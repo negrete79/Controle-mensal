@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3A7D2C">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>MiniFazenda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;-webkit-tap-highlight-color:transparent}
+        body{background:#FBF8F1;color:#2C1810;overflow-x:hidden}
+        .app{max-width:500px;margin:0 auto;min-height:100vh;position:relative;background:#FBF8F1}
+        .pag{display:none;animation:sobe .25s ease}.pag.ativo{display:block}
+        @keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes sobemodal{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 12px rgba(44,24,16,.05)}
+        .bp:active{transform:scale(.95);transition:transform .1s}
+        input,select,textarea{width:100%;padding:11px 14px;border:2px solid #E8E0D0;border-radius:12px;background:#F5F0E8;font-size:14px;font-family:'Nunito',sans-serif;color:#2C1810;outline:none;transition:border .2s}
+        input:focus,select:focus,textarea:focus{border-color:#3A7D2C}
+        .tab{border-bottom:3px solid transparent;padding:10px 0;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .2s}
+        .tab.on{color:#3A7D2C;border-bottom-color:#3A7D2C}
+        .tab:not(.on){color:#8B7355}
+        .nv{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;cursor:pointer;transition:color .2s;color:#8B7355;font-size:10px;font-weight:700;flex:1}
+        .nv.on{color:#3A7D2C}
+        .nv .pts{width:16px;height:3px;border-radius:2px;background:#3A7D2C;transform:scaleX(0);transition:transform .2s;margin-top:3px}
+        .nv.on .pts{transform:scaleX(1)}
+        .fab{position:fixed;z-index:30;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3A7D2C,#4E9A3E);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(58,125,44,.35);bottom:82px;right:max(16px,calc(50% - 240px));transition:transform .15s}
+        .fab:active{transform:scale(.9)}
+        .esconde::-webkit-scrollbar{display:none}.esconde{-ms-overflow-style:none;scrollbar-width:none}
+        .toast-box{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:90%;max-width:400px}
+        .toast-item{padding:10px 20px;border-radius:14px;color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sobe .3s ease;pointer-events:auto;text-align:center;width:100%}
+        .fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none}
+        .fundo.abre{display:block}
+        .modal-cima{position:fixed;bottom:0;left:0;right:0;z-index:51;background:#fff;border-radius:24px 24px 0 0;max-height:85vh;overflow-y:auto;max-width:500px;margin:0 auto;display:none;animation:sobemodal .3s ease}
+        .modal-cima.abre{display:block}
+        @media(max-width:500px){.fab{right:16px}}
+        @media print{.fab,.nv-bar,.topo,.fundo,.modal-cima,.toast-box{display:none!important}.pag{display:block!important}body{background:#fff}.app{box-shadow:none}}
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="topo" style="position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(135deg,#3A7D2C,#2A5C1E)">
+        <div style="max-width:500px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="color:#fff;font-size:18px;font-weight:900">MiniFazenda</div><div id="saudacao" style="color:#a8d89a;font-size:11px;font-weight:600"></div></div>
+            <div style="display:flex;gap:8px">
+                <button onclick="abrirCompras()" class="bp" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer"><i class="fa-solid fa-cart-shopping" style="font-size:13px"></i></button>
+                <button onclick="gerarPDF()" class="bp" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer"><i class="fa-solid fa-file-pdf" style="font-size:13px"></i></button>
+            </div>
+        </div>
+    </div>
+    <div style="padding:64px 16px 90px">
+        <div id="pg-inicio" class="pag ativo"></div>
+        <div id="pg-rebanho" class="pag">
+            <div style="display:flex;gap:0;border-bottom:2px solid #E8E0D0;margin:0 -16px 16px;padding:0 16px;overflow-x:auto" class="esconde">
+                <div class="tab on" data-t="galinhas" onclick="mudarTab('galinhas')">🐔 Galinhas</div>
+                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')">🐣 Codornas</div>
+                <div class="tab" style="margin-left:20px" data-t="peixes" onclick="mudarTab('peixes')">🐟 Peixes</div>
+            </div>
+            <div id="reb-conteudo"></div>
+        </div>
+        <div id="pg-postura" class="pag"></div>
+        <div id="pg-vendas" class="pag"></div>
+        <div id="pg-financeiro" class="pag"></div>
+        <div id="pg-racao" class="pag"></div>
+        <div id="pg-dicas" class="pag"></div>
+    </div>
+    <button class="fab" onclick="acaoFab()"><i class="fa-solid fa-plus"></i></button>
+    <div class="nv-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:40;background:#fff;border-top:2px solid #E8E0D0;padding-bottom:env(safe-area-inset-bottom,0px)">
+        <div style="max-width:500px;margin:0 auto;display:flex">
+            <div class="nv on" data-p="inicio" onclick="irPara('inicio')"><i class="fa-solid fa-house" style="font-size:18px;margin-bottom:2px"></i>Inicio<div class="pts"></div></div>
+            <div class="nv" data-p="rebanho" onclick="irPara('rebanho')"><span style="font-size:18px;margin-bottom:2px">🐔</span>Rebanho<div class="pts"></div></div>
+            <div class="nv" data-p="postura" onclick="irPara('postura')"><i class="fa-solid fa-egg" style="font-size:18px;margin-bottom:2px"></i>Postura<div class="pts"></div></div>
+            <div class="nv" data-p="vendas" onclick="irPara('vendas')"><i class="fa-solid fa-coins" style="font-size:18px;margin-bottom:2px"></i>Vendas<div class="pts"></div></div>
+            <div class="nv" onclick="abrirMenu()"><i class="fa-solid fa-ellipsis" style="font-size:18px;margin-bottom:2px"></i>Mais<div class="pts"></div></div>
+        </div>
+    </div>
+</div>
+<div class="fundo" id="fundo" onclick="fecharTudo()"></div>
+<div class="modal-cima esconde" id="modal">
+    <div style="position:sticky;top:0;background:#fff;border-radius:24px 24px 0 0;z-index:2;padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E8E0D0">
+        <div id="modalTitulo" style="font-size:17px;font-weight:900;color:#2C1810"></div>
+        <button onclick="fecharTudo()" style="width:32px;height:32px;border-radius:50%;background:#E8E0D0;border:none;cursor:pointer;color:#5C4033;font-size:14px"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="modalCorpo" style="padding:20px"></div>
+</div>
+<div class="toast-box" id="toasts"></div>
+<script>
+var CHAVE='mf_v7',D={};
+
+function dadosVazio(){return{galinhas:[],codornas:[],peixes:[],postura:[],vendas:[],compras:[],nid:{g:1,c:1,p:1,po:1,v:1,co:1}}}
+
+function carregar(){
+    try{
+        var r=localStorage.getItem(CHAVE);
+        if(r){D=JSON.parse(r);if(!D.nid)D.nid=dadosVazio().nid;if(!D.galinhas)D.galinhas=[];if(!D.codornas)D.codornas=[];if(!D.peixes)D.peixes=[];if(!D.postura)D.postura=[];if(!D.vendas)D.vendas=[];if(!D.compras)D.compras=[]}
+        else{D=dadosVazio();salvar()}
+    }catch(e){D=dadosVazio();salvar()}
+}
+
+function salvar(){try{localStorage.setItem(CHAVE,JSON.stringify(D))}catch(e){}}
+
+function limparTudo(){
+    if(!confirm('APAGAR TUDO?\n\nRebanho, postura, vendas, compras...\nTODOS os dados serao apagados!'))return;
+    localStorage.removeItem(CHAVE);
+    D=dadosVazio();
+    salvar();
+    document.getElementById('fundo').classList.remove('abre');
+    document.getElementById('modal').classList.remove('abre');
+    document.body.style.overflow='';
+    setTimeout(function(){desenhar();toast('Todos os dados foram apagados!')},150);
+}
+
+function excluirHistoricoPostura(){
+    if(!confirm('Excluir TODO o historico de postura?'))return;
+    D.postura=[];salvar();fecharTudo();desenhar();toast('Historico de postura excluido!','aviso');
+}
+
+function excluirHistoricoVendas(){
+    if(!confirm('Excluir TODO o historico de vendas?'))return;
+    D.vendas=[];salvar();fecharTudo();desenhar();toast('Historico de vendas excluido!','aviso');
+}
+
+function R$(n){return'R$ '+Number(n).toFixed(2).replace('.',',')}
+function dataBr(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function hoje(){return new Date().toISOString().split('T')[0]}
+function diasAtras(n){var d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
+function saudacao(){var h=new Date().getHours();return h<12?'Bom dia, fazendeiro!':h<18?'Boa tarde, fazendeiro!':'Boa noite, fazendeiro!'}
+
+function toast(msg,tipo){
+    tipo=tipo||'ok';var cor=tipo==='ok'?'#3A7D2C':tipo==='erro'?'#dc2626':'#D4A030';
+    var el=document.createElement('div');el.className='toast-item';el.style.background=cor;el.textContent=msg;
+    document.getElementById('toasts').appendChild(el);setTimeout(function(){el.remove()},2800);
+}
+
+function totalVendas(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.vendas.length;i++){if(D.vendas[i].data>=ini)t+=D.vendas[i].qtd*D.vendas[i].vu}return t}
+function totalCompras(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.compras.length;i++){if(D.compras[i].data>=ini)t+=D.compras[i].qtd*D.compras[i].vu}return t}
+function totalAves(tipo){var arr=tipo==='g'?D.galinhas:tipo==='c'?D.codornas:D.peixes;var t=0;for(var i=0;i<arr.length;i++)t+=arr[i].qtd;return t}
+
+var pagAtual='inicio',tabAtual='galinhas';
+
+function irPara(pg){
+    pagAtual=pg;var pags=document.querySelectorAll('.pag');for(var i=0;i<pags.length;i++)pags[i].classList.remove('ativo');
+    var el=document.getElementById('pg-'+pg);if(el)el.classList.add('ativo');
+    var nvs=document.querySelectorAll('.nv');for(var i=0;i<nvs.length;i++)nvs[i].classList.remove('on');
+    var nv=document.querySelector('.nv[data-p="'+pg+'"]');if(nv)nv.classList.add('on');
+    window.scrollTo(0,0);desenhar();
+}
+
+function mudarTab(t){
+    tabAtual=t;var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('on');
+    var tb=document.querySelector('.tab[data-t="'+t+'"]');if(tb)tb.classList.add('on');desenhar();
+}
+
+function desenhar(){
+    document.getElementById('saudacao').textContent=saudacao();
+    if(pagAtual==='inicio')desenharInicio();
+    else if(pagAtual==='rebanho')desenharRebanho();
+    else if(pagAtual==='postura')desenharPostura();
+    else if(pagAtual==='vendas')desenharVendas();
+    else if(pagAtual==='financeiro')desenharFinanceiro();
+    else if(pagAtual==='racao')desenharRacao();
+    else if(pagAtual==='dicas')desenharDicas();
+}
+
+function desenharInicio(){
+    var oh={og:0,oc:0};for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){oh=D.postura[i];break}}
+    var tv7=totalVendas(7),tc7=totalCompras(7),tv30=totalVendas(30),tc30=totalCompras(30),l7=tv7-tc7,l30=tv30-tc30;
+    var h='<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    h+=cardCli('onclick="irPara(\'rebanho\')"','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
+    h+=cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐣</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
+    h+=cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐟</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
+    h+=cardCli('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
+    h+='</div><div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-wallet" style="color:#3A7D2C;margin-right:8px"></i>Financeiro</span><span onclick="irPara(\'financeiro\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Ver mais <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#f0f7ed"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Semana</div><div style="font-size:16px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div>';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#fef3cd"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Mes</div><div style="font-size:16px;font-weight:900;color:'+(l30>=0?'#3A7D2C':'#dc2626')+'">'+R$(l30)+'</div></div>';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#e0f0ff"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas 30d</div><div style="font-size:16px;font-weight:900;color:#2563eb">'+R$(tv30)+'</div></div>';
+    h+='</div></div><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-receipt" style="color:#D4A030;margin-right:8px"></i>Ultimas Vendas</span><span onclick="irPara(\'vendas\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Todas <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    var ult=D.vendas.slice(-5).reverse();
+    if(ult.length===0){h+='<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhuma venda registrada</div>'}
+    else{for(var i=0;i<ult.length;i++){var vv=ult[i];var ic=vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';var bg=vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';var cg=vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border-none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>'}}
+    h+='</div>';document.getElementById('pg-inicio').innerHTML=h;
+}
+
+function cardCli(onclick,emoji,titulo,valor,sub){return'<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div style="font-size:22px;font-weight:900;color:#2C1810">'+valor+'</div><div style="font-size:11px;color:#8B7355">'+sub+'</div></div>'}
+
+function desenharRebanho(){
+    var arr,label,emoji;if(tabAtual==='galinhas'){arr=D.galinhas;label='Galinhas';emoji='🐔'}else if(tabAtual==='codornas'){arr=D.codornas;label='Codornas';emoji='🐣'}else{arr=D.peixes;label='Peixes';emoji='🐟'}
+    var total=0;for(var i=0;i<arr.length;i++)total+=arr[i].qtd;
+    var h='<div style="font-size:13px;color:#8B7355;font-weight:600;margin-bottom:14px">'+arr.length+' lotes · '+total+' '+(tabAtual==='peixes'?'peixes':'aves')+'</div>';
+    if(arr.length===0){h+='<div style="text-align:center;padding:40px 0"><i class="fa-solid fa-inbox" style="font-size:40px;color:#C4AD8C;margin-bottom:12px;display:block"></i><div style="font-weight:900;color:#8B7355;margin-bottom:4px">Nenhum '+label.toLowerCase()+'</div><div style="font-size:13px;color:#8B7355">Use o botao + para adicionar</div></div>'}
+    else{for(var i=0;i<arr.length;i++){var item=arr[i];var dias=Math.floor((new Date()-new Date(item.data))/86400000);var stCor=item.status==='postura'?'background:#f0f7ed;color:#3A7D2C':item.status==='engorda'?'background:#eff6ff;color:#2563eb':'background:#fef3cd;color:#92400e';var nome=tabAtual==='peixes'?item.especie:item.raca;var local=tabAtual==='peixes'?item.caixa:item.local;var tipo=tabAtual==='peixes'?'p':tabAtual==='codornas'?'c':'g';h+='<div class="card bp" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:900;color:#2C1810">'+emoji+' '+nome+'</div><div style="font-size:12px;color:#8B7355">'+local+'</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;'+stCor+'">'+item.status+'</span></div><div style="display:flex;gap:16px;font-size:13px;margin-bottom:6px"><span style="font-weight:700;color:#2C1810">'+item.qtd+' '+(tabAtual==='peixes'?'peixes':'aves')+'</span><span style="color:#8B7355">'+dias+' dias</span></div>';if(item.obs)h+='<div style="font-size:12px;color:#8B7355;font-style:italic;margin-bottom:8px">'+item.obs+'</div>';h+='<div style="display:flex;gap:8px;padding-top:8px;border-top:1px solid #f0ebe0"><button onclick="editarLote(\''+tipo+'\','+item.id+')" class="bp" style="font-size:12px;font-weight:700;color:#3A7D2C;background:none;border:none;cursor:pointer;padding:4px 0"><i class="fa-solid fa-pen" style="margin-right:4px"></i>Editar</button><button onclick="excluirLote(\''+tipo+'\','+item.id+')" class="bp" style="font-size:12px;font-weight:700;color:#ef4444;background:none;border:none;cursor:pointer;padding:4px 0;margin-left:auto"><i class="fa-solid fa-trash" style="margin-right:4px"></i>Remover</button></div></div>'}}
+    document.getElementById('reb-conteudo').innerHTML=h;
+}
+
+function excluirLote(tipo,id){if(!confirm('Remover este lote?'))return;if(tipo==='g')D.galinhas=D.galinhas.filter(function(x){return x.id!==id});if(tipo==='c')D.codornas=D.codornas.filter(function(x){return x.id!==id});if(tipo==='p')D.peixes=D.peixes.filter(function(x){return x.id!==id});salvar();toast('Lote removido!','aviso');desenhar()}
+function editarLote(tipo,id){abrirFormLote(tipo,id)}
+
+function desenharPostura(){
+    var ult=D.postura.slice(-14).reverse();var tg=0,tc=0;for(var i=0;i<ult.length;i++){tg+=ult[i].og;tc+=ult[i].oc}
+    var h='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div style="font-size:20px;font-weight:900;color:#2C1810">Controle de Postura</div><button onclick="excluirHistoricoPostura()" class="bp" style="font-size:11px;font-weight:700;color:#ef4444;background:#fef2f2;border:none;cursor:pointer;padding:6px 12px;border-radius:10px"><i class="fa-solid fa-trash" style="margin-right:4px"></i>Excluir Historico</button></div>';
+    h+='<div style="font-size:13px;color:#8B7355;margin-bottom:16px">Registro diario de ovos</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    h+='<div class="card" style="text-align:center"><span style="font-size:28px">🥚</span><div style="font-size:22px;font-weight:900;color:#2C1810">'+tg+'</div><div style="font-size:11px;color:#8B7355;font-weight:600">Ovos galinha (14d)</div></div>';
+    h+='<div class="card" style="text-align:center"><span style="font-size:28px">🥚</span><div style="font-size:22px;font-weight:900;color:#2C1810">'+tc+'</div><div style="font-size:11px;color:#8B7355;font-weight:600">Ovos codorna (14d)</div></div></div>';
+    if(ult.length>0){h+='<div class="card" style="margin-bottom:16px"><div style="font-weight:900;color:#2C1810;margin-bottom:12px">Producao 14 dias</div>';var maxO=1;for(var i=0;i<ult.length;i++){var s=ult[i].og+ult[i].oc;if(s>maxO)maxO=s}for(var i=0;i<ult.length;i++){var p=ult[i],total=p.og+p.oc;h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:11px;color:#8B7355;width:42px;flex-shrink:0;text-align:right">'+dataBr(p.data).substring(0,5)+'</span><div style="flex:1;display:flex;gap:2px;height:18px;border-radius:4px;overflow:hidden;background:#f5f0e8"><div style="width:'+(p.og/total*100)+'%;background:#f97316;border-radius:4px 0 0 4px"></div><div style="width:'+(p.oc/total*100)+'%;background:#eab308;border-radius:0 4px 4px 0"></div></div><span style="font-size:11px;font-weight:700;color:#2C1810;width:28px">'+total+'</span></div>'}h+='<div style="display:flex;gap:16px;margin-top:8px;font-size:11px"><span><span style="display:inline-block;width:10px;height:10px;background:#f97316;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Galinha</span><span><span style="display:inline-block;width:10px;height:10px;background:#eab308;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Codorna</span></div></div>'}
+    h+='<div class="card"><div style="font-weight:900;color:#2C1810;margin-bottom:10px">Historico</div>';
+    if(ult.length===0){h+='<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhum registro ainda.<br>Use o botao + para registrar.</div>'}
+    else{for(var i=0;i<ult.length;i++){var p=ult[i];h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border-none':'')+'"><span style="font-size:13px;font-weight:700;color:#2C1810">'+dataBr(p.data)+'</span><div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#f97316;font-weight:700"><i class="fa-solid fa-egg" style="font-size:11px;margin-right:2px"></i>'+p.og+'</span><span style="font-size:13px;color:#eab308;font-weight:700"><i class="fa-solid fa-egg" style="font-size:11px;margin-right:2px"></i>'+p.oc+'</span><div style="display:flex;gap:4px"><button onclick="editarPostura('+p.id+')" class="bp" style="width:28px;height:28px;border-radius:8px;background:#f0f7ed;border:none;cursor:pointer;color:#3A7D2C;font-size:10px"><i class="fa-solid fa-pen"></i></button><button onclick="excluirPostura('+p.id+')" class="bp" style="width:28px;height:28px;border-radius:8px;background:#fef2f2;border:none;cursor:pointer;color:#ef4444;font-size:10px"><i class="fa-solid fa-trash"></i></button></div></div></div>'}}
+    h+='</div>';document.getElementById('pg-postura').innerHTML=h;
+}
+
+function excluirPostura(id){if(!confirm('Excluir este registro?'))return;D.postura=D.postura.filter(function(x){return x.id!==id});salvar();toast('Excluido!','aviso');desenhar()}
+
+function editarPostura(id){var p=null;for(var i=0;i<D.postura.length;i++){if(D.postura[i].id===id){p=D.postura[i];break}}if(!p)return;abrirModal('Editar Postura - '+dataBr(p.data),'<form onsubmit="salvarEditPostura(event,'+id+')"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px"><div style="text-align:center;padding:16px;border-radius:14px;background:#fff7ed"><i class="fa-solid fa-egg" style="font-size:24px;color:#f97316;margin-bottom:6px;display:block"></i><div style="font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;margin-bottom:6px">Ovos Galinha</div><input type="number" name="og" value="'+p.og+'" min="0" required style="text-align:center;font-size:20px;font-weight:900;background:#fff"></div><div style="text-align:center;padding:16px;border-radius:14px;background:#fefce8"><i class="fa-solid fa-egg" style="font-size:24px;color:#eab308;margin-bottom:6px;display:block"></i><div style="font-size:11px;font-weight:700;color:#ca8a04;text-transform:uppercase;margin-bottom:6px">Ovos Codorna</div><input type="number" name="oc" value="'+p.oc+'" min="0" required style="text-align:center;font-size:20px;font-weight:900;background:#fff"></div></div><button type="submit" class="bp" style="width:100%;padding:14px;border-radius:14px;background:#3A7D2C;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer"><i class="fa-solid fa-check" style="margin-right:8px"></i>Salvar</button></form>')}
+
+function salvarEditPostura(e,id){e.preventDefault();for(var i=0;i<D.postura.length;i++){if(D.postura[i].id===id){D.postura[i].og=parseInt(e.target.og.value)||0;D.postura[i].oc=parseInt(e.target.oc.value)||0;break}}salvar();fecharTudo();toast('Atualizado!');desenhar()}
+
+function desenharVendas(){
+    var tv7=totalVendas(7),tv30=totalVendas(30),ult=D.vendas.slice(-20).reverse();
+    var h='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div style="font-size:20px;font-weight:900;color:#2C1810">Vendas</div><button onclick="excluirHistoricoVendas()" class="bp" style="font-size:11px;font-weight:700;color:#ef4444;background:#fef2f2;border:none;cursor:pointer;padding:6px 12px;border-radius:10px"><i class="fa-solid fa-trash" style="margin-right:4px"></i>Excluir Historico</button></div>';
+    h+='<div style="font-size:13px;color:#8B7355;margin-bottom:16px">Tudo que foi vendido</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    h+='<div class="card" style="text-align:center"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">7 dias</div><div style="font-size:20px;font-weight:900;color:#3A7D2C">'+R$(tv7)+'</div></div>';
+    h+='<div class="card" style="text-align:center"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">30 dias</div><div style="font-size:20px;font-weight:900;color:#D4A030">'+R$(tv30)+'</div></div></div>';
+    var pt={};for(var i=0;i<D.vendas.length;i++){var v=D.vendas[i];if(v.data>=diasAtras(30)){pt[v.tipo]=(pt[v.tipo]||0)+v.qtd*v.vu}}
+    var cores={'Ovos Galinha':'#f97316','Ovos Codorna':'#eab308','Aves':'#3A7D2C','Adubo':'#d97706','Peixes':'#3b82f6'};
+    if(Object.keys(pt).length>0){h+='<div class="card" style="margin-bottom:16px"><div style="font-weight:900;color:#2C1810;margin-bottom:10px">Vendas por tipo (30d)</div>';for(var tipo in pt){var pct=tv30>0?(pt[tipo]/tv30*100):0;h+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span style="font-weight:700;color:#2C1810">'+tipo+'</span><span style="font-weight:900;color:#2C1810">'+R$(pt[tipo])+'</span></div><div style="width:100%;height:8px;border-radius:4px;background:#f0ebe0;overflow:hidden"><div style="width:'+pct+'%;height:100%;border-radius:4px;background:'+(cores[tipo]||'#888')+'"></div></div></div>'}h+='</div>'}
+    h+='<div class="card"><div style="font-weight:900;color:#2C1810;margin-bottom:10px">Ultimas vendas</div>';
+    if(ult.length===0){h+='<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhuma venda registrada.<br>Use o botao + para registrar.</div>'}
+    else{for(var i=0;i<ult.length;i++){var v=ult[i];var ic=v.tipo.includes('Galinha')?'fa-egg':v.tipo.includes('Codorna')?'fa-egg':v.tipo==='Adubo'?'fa-seedling':v.tipo==='Peixes'?'fa-fish':'fa-dove';var bg=v.tipo.includes('Galinha')?'#fff7ed':v.tipo.includes('Codorna')?'#fefce8':v.tipo==='Adubo'?'#fffbeb':v.tipo==='Peixes'?'#eff6ff':'#f0f7ed';var cg=v.tipo.includes('Galinha')?'#f97316':v.tipo.includes('Codorna')?'#eab308':v.tipo==='Adubo'?'#d97706':v.tipo==='Peixes'?'#3b82f6':'#3A7D2C';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border-none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+v.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(v.data)+' · '+v.qtd+'x '+R$(v.vu)+' · '+v.cliente+'</div></div></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(v.qtd*v.vu)+'</span><button onclick="excluirVenda('+v.id+')" class="bp" style="background:none;border:none;cursor:pointer;color:#fca5a5;font-size:12px;padding:4px"><i class="fa-solid fa-xmark"></i></button></div></div>'}}
+    h+='</div>';document.getElementById('pg-vendas').innerHTML=h;
+}
+
+function excluirVenda(id){if(!confirm('Remover?'))return;D.vendas=D.vendas.filter(function(x){return x.id!==id});salvar();toast('Removida!','aviso');desenhar()}
+
+function desenharFinanceiro(){
+    var tv7=totalVendas(7),tc7=totalCompras(7),tv30=totalVendas(30),tc30=totalCompras(30),l30=tv30-tc30,l7=tv7-tc7;var nv=0;for(var i=0;i<D.vendas.length;i++){if(D.vendas[i].data>=diasAtras(30))nv++}
+    var h='<div style="font-size:20px;font-weight:900;color:#2C1810;margin-bottom:4px">Financeiro</div><div style="font-size:13px;color:#8B7355;margin-bottom:16px">Receitas, despesas e lucro</div>';
+    h+='<div class="card" style="margin-bottom:14px;padding:20px;background:linear-gradient(135deg,#3A7D2C,#2A5C1E);border-radius:18px"><div style="font-size:11px;font-weight:700;color:#a8d89a;text-transform:uppercase;margin-bottom:4px">Lucro liquido (30 dias)</div><div style="font-size:28px;font-weight:900;color:#fff">'+R$(l30)+'</div><div style="display:flex;gap:24px;margin-top:10px"><div><div style="font-size:10px;font-weight:700;color:#a8d89a;text-transform:uppercase">Entradas</div><div style="font-size:14px;font-weight:700;color:#d1fae5">'+R$(tv30)+'</div></div><div><div style="font-size:10px;font-weight:700;color:#a8d89a;text-transform:uppercase">Saidas</div><div style="font-size:14px;font-weight:700;color:#d1fae5">'+R$(tc30)+'</div></div></div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px"><div class="card" style="text-align:center;padding:12px 8px"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Lucro Semanal</div><div style="font-size:15px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div><div class="card" style="text-align:center;padding:12px 8px"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Ticket Medio</div><div style="font-size:15px;font-weight:900;color:#2C1810">'+R$(nv>0?tv30/nv:0)+'</div></div><div class="card" style="text-align:center;padding:12px 8px"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas/Mes</div><div style="font-size:15px;font-weight:900;color:#2C1810">'+nv+'</div></div></div>';
+    h+='<div class="card" style="margin-bottom:16px"><div style="font-weight:900;color:#2C1810;margin-bottom:12px">Semanal - Vendas vs Despesas</div>';var diasSem=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];var maxV=1;var dv=[],dc=[];for(var i=6;i>=0;i--){var d=diasAtras(i);var sv=0,sc=0;for(var j=0;j<D.vendas.length;j++){if(D.vendas[j].data===d)sv+=D.vendas[j].qtd*D.vendas[j].vu}for(var j=0;j<D.compras.length;j++){if(D.compras[j].data===d)sc+=D.compras[j].qtd*D.compras[j].vu}dv.push(sv);dc.push(sc);if(sv>maxV)maxV=sv;if(sc>maxV)maxV=sc}for(var i=0;i<7;i++){var dia=new Date(diasAtras(6-i));var nomeD=diasSem[dia.getDay()];h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:11px;font-weight:700;color:#8B7355;width:28px;text-align:right">'+nomeD+'</span><div style="flex:1;display:flex;gap:2px;height:16px;border-radius:4px;overflow:hidden;background:#f5f0e8"><div style="width:'+(dv[i]/maxV*100)+'%;background:#3A7D2C;border-radius:4px 0 0 4px;min-width:'+(dv[i]>0?'2px':'0')+'"></div><div style="width:'+(dc[i]/maxV*100)+'%;background:#D4A030;border-radius:0 4px 4px 0;min-width:'+(dc[i]>0?'2px':'0')+'"></div></div><span style="font-size:10px;color:#8B7355;width:50px;text-align:right">'+R$(dv[i])+'</span></div>'}h+='<div style="display:flex;gap:16px;margin-top:8px;font-size:11px"><span><span style="display:inline-block;width:10px;height:10px;background:#3A7D2C;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Vendas</span><span><span style="display:inline-block;width:10px;height:10px;background:#D4A030;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Compras</span></div></div>';
+    var dt={};for(var i=0;i<D.compras.length;i++){var c=D.compras[i];if(c.data>=diasAtras(30)){dt[c.tipo]=(dt[c.tipo]||0)+c.qtd*c.vu}}var coresD={'Racao':'#3A7D2C','Insumo':'#D4A030','Animais':'#f97316','Medicamento':'#3b82f6','Equipamento':'#8b5cf6','Outro':'#888'};
+    h+='<div class="card"><div style="font-weight:900;color:#2C1810;margin-bottom:10px">Despesas por tipo (30d)</div>';for(var tipo in dt){var pct=tc30>0?(dt[tipo]/tc30*100):0;h+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span style="font-weight:700;color:#2C1810">'+tipo+'</span><span style="font-weight:900;color:#2C1810">'+R$(dt[tipo])+'</span></div><div style="width:100%;height:8px;border-radius:4px;background:#f0ebe0;overflow:hidden"><div style="width:'+pct+'%;height:100%;border-radius:4px;background:'+(coresD[tipo]||'#888')+'"></div></div></div>'}if(Object.keys(dt).length===0)h+='<div style="font-size:13px;color:#8B7355">Nenhuma despesa</div>';h+='</div>';
+    document.getElementById('pg-financeiro').innerHTML=h;
+}
+
+function desenharRacao(){
+    var recs=[{n:'Ração Galinhas Postura',a:'Galinha',cor:'#fff7ed',cta:'#f97316',ig:[['Milho moído',58],['Farelo de soja',26],['Calcário',5],['Fosfato bicálcico',2],['Óleo de soja',2.5],['Sal',0.5],['Premix vit.',1],['DL-Metionina',0.15],['L-Lisina',0.1],['Outros',4.75]],prep:'Misturar secos primeiro. Adicionar óleo e premix por ultimo. Misturar 5 min. Armazenar seco até 30 dias.',dica:'Consumo: 110-120g/ave/dia. ~17% PB, 2800 kcal/kg.',custo:'R$ 1,80 - 2,20/kg'},{n:'Ração Codornas Postura',a:'Codorna',cor:'#fefce8',cta:'#ca8a04',ig:[['Milho moído (fino)',52],['Farelo de soja',30],['Calcário',4.5],['Fosfato bicálcico',2],['Óleo de soja',3],['Sal',0.5],['Premix vit.',1],['DL-Metionina',0.2],['Outros',6.8]],prep:'Moer milho mais finamente. Mesma ordem. Mistura muito homogênea pelo tamanho do animal.',dica:'Consumo: 28-32g/ave/dia. ~22% PB (codorna exige mais que galinha).',custo:'R$ 2,00 - 2,50/kg'},{n:'Ração Peixes (Tilápia)',a:'Peixe',cor:'#eff6ff',cta:'#2563eb',ig:[['Farelo de soja',42],['Milho moído',24],['Farelo de trigo',16],['Óleo de soja',5],['Farinha peixe',5],['Calcário',3],['Premix',2],['Sal',0.5],['Aglutinante',2.5]],prep:'Moer finamente. Misturar secos, adicionar óleo e água morna (20% peso). Peletizar. Secar ao sol 6-8h.',dica:'Taxa: 3-5% peso vivo/dia, 3-4 refeições. ~28% PB para engorda.',custo:'R$ 2,30 - 3,00/kg'}];
+    var h='<div style="font-size:20px;font-weight:900;color:#2C1810;margin-bottom:4px">Receitas de Ração</div><div style="font-size:13px;color:#8B7355;margin-bottom:16px">Formulações artesanais</div>';
+    for(var r=0;r<recs.length;r++){var rc=recs[r];h+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:'+rc.cor+';color:'+rc.cta+';text-transform:uppercase">'+rc.a+'</span><span style="font-weight:900;color:#2C1810;font-size:14px">'+rc.n+'</span></div><div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:6px">Ingredientes</div>';for(var j=0;j<rc.ig.length;j++){h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f0e8;font-size:13px"><span style="color:#2C1810">'+rc.ig[j][0]+'</span><span style="font-weight:700;color:#8B7355">'+rc.ig[j][1]+'%</span></div>'}h+='</div><div style="padding:12px;border-radius:12px;background:#f0f7ed;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#3A7D2C;text-transform:uppercase;margin-bottom:4px"><i class="fa-solid fa-flask" style="margin-right:4px"></i>Modo de Preparo</div><div style="font-size:13px;color:#2C1810;line-height:1.5">'+rc.prep+'</div></div><div style="padding:12px;border-radius:12px;background:#fef3cd;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;margin-bottom:4px"><i class="fa-solid fa-lightbulb" style="margin-right:4px"></i>Dica</div><div style="font-size:13px;color:#2C1810">'+rc.dica+'</div></div><div style="font-size:12px;font-weight:700;color:#8B7355"><i class="fa-solid fa-tag" style="margin-right:4px"></i>'+rc.custo+'</div></div>'}
+    h+='<div class="card"><div style="font-weight:900;color:#2C1810;margin-bottom:10px"><i class="fa-solid fa-circle-info" style="color:#3b82f6;margin-right:8px"></i>Rações Alternativas</div><div style="font-size:13px;color:#2C1810;line-height:1.6"><p style="margin-bottom:8px"><strong>Substitutos do milho:</strong> Sorgo (até 50%), quirera de arroz, farelo de arroz.</p><p style="margin-bottom:8px"><strong>Substitutos da soja:</strong> Farelo de algodão (até 15%), farelo de amendoim (até 10%), torta de girassol.</p><p style="margin-bottom:8px"><strong>Para peixes:</strong> Restos de cultura, minhoca, larvas de mosca (BSF) como fonte proteica.</p><p><strong>Toda mudança de ração deve ser gradual (7 dias)!</strong></p></div></div>';
+    document.getElementById('pg-racao').innerHTML=h;
+}
+
+function desenharDicas(){
+    var h='<div style="font-size:20px;font-weight:900;color:#2C1810;margin-bottom:4px">Dicas de Criação</div><div style="font-size:13px;color:#8B7355;margin-bottom:16px">Orientações práticas</div>';
+    h+='<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:24px">🐔</span><span style="font-weight:900;color:#2C1810;font-size:16px">Galinhas</span></div><div style="display:flex;flex-direction:column;gap:8px">';
+    h+=dicaBox('#fff7ed','#f97316','Pintinhos (0-21 dias)','Temperatura: 32-35°C primeira semana, reduzir 2°C/semana. Lâmpada 150W a 40-50cm. Água morna nas primeiras 24h com vitamina.');
+    h+=dicaBox('#fff7ed','#f97316','Espaço mínimo','Pintinhos: 10 aves/m². Crescimento: 6-8/m². Postura: 4-5/m² com piquete. Comedouros: 5cm/ave.');
+    h+=dicaBox('#fff7ed','#f97316','Postura','Iluminação: 16h luz/dia. Ninhos: 1 para 4-5 galinhas. Coletar ovos 2x/dia. Isa Brown ~18 semanas, Rhode Island ~20 semanas.');
+    h+=dicaBox('#fff7ed','#f97316','Saúde','Vacinar contra Newcastle e Gumboro. Vermifugar a cada 3 meses. Manter limpos bebedouros e comedouros.');
+    h+='</div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:24px">🐣</span><span style="font-weight:900;color:#2C1810;font-size:16px">Codornas</span></div><div style="display:flex;flex-direction:column;gap:8px">';
+    h+=dicaBox('#fefce8','#ca8a04','Pintinhos','Temperatura: 38°C primeira semana (mais quente que galinha!). Reduzir 2-3°C/semana. Muito sensíveis ao frio.');
+    h+=dicaBox('#fefce8','#ca8a04','Postura','Início: 40-45 dias! Produtividade: 280-320 ovos/ano. Luz: 16h/dia. Taxa ideal: acima de 85%.');
+    h+=dicaBox('#fefce8','#ca8a04','Gaiolas','Densidade: 10-12/gaiola 1m×30cm×25cm. Piso inclinado 8-10%. Bebedouro nipple ideal.');
+    h+=dicaBox('#fefce8','#ca8a04','Raças','Coturnix japonesa: melhor para ovos. Coturnix europeia: maior, dupla aptidão. AMAX: seleção brasileira.');
+    h+='</div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:24px">🐟</span><span style="font-weight:900;color:#2C1810;font-size:16px">Peixes em Caixa d\'Água</span></div><div style="display:flex;flex-direction:column;gap:8px">';
+    h+=dicaBox('#eff6ff','#2563eb','Densidade','Tilápia: 1 peixe/10-15L. Tambaqui: 1/15-20L. Caixa 1000L: ~80 tilápias. SEM aeração: reduzir pela metade!');
+    h+=dicaBox('#eff6ff','#2563eb','Aeração','ESSENCIAL! Pedra porosa + compressor ou recirculação com filtro biológico. Sem aeração morrem em horas no calor.');
+    h+=dicaBox('#eff6ff','#2563eb','Alimentação','3-4x/dia horários fixos. 3-5% peso vivo. Se sobrar ração após 10min, reduzir. Peletizada 3-5mm.');
+    h+=dicaBox('#eff6ff','#2563eb','Água','pH 6.5-8.0. Amônia abaixo de 0,5mg/L. Trocar 10-20% semanalmente. Temperatura: 26-30°C.');
+    h+='</div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:24px">🌱</span><span style="font-weight:900;color:#2C1810;font-size:16px">Produção de Adubo</span></div><div style="display:flex;flex-direction:column;gap:8px">';
+    h+=dicaBox('#fffbeb','#d97706','Compostagem','Esterco:palha = 1:3. Umidificar sem encharcar. Monte 1-1,5m altura. Revirar 7-10 dias. Pronto em 30-45 dias.');
+    h+=dicaBox('#fffbeb','#d97706','Composição','Esterco galinha: N 2-3%, P 1,5-2,5%, K 1-1,5%. Esterco codorna ainda mais concentrado.');
+    h+=dicaBox('#fffbeb','#d97706','Comercialização','Sacos 5kg ou 10kg. R$ 10-20/saco 10kg. Feiras, vizinhos, horticultores. "Adubo orgânico curado" agrega valor.');
+    h+='</div></div>';document.getElementById('pg-dicas').innerHTML=h;
+}
+function dicaBox(bg,cor,titulo,texto){return'<div style="padding:12px;border-radius:12px;background:'+bg+'"><div style="font-size:13px;font-weight:700;color:'+cor+';margin-bottom:4px">'+titulo+'</div><div style="font-size:13px;color:#2C1810;line-height:1.5">'+texto+'</div></div>'}
+
+function abrirModal(titulo,html){document.getElementById('modalTitulo').textContent=titulo;document.getElementById('modalCorpo').innerHTML=html;document.getElementById('fundo').classList.add('abre');document.getElementById('modal').classList.add('abre');document.body.style.overflow='hidden'}
+function fecharTudo(){document.getElementById('fundo').classList.remove('abre');document.getElementById('modal').classList.remove('abre');document.body.style.overflow=''}
+
+function abrirMenu(){var h='<div style="width:40px;height:4px;border-radius:2px;background:#E8E0D0;margin:0 auto 16px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">';h+=menuBtn('irPara(\'financeiro\');fecharTudo()','#f0f7ed','#3A7D2C','fa-chart-line','Financeiro');h+=menuBtn('irPara(\'racao\');fecharTudo()','#fef3cd','#D4A030','fa-wheat-awn','Ração');h+=menuBtn('irPara(\'dicas\');fecharTudo()','#fff7ed','#f97316','fa-lightbulb','Dicas');h+=menuBtn('abrirCompras();fecharTudo()','#eff6ff','#3b82f6','fa-cart-shopping','Compras');h+=menuBtn('limparTudo()','#fef2f2','#ef4444','fa-trash','Limpar Tudo');h+=menuBtn('gerarPDF();fecharTudo()','#f3e8ff','#8b5cf6','fa-file-pdf','PDF');h+='</div>';abrirModal('Mais Opções',h)}
+function menuBtn(acao,bg,cor,icone,texto){return'<div onclick="'+acao+'" class="bp" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border-radius:16px;background:'+bg+';cursor:pointer"><div style="width:44px;height:44px;border-radius:50%;background:'+cor+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i class="fa-solid '+icone+'"></i></div><span style="font-size:11px;font-weight:700;color:#2C1810">'+texto+'</span></div>'}
+
+function acaoFab(){if(pagAtual==='postura'){abrirFormPostura();return}if(pagAtual==='vendas'){abrirFormVenda();return}abrirFormLote()}
+
+function abrirFormLote(tipo,editId){
+    if(!tipo)tipo=tabAtual==='peixes'?'p':tabAtual==='codornas'?'c':'g';
+    var isPeixe=tipo==='p';var arr=isPeixe?D.peixes:tipo==='c'?D.codornas:D.galinhas;var ed=null;if(editId){for(var i=0;i<arr.length;i++){if(arr[i].id===editId){ed=arr[i];break}}}
+    var label=isPeixe?'Peixes':tipo==='c'?'Codornas':'Galinhas';
+    var h='<form onsubmit="salvarLote(event,\''+tipo+'\','+(editId||0)+')">';
+    if(isPeixe){h+=campo('Espécie','text','especie',ed?ed.especie:'Tilápia',true);h+=campo('Quantidade','number','qtd',ed?String(ed.qtd):'',true);h+=campo('Caixa d\'água','text','caixa',ed?ed.caixa:'',true);h+=selCampo('Status','status',[['engorda','Engorda'],['alevinos','Alevinos'],['reproducao','Reprodução']],ed?ed.status:'engorda')}
+    else{var racas=tipo==='c'?['Coturnix japonesa','Coturnix europeia','AMAX','Outra']:['Isa Brown','Rhode Island Red','Plymouth Rock','Leghorn','Sussex','Australorp','Wyandotte','Outra'];h+=selCampo('Raça','raca',racas.map(function(r){return[r,r]}),ed?ed.raca:racas[0]);h+=campo('Quantidade','number','qtd',ed?String(ed.qtd):'',true);h+=campo('Local','text','local',ed?ed.local:'',true);h+=selCampo('Status','status',[['postura','Postura'],['crescimento','Crescimento'],['reproducao','Reprodução']],ed?ed.status:'postura')}
+    h+=campoDt('Data de chegada','data',ed?ed.data:hoje());h+=campoTx('Observações','obs',ed?ed.obs:'');
+    h+='<button type="submit" class="bp" style="width:100%;padding:14px;border-radius:14px;background:#3A7D2C;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer"><i class="fa-solid fa-check" style="margin-right:8px"></i>'+(ed?'Salvar Alterações':'Adicionar')+'</button></form>';
+    abrirModal(ed?'Editar '+label:'Adicionar '+label,h);
+}
+function campo(l,t,n,v,r){return'<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">'+l+'</label><input type="'+t+'" name="'+n+'" value="'+(v||'')+'" '+(r?'required':'')+'></div>'}
+function campoDt(l,n,v){return'<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">'+l+'</label><input type="date" name="'+n+'" value="'+v+'" required></div>'}
+function campoTx(l,n,v){return'<div style="margin-bottom:16px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">'+l+'</label><textarea name="'+n+'" rows="2" placeholder="Notas...">'+(v||'')+'</textarea></div>'}
+function selCampo(l,n,ops,val){var h='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">'+l+'</label><select name="'+n+'">';for(var i=0;i<ops.length;i++){h+='<option value="'+ops[i][0]+'"'+(val===ops[i][0]?' selected':'')+'>'+ops[i][1]+'</option>'}h+='</select></div>';return h}
+
+function salvarLote(e,tipo,editId){
+    e.preventDefault();var f=e.target;
+    if(tipo==='p'){var obj={especie:f.especie.value,qtd:parseInt(f.qtd.value),caixa:f.caixa.value,status:f.status.value,data:f.data.value,obs:f.obs.value};if(editId){for(var i=0;i<D.peixes.length;i++){if(D.peixes[i].id===editId){D.peixes[i].especie=obj.especie;D.peixes[i].qtd=obj.qtd;D.peixes[i].caixa=obj.caixa;D.peixes[i].status=obj.status;D.peixes[i].data=obj.data;D.peixes[i].obs=obj.obs;break}}}else{obj.id=D.nid.p++;D.peixes.push(obj)}}
+    else{var obj={raca:f.raca.value,qtd:parseInt(f.qtd.value),local:f.local.value,status:f.status.value,data:f.data.value,obs:f.obs.value};var arr=tipo==='c'?D.codornas:D.galinhas;if(editId){for(var i=0;i<arr.length;i++){if(arr[i].id===editId){arr[i].raca=obj.raca;arr[i].qtd=obj.qtd;arr[i].local=obj.local;arr[i].status=obj.status;arr[i].data=obj.data;arr[i].obs=obj.obs;break}}}else{obj.id=D.nid[tipo]++;arr.push(obj)}}
+    salvar();fecharTudo();toast(editId?'Lote atualizado!':'Lote adicionado!');desenhar();
+}
+
+function abrirFormPostura(){
+    var ex=null;for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){ex=D.postura[i];break}}
+    var h='<form onsubmit="salvarPostura(event)"><div style="font-size:13px;color:#8B7355;margin-bottom:12px">'+dataBr(hoje())+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px"><div style="text-align:center;padding:16px;border-radius:14px;background:#fff7ed"><i class="fa-solid fa-egg" style="font-size:28px;color:#f97316;margin-bottom:8px;display:block"></i><div style="font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;margin-bottom:8px">Ovos Galinha</div><input type="number" name="og" value="'+(ex?ex.og:0)+'" min="0" required style="text-align:center;font-size:22px;font-weight:900;background:#fff"></div><div style="text-align:center;padding:16px;border-radius:14px;background:#fefce8"><i class="fa-solid fa-egg" style="font-size:28px;color:#eab308;margin-bottom:8px;display:block"></i><div style="font-size:11px;font-weight:700;color:#ca8a04;text-transform:uppercase;margin-bottom:8px">Ovos Codorna</div><input type="number" name="oc" value="'+(ex?ex.oc:0)+'" min="0" required style="text-align:center;font-size:22px;font-weight:900;background:#fff"></div></div><button type="submit" class="bp" style="width:100%;padding:14px;border-radius:14px;background:#3A7D2C;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer"><i class="fa-solid fa-check" style="margin-right:8px"></i>Salvar Postura</button></form>';
+    abrirModal('Registrar Postura de Hoje',h);
+}
+function salvarPostura(e){e.preventDefault();var og=parseInt(e.target.og.value)||0,oc=parseInt(e.target.oc.value)||0;var idx=-1;for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){idx=i;break}}if(idx>=0){D.postura[idx].og=og;D.postura[idx].oc=oc}else{D.postura.push({id:D.nid.po++,data:hoje(),og:og,oc:oc})}salvar();fecharTudo();toast('Postura registrada!');desenhar()}
+
+function abrirFormVenda(){
+    var h='<form onsubmit="salvarVenda(event)"><div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Tipo</label><select name="tipo" required onchange="mudarProduto(this)"><option value="Ovos Galinha">Ovos de Galinha</option><option value="Ovos Codorna">Ovos de Codorna</option><option value="Aves">Ave - Galinha/Codorna</option><option value="Peixes">Peixes</option><option value="Adubo">Adubo</option></select></div><div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Produto</label><input type="text" name="produto" id="vProd" value="Dúzia ovos galinha" required></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Quantidade</label><input type="number" name="qtd" id="vQtd" required min="1" value="1" oninput="calcTotal()"></div><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Valor Unit. (R$)</label><input type="number" name="vu" id="vVal" required min="0" step="0.01" value="12" oninput="calcTotal()"></div></div><div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Cliente</label><input type="text" name="cliente" placeholder="Nome ou tipo de cliente"></div><div style="padding:14px;border-radius:14px;background:#f0f7ed;text-align:center;margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">Total da Venda</div><div id="vTotal" style="font-size:24px;font-weight:900;color:#3A7D2C">'+R$(12)+'</div></div><button type="submit" class="bp" style="width:100%;padding:14px;border-radius:14px;background:#3A7D2C;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer"><i class="fa-solid fa-check" style="margin-right:8px"></i>Registrar Venda</button></form>';
+    abrirModal('Registrar Venda',h);
+}
+function mudarProduto(sel){var defs={'Ovos Galinha':['Dúzia ovos galinha',12],'Ovos Codorna':['Dúzia ovos codorna',8],'Aves':['Ave viva',25],'Peixes':['Peixe (kg)',25],'Adubo':['Saco adubo 10kg',15]};var d=defs[sel.value]||['','0'];document.getElementById('vProd').value=d[0];document.getElementById('vVal').value=d[1];calcTotal()}
+function calcTotal(){var q=parseFloat(document.getElementById('vQtd').value)||0;var v=parseFloat(document.getElementById('vVal').value)||0;document.getElementById('vTotal').textContent=R$(q*v)}
+function salvarVenda(e){e.preventDefault();var f=e.target;D.vendas.push({id:D.nid.v++,data:hoje(),tipo:f.tipo.value,produto:f.produto.value,qtd:parseInt(f.qtd.value),vu:parseFloat(f.vu.value),cliente:f.cliente.value||'Não informado'});salvar();fecharTudo();toast('Venda de '+R$(parseInt(f.qtd.value)*parseFloat(f.vu.value))+' registrada!');desenhar()}
+
+function abrirCompras(){
+    var ult=D.compras.slice(-15).reverse();
+    var h='<form onsubmit="salvarCompra(event)" style="margin-bottom:20px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Tipo</label><select name="tipo" required><option value="Ração">Ração</option><option value="Insumo">Insumo</option><option value="Animais">Animais</option><option value="Medicamento">Medicamento</option><option value="Equipamento">Equipamento</option><option value="Outro">Outro</option></select></div><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Data</label><input type="date" name="data" value="'+hoje()+'" required></div></div><div style="margin-bottom:12px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Produto</label><input type="text" name="produto" required placeholder="Ex: Ração galinha 20kg"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Qtd</label><input type="number" name="qtd" required min="1" value="1"></div><div><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Valor Unit.</label><input type="number" name="vu" required min="0" step="0.01" value="0"></div></div><div style="margin-bottom:16px"><label style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;display:block;margin-bottom:4px">Fornecedor</label><input type="text" name="forn" placeholder="Nome do fornecedor"></div><button type="submit" class="bp" style="width:100%;padding:14px;border-radius:14px;background:#D4A030;border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer"><i class="fa-solid fa-check" style="margin-right:8px"></i>Registrar Compra</button></form>';
+    h+='<div style="font-weight:900;color:#2C1810;margin-bottom:10px">Últimas compras</div>';
+    if(ult.length===0){h+='<div style="font-size:13px;color:#8B7355">Nenhuma compra</div>'}
+    else{for(var i=0;i<ult.length;i++){var c=ult[i];h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border:none':'')+'"><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+c.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(c.data)+' · '+(c.forn||'-')+'</div></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:900;color:#ef4444">'+R$(c.qtd*c.vu)+'</span><button onclick="excluirCompra('+c.id+')" class="bp" style="background:none;border:none;cursor:pointer;color:#fca5a5;font-size:12px;padding:4px"><i class="fa-solid fa-xmark"></i></button></div></div>'}}
+    abrirModal('Compras e Despesas',h);
+}
+function salvarCompra(e){e.preventDefault();var f=e.target;D.compras.push({id:D.nid.co++,data:f.data.value,tipo:f.tipo.value,produto:f.produto.value,qtd:parseInt(f.qtd.value),vu:parseFloat(f.vu.value),forn:f.forn.value||''});salvar();fecharTudo();toast('Compra registrada!');desenhar()}
+function excluirCompra(id){if(!confirm('Remover?'))return;D.compras=D.compras.filter(function(x){return x.id!==id});salvar();toast('Removida!','aviso');fecharTudo();abrirCompras()}
+
+function gerarPDF(){
+    try{var jsPDF=window.jspdf.jsPDF;var doc=new jsPDF({unit:'mm',format:'a4'});doc.setFillColor(58,125,44);doc.rect(0,0,210,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(18);doc.text('MiniFazenda - Relatorio',14,17);doc.setFontSize(9);doc.text('Gerado em: '+new Date().toLocaleDateString('pt-BR')+' as '+new Date().toLocaleTimeString('pt-BR'),14,24);doc.setTextColor(44,24,16);var y=36;var tv30=totalVendas(30),tc30=totalCompras(30),l30=tv30-tc30;doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text('Resumo Financeiro (30 dias)',14,y);y+=7;doc.setFontSize(10);doc.setFont(undefined,'normal');doc.text('Receitas: '+R$(tv30),14,y);doc.text('Despesas: '+R$(tc30),100,y);y+=6;doc.setFont(undefined,'bold');doc.setTextColor(l30>=0?58:220,l30>=0?125:38,l30>=0?44:38);doc.text('Lucro: '+R$(l30),14,y);doc.setTextColor(44,24,16);y+=12;doc.setFontSize(12);doc.text('Rebanho',14,y);y+=7;doc.setFontSize(10);doc.setFont(undefined,'normal');doc.text('Galinhas: '+totalAves('g')+' aves ('+D.galinhas.length+' lotes)',14,y);y+=5;doc.text('Codornas: '+totalAves('c')+' aves ('+D.codornas.length+' lotes)',14,y);y+=5;doc.text('Peixes: '+totalAves('p')+' ('+D.peixes.length+' caixas)',14,y);y+=12;doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text('Vendas (ultimas 25)',14,y);y+=3;var vRows=[];var ultV=D.vendas.slice(-25).reverse();for(var i=0;i<ultV.length;i++){var v=ultV[i];vRows.push([dataBr(v.data),v.produto,String(v.qtd),R$(v.vu),R$(v.qtd*v.vu),v.cliente])}doc.autoTable({startY:y,head:[['Data','Produto','Qtd','V.Unit.','Total','Cliente']],body:vRows,theme:'grid',headStyles:{fillColor:[58,125,44],textColor:255,fontSize:8,fontStyle:'bold'},bodyStyles:{fontSize:7.5},columnStyles:{0:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:22,halign:'right'}},margin:{left:14,right:14}});y=doc.lastAutoTable.finalY+14;if(y<240){doc.setFontSize(12);doc.setFont(undefined,'bold');doc.text('Postura (ultimos 14 dias)',14,y);y+=3;var pRows=[];var ultP=D.postura.slice(-14);for(var i=0;i<ultP.length;i++){var p=ultP[i];pRows.push([dataBr(p.data),String(p.og),String(p.oc),String(p.og+p.oc)])}doc.autoTable({startY:y,head:[['Data','Ovos Galinha','Ovos Codorna','Total']],body:pRows,theme:'grid',headStyles:{fillColor:[212,160,48],textColor:255,fontSize:8,fontStyle:'bold'},bodyStyles:{fontSize:8},margin:{left:14,right:14}})}doc.save('minifazenda_relatorio_'+hoje()+'.pdf');toast('PDF baixado com sucesso!')}catch(erro){console.error('Erro PDF:',erro);toast('Erro ao gerar PDF','erro')}
+}
+
+// ============ PWA COM ICONE PNG ============
+(function(){
+    try{
+        var c=document.createElement('canvas');c.width=192;c.height=192;var x=c.getContext('2d');
+        x.fillStyle='#3A7D2C';x.beginPath();x.moveTo(36,0);x.lineTo(156,0);x.quadraticCurveTo(192,0,192,36);x.lineTo(192,156);x.quadraticCurveTo(192,192,156,192);x.lineTo(36,192);x.quadraticCurveTo(0,192,0,156);x.lineTo(0,36);x.quadraticCurveTo(0,0,36,0);x.closePath();x.fill();
+        x.font='100px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('🐔',96,106);
+        var png=c.toDataURL('image/png');
+        var m={name:'MiniFazenda',short_name:'MiniFazenda',start_url:location.href.split('?')[0],display:'standalone',background_color:'#FBF8F1',theme_color:'#3A7D2C',orientation:'portrait',icons:[{src:png,sizes:'192x192',type:'image/png',purpose:'any maskable'}]};
+        var b=new Blob([JSON.stringify(m)],{type:'application/json'});var lk=document.createElement('link');lk.rel='manifest';lk.href=URL.createObjectURL(b);document.head.appendChild(lk);
+        if('serviceWorker' in navigator){var sw='self.addEventListener("install",function(){self.skipWaiting()});self.addEventListener("activate",function(e){e.waitUntil(clients.claim())});self.addEventListener("fetch",function(e){e.respondWith(fetch(e.request).catch(function(){return new Response("Offline")}))});';navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(function(){})}
+    }catch(e){}
+})();
+
+carregar();
+document.getElementById('saudacao').textContent=saudacao();
+desenharInicio();
+</script>
+</body>
+</html>
