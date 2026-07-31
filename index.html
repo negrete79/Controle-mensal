@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Projeto da Roça - Controle Financeiro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🌱 Meu Projeto da Roça: Peixes, Codornas & Horta</h1>
+        <p>Planejamento para Mudar de Vida com Segurança</p>
+    </header>
+
+    <main class="container">
+        <!-- TABELA 1: INVESTIMENTO INICIAL -->
+        <section class="card">
+            <h2>🧱 1. Investimento Inicial (Para Começar)</h2>
+            <div class="responsive-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qtd</th>
+                            <th>Preço Unitário (R$)</th>
+                            <th>Total (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-investimento">
+                        <!-- Gerado automaticamente pelo JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="3">INVESTIMENTO TOTAL ESTIMADO:</td>
+                            <td id="total-investimento">R$ 0,00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- TABELA 2: FLUXO DE CAIXA MENSAL -->
+        <section class="card">
+            <h2>💸 2. Caixa Mensal (Lucros e Custos)</h2>
+            <div class="responsive-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Origem / Detalhe</th>
+                            <th>Valor Mensal (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-caixa">
+                        <!-- Gerado automaticamente pelo JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr id="linha-lucro" class="total-row">
+                            <td colspan="2">LUCRO LÍQUIDO (Dinheiro limpo no bolso):</td>
+                            <td id="total-lucro">R$ 0,00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts do Sistema -->
+    <script src="ws.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
