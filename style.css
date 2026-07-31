@@ -1,0 +1,90 @@
+/* Cores que lembram a natureza, horta e terra */
+:root {
+    --primary-color: #2e7d32; /* Verde horta */
+    --secondary-color: #f57c00; /* Laranja codorna/peixe */
+    --bg-color: #f4f6f0; /* Fundo areia claro */
+    --card-bg: #ffffff;
+    --text-color: #3e2723; /* Marrom terra escuro */
+    --border-color: #d7ccc8;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 20px 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+header h1 { margin: 0; font-size: 24px; }
+header p { margin: 5px 0 0 0; font-size: 16px; opacity: 0.9; }
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.responsive-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 15px;
+}
+
+th {
+    background-color: #efebe9;
+    font-weight: bold;
+}
+
+.total-row {
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #e8f5e9;
+}
+
+.total-row td {
+    border-top: 2px solid var(--primary-color);
+}
+
+/* Cores dinâmicas para entradas e saídas */
+.entrada { color: #1b5e20; font-weight: bold; }
+.custo { color: #b71c1c; }
+.lucro-positivo { background-color: #c8e6c9 !important; color: #1b5e20; }
+.lucro-negativo { background-color: #ffcdd2 !important; color: #b71c1c; }
+  
