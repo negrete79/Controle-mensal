@@ -3,624 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1a1a">
+    <meta name="theme-color" content="#3A7D2C">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sítio Certo">
-    <title>Sítio Certo Pro</title>
+    <title>MiniFazenda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script>
+    tailwind.config={theme:{extend:{colors:{verde:'#3A7D2C','verde-escuro':'#2A5C1E',terra:'#D4A030','terra-claro':'#E8C96A',creme:'#FBF8F1',marrom:'#2C1810','marrom-m':'#5C4033','marrom-c':'#8B7355','marrom-l':'#C4AD8C'}}}}
+    </script>
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --bg: #F2F4F1; --card: #FFFFFF; --dark: #1a1a1a; --dark-soft: #2c2c2c;
-            --text: #1F2937; --text-soft: #6B7280; --primary: #166534; --primary-light: #BBF7D0;
-            --primary-bg: #F0FDF4; --accent: #D97706; --accent-light: #FEF3C7;
-            --danger: #DC2626; --danger-light: #FEE2E2; --border: #E5E7EB;
-            --radius: 20px; --radius-sm: 14px;
-            --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04);
-            --shadow-btn: 0 4px 14px rgba(22, 101, 52, 0.3); --ease: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg); color: var(--text); min-height: 100dvh;
-            overflow-x: hidden; padding-bottom: 96px; -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Canvas do Favicon Animado */
-        #favicon-canvas { display: none; }
-
-        .header {
-            background: linear-gradient(180deg, var(--dark) 0%, var(--dark-soft) 100%);
-            padding: 20px 24px 32px; position: relative; overflow: hidden;
-        }
-        .header::after {
-            content: ''; position: absolute; bottom: -20px; left: 0; right: 0; height: 40px;
-            background: var(--bg); border-radius: 24px 24px 0 0;
-        }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .header-logo { display: flex; align-items: center; gap: 14px; }
-        .logo-icon {
-            width: 48px; height: 48px; border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary), #15803d);
-            display: grid; place-items: center; box-shadow: 0 4px 12px rgba(22,101,52,0.4);
-        }
-        .logo-icon svg { width: 26px; height: 26px; fill: white; }
-        .logo-text h1 { color: white; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
-        .logo-text span { color: #9CA3AF; font-size: 0.78rem; font-weight: 500; }
-        .header-badge {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            padding: 8px 14px; border-radius: 30px; color: white;
-            font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .kpi-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
-            padding: 0 24px; margin-top: -16px; position: relative; z-index: 2;
-        }
-        .kpi {
-            background: var(--card); border-radius: var(--radius); padding: 20px;
-            box-shadow: var(--shadow-card); border: 1px solid var(--border);
-        }
-        .kpi-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .kpi-label { font-size: 0.8rem; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; }
-        .kpi-dot { width: 10px; height: 10px; border-radius: 50%; }
-        .kpi-val { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 12px; color: var(--text); }
-        .kpi-bar-bg { height: 6px; background: #F3F4F6; border-radius: 10px; overflow: hidden; }
-        .kpi-bar { height: 100%; border-radius: 10px; transition: width 0.6s var(--ease); }
-        .app { max-width: 680px; margin: 0 auto; padding: 24px 20px; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeUp 0.35s var(--ease); }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .card {
-            background: var(--card); border-radius: var(--radius);
-            box-shadow: var(--shadow-card); border: 1px solid var(--border);
-            padding: 24px; margin-bottom: 24px;
-        }
-        .card-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-        .card-icon {
-            width: 42px; height: 42px; border-radius: 12px;
-            display: grid; place-items: center; flex-shrink: 0;
-        }
-        .card-icon svg { width: 20px; height: 20px; fill: white; }
-        .card-icon.green { background: var(--primary); }
-        .card-icon.orange { background: var(--accent); }
-        .card-icon.brown { background: var(--dark-soft); }
-        .card-title { font-size: 1.1rem; font-weight: 800; color: var(--dark); }
-        .card-desc { font-size: 0.88rem; color: var(--text-soft); margin-bottom: 20px; line-height: 1.6; }
-        .form-group { position: relative; margin-bottom: 24px; }
-        .form-input {
-            width: 100%; height: 58px; padding: 20px 16px 8px;
-            border: 2px solid var(--border); border-radius: var(--radius-sm);
-            font-size: 1rem; font-family: inherit; font-weight: 600;
-            color: var(--text); background: var(--card);
-            transition: all 0.2s var(--ease); -webkit-appearance: none; appearance: none;
-        }
-        .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(22,101,52,0.1); }
-        .form-label {
-            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            font-size: 1rem; color: var(--text-soft); pointer-events: none;
-            transition: all 0.2s var(--ease); font-weight: 500;
-        }
-        .form-input:focus + .form-label, .form-input:not(:placeholder-shown) + .form-label {
-            top: 12px; transform: translateY(0); font-size: 0.7rem; font-weight: 700;
-            color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .form-select {
-            width: 100%; height: 58px; padding: 0 16px;
-            border: 2px solid var(--border); border-radius: var(--radius-sm);
-            font-size: 1rem; font-family: inherit; font-weight: 600;
-            color: var(--text); background: var(--card); -webkit-appearance: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center; transition: all 0.2s var(--ease);
-        }
-        .form-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(22,101,52,0.1); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .btn {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            height: 56px; padding: 0 28px; border: none; border-radius: var(--radius-sm);
-            font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer;
-            transition: all 0.2s var(--ease); text-decoration: none;
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: var(--primary); color: white; width: 100%; box-shadow: var(--shadow-btn); }
-        .btn-ghost { background: transparent; color: var(--danger); width: 44px; height: 44px; padding: 0; border-radius: 50%; }
-        .btn-ghost:active { background: var(--danger-light); }
-        .btn-ghost svg { width: 20px; height: 20px; fill: currentColor; }
-        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -8px; padding: 0 8px; border-radius: var(--radius-sm); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 480px; }
-        thead th {
-            background: #F9FAFB; color: var(--text-soft); font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 12px; text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        tbody tr { transition: background 0.15s; }
-        tbody tr:active { background: #F9FAFB; }
-        tbody td { padding: 16px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .tag { display: inline-block; padding: 5px 10px; border-radius: 8px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
-        .tag-inv { background: var(--accent-light); color: var(--accent); }
-        .tag-rec { background: var(--primary-bg); color: var(--primary); }
-        .tag-cust { background: var(--danger-light); color: var(--danger); }
-        .money { font-weight: 700; font-variant-numeric: tabular-nums; }
-        .tfoot-dark { background: var(--dark); color: white; }
-        .tfoot-dark td { padding: 16px 12px !important; border: none !important; font-weight: 700; }
-        .empty { text-align: center; padding: 48px 24px; color: var(--text-soft); }
-        .empty svg { width: 48px; height: 48px; fill: #E5E7EB; margin-bottom: 12px; }
-        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
-        .calc-item { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; text-align: center; border: 1px solid var(--border); }
-        .calc-item.highlight { background: var(--primary-bg); border-color: var(--primary-light); }
-        .calc-lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
-        .calc-val { font-size: 1.15rem; font-weight: 900; color: var(--dark); margin-top: 4px; }
-        .ing-head { display: flex; padding: 0 16px 10px; font-size: 0.7rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
-        .ing-row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); }
-        .ing-row:last-child { border-bottom: none; }
-        .ing-name { flex: 1; font-weight: 600; color: var(--dark); }
-        .ing-pct { width: 50px; text-align: right; font-weight: 800; color: var(--primary); }
-        .ing-qty { width: 85px; text-align: right; font-weight: 700; color: var(--accent); }
-        .flow-step { display: flex; gap: 16px; margin-bottom: 20px; position: relative; }
-        .flow-step:not(:last-child)::after {
-            content: ''; position: absolute; left: 19px; top: 44px; bottom: -20px; width: 2px; background: var(--border);
-        }
-        .flow-dot {
-            width: 40px; height: 40px; border-radius: 12px; background: var(--bg);
-            border: 2px solid var(--border); display: grid; place-items: center; flex-shrink: 0; z-index: 1;
-        }
-        .flow-dot svg { width: 18px; height: 18px; fill: var(--text-soft); }
-        .flow-content { flex: 1; padding-top: 2px; }
-        .flow-title { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
-        .flow-desc { font-size: 0.8rem; color: var(--text-soft); margin-top: 2px; }
-        .highlight-box { background: var(--dark); border-radius: var(--radius); padding: 28px; text-align: center; margin-top: 24px; color: white; }
-        .highlight-val { font-size: 2.2rem; font-weight: 900; color: #4ADE80; margin: 8px 0; letter-spacing: -1px; }
-        .highlight-sub { font-size: 0.85rem; color: #9CA3AF; }
-        .tip-box {
-            background: var(--accent-light); border-left: 4px solid var(--accent);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            padding: 16px 18px; font-size: 0.82rem; color: #92400E; line-height: 1.6; margin-top: 20px;
-        }
-        .tip-box b { color: var(--dark); }
-        .divider { height: 1px; background: var(--border); margin: 24px 0; }
-        .nav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border); padding: 8px 0; padding-bottom: max(8px, env(safe-area-inset-bottom));
-            display: flex; justify-content: space-around;
-        }
-        .nav-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            padding: 8px 20px; border: none; background: none; cursor: pointer;
-            color: var(--text-soft); font-size: 0.68rem; font-weight: 700;
-            font-family: inherit; transition: color 0.2s var(--ease); border-radius: 12px; position: relative;
-        }
-        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; transition: fill 0.2s var(--ease); }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn.active::before {
-            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 24px; height: 3px; background: var(--primary); border-radius: 0 0 4px 4px;
-        }
-        .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
-            display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px);
-        }
-        .overlay.open { display: flex; }
-        .modal {
-            background: var(--card); width: 100%; max-width: 540px; max-height: 90dvh;
-            border-radius: 24px 24px 0 0; padding: 32px 24px 40px; overflow-y: auto;
-            animation: slideUp 0.3s var(--ease); position: relative;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-handle { width: 40px; height: 4px; background: #D1D5DB; border-radius: 4px; margin: 0 auto 24px; }
-        .modal-title { font-size: 1.2rem; font-weight: 900; color: var(--dark); margin-bottom: 28px; }
-        .modal-close {
-            position: absolute; top: 24px; right: 24px; width: 36px; height: 36px;
-            border-radius: 50%; border: none; background: var(--bg); cursor: pointer; display: grid; place-items: center;
-        }
-        .modal-close svg { width: 18px; height: 18px; fill: var(--text-soft); }
-        .toast-area { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; }
-        .toast {
-            padding: 16px 20px; border-radius: var(--radius-sm); margin-bottom: 8px;
-            font-size: 0.88rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            animation: toastIn 0.3s var(--ease), toastOut 0.3s var(--ease) 2.5s forwards; text-align: center;
-        }
-        .toast.ok { background: var(--dark); color: white; }
-        .toast.err { background: var(--danger); color: white; }
-        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
-        @media (min-width: 500px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 380px) { .form-row, .calc-grid { grid-template-columns: 1fr; } }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;-webkit-tap-highlight-color:transparent}
+        body{background:#FBF8F1;color:#2C1810;overflow-x:hidden}
+        .app{max-width:500px;margin:0 auto;min-height:100vh;position:relative;background:#FBF8F1}
+        .pag{display:none;animation:sobe .25s ease}.pag.ativo{display:block}
+        @keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes sobemodal{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 12px rgba(44,24,16,.05)}
+        .bp:active{transform:scale(.95);transition:transform .1s}
+        input,select,textarea{width:100%;padding:11px 14px;border:2px solid #E8E0D0;border-radius:12px;background:#F5F0E8;font-size:14px;font-family:'Nunito',sans-serif;color:#2C1810;outline:none;transition:border .2s}
+        input:focus,select:focus,textarea:focus{border-color:#3A7D2C}
+        .tab{border-bottom:3px solid transparent;padding:10px 0;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .2s}
+        .tab.on{color:#3A7D2C;border-bottom-color:#3A7D2C}
+        .tab:not(.on){color:#8B7355}
+        .nv{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;cursor:pointer;transition:color .2s;color:#8B7355;font-size:10px;font-weight:700;flex:1}
+        .nv.on{color:#3A7D2C}
+        .nv .pts{width:16px;height:3px;border-radius:2px;background:#3A7D2C;transform:scaleX(0);transition:transform .2s;margin-top:3px}
+        .nv.on .pts{transform:scaleX(1)}
+        .fab{position:fixed;z-index:30;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3A7D2C,#4E9A3E);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(58,125,44,.35);bottom:82px;right:max(16px,calc(50% - 240px));transition:transform .15s}
+        .fab:active{transform:scale(.9)}
+        .esconde::-webkit-scrollbar{display:none}.esconde{-ms-overflow-style:none;scrollbar-width:none}
+        .toast-box{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+        .toast-item{padding:10px 20px;border-radius:14px;color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sobe .3s ease;pointer-events:auto}
+        .fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none}
+        .fundo.abre{display:block}
+        .modal-cima{position:fixed;bottom:0;left:0;right:0;z-index:51;background:#fff;border-radius:24px 24px 0 0;max-height:85vh;overflow-y:auto;max-width:500px;margin:0 auto;display:none;animation:sobemodal .3s ease}
+        .modal-cima.abre{display:block}
+        @media(max-width:500px){.fab{right:16px}}
+        @media print{.fab,.nv-bar,.topo,.fundo,.modal-cima,.toast-box{display:none!important}.pag{display:block!important}body{background:#fff}.app{box-shadow:none}}
     </style>
 </head>
 <body>
+<div class="app" id="app">
 
-    <!-- Canvas oculto para gerar o Favicon Animado -->
-    <canvas id="favicon-canvas" width="32" height="32"></canvas>
-
-    <header class="header">
-        <div class="header-top">
-            <div class="header-logo">
-                <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M17.5 12c0 1.1-.4 2.1-1 2.9l1.4 1.4c.9-1.2 1.5-2.7 1.5-4.3 0-1.6-.6-3.1-1.5-4.3l-1.4 1.4c.6.8 1 1.8 1 2.9zm2.6-6.3C21.4 7.8 22 9.8 22 12s-.6 4.2-1.8 5.7l1.4 1.4C23.2 17.2 24 14.7 24 12s-.8-5.2-2.3-7.1l-1.6 1.8zM7 9v6h4l5 5V4l-5 5H7z"/></svg></div>
-                <div class="logo-text"><h1>Sitio Certo</h1><span>Gestao Rural Inteligente</span></div>
+    <!-- TOPO -->
+    <div class="topo" style="position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(135deg,#3A7D2C,#2A5C1E)">
+        <div style="max-width:500px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="color:#fff;font-size:18px;font-weight:900">MiniFazenda</div><div id="saudacao" style="color:#a8d89a;font-size:11px;font-weight:600"></div></div>
+            <div style="display:flex;gap:8px">
+                <button onclick="abrirCompras()" class="bp" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer"><i class="fa-solid fa-cart-shopping" style="font-size:13px"></i></button>
+                <button onclick="gerarPDF()" class="bp" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer"><i class="fa-solid fa-file-pdf" style="font-size:13px"></i></button>
             </div>
-            <div class="header-badge">PRO</div>
-        </div>
-    </header>
-
-    <div class="kpi-grid">
-        <div class="kpi">
-            <div class="kpi-head"><span class="kpi-label">Investimento</span><div class="kpi-dot" style="background:var(--accent)"></div></div>
-            <div class="kpi-val" id="k-i">R$ 0,00</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar" id="bar-i" style="width:0%;background:var(--accent)"></div></div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-head"><span class="kpi-label">Faturamento</span><div class="kpi-dot" style="background:var(--primary)"></div></div>
-            <div class="kpi-val" id="k-r">R$ 0,00</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar" id="bar-r" style="width:0%;background:var(--primary)"></div></div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-head"><span class="kpi-label">Custos</span><div class="kpi-dot" style="background:var(--danger)"></div></div>
-            <div class="kpi-val" id="k-c">R$ 0,00</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar" id="bar-c" style="width:0%;background:var(--danger)"></div></div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-head"><span class="kpi-label">Lucro Liquido</span><div class="kpi-dot" style="background:#10B981"></div></div>
-            <div class="kpi-val" id="k-p">R$ 0,00</div>
-            <div class="kpi-bar-bg"><div class="kpi-bar" id="bar-p" style="width:0%;background:#10B981"></div></div>
         </div>
     </div>
 
-    <main class="app">
-        <section id="v-dash" class="view active">
-            <div class="card">
-                <div class="card-head"><div class="card-icon green"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div><div class="card-title">Registros Financeiros</div></div>
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Tipo</th><th>Descricao</th><th>Qtd</th><th>V. Unit.</th><th>Total</th><th></th></tr></thead>
-                        <tbody id="tb"></tbody>
-                        <tfoot><tr class="tfoot-dark"><td colspan="4">Lucro Liquido</td><td id="tt" style="text-align:right">R$ 0,00</td><td></td></tr></tfoot>
-                    </table>
-                </div>
+    <!-- CONTEUDO -->
+    <div style="padding:64px 16px 90px">
+        <div id="pg-inicio" class="pag ativo"></div>
+        <div id="pg-rebanho" class="pag">
+            <div style="display:flex;gap:0;border-bottom:2px solid #E8E0D0;margin:0 -16px 16px;padding:0 16px;overflow-x:auto" class="esconde">
+                <div class="tab on" data-t="galinhas" onclick="mudarTab('galinhas')">🐔 Galinhas</div>
+                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')">🐣 Codornas</div>
+                <div class="tab" style="margin-left:20px" data-t="peixes" onclick="mudarTab('peixes')">🐟 Peixes</div>
             </div>
-            <button class="btn btn-primary" onclick="openM()"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>Adicionar Registro</button>
-        </section>
+            <div id="reb-conteudo"></div>
+        </div>
+        <div id="pg-postura" class="pag"></div>
+        <div id="pg-vendas" class="pag"></div>
+        <div id="pg-financeiro" class="pag"></div>
+        <div id="pg-racao" class="pag"></div>
+        <div id="pg-dicas" class="pag"></div>
+    </div>
 
-        <section id="v-rac" class="view">
-            <div class="card">
-                <div class="card-head"><div class="card-icon green"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zM9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z"/></svg></div><div class="card-title">Racao de Postura</div></div>
-                <p class="card-desc">Galinha (115g/dia) ou Codorna (30g/dia).</p>
-                <div class="form-row">
-                    <div class="form-group"><select class="form-select" id="pa" onchange="cP()"><option value="galinha">Galinha Caipira</option><option value="codorna">Codorna</option></select></div>
-                    <div class="form-group"><input class="form-input" type="number" id="pq" min="1" value="50" inputmode="numeric" oninput="cP()" placeholder="Qtd"><label class="form-label">Quantidade</label></div>
-                </div>
-                <div class="calc-grid">
-                    <div class="calc-item"><div class="calc-lbl">Consumo Diario</div><div class="calc-val" id="p-d">0 kg</div></div>
-                    <div class="calc-item"><div class="calc-lbl">Consumo Mensal</div><div class="calc-val" id="p-m">0 kg</div></div>
-                    <div class="calc-item highlight"><div class="calc-lbl">Sacos 25kg/mes</div><div class="calc-val" id="p-s">0</div></div>
-                    <div class="calc-item highlight"><div class="calc-lbl">Custo Estimado</div><div class="calc-val" id="p-c">R$ 0</div></div>
-                </div>
-                <div class="divider"></div>
-                <div class="ing-head"><span style="flex:1">Ingrediente</span><span style="width:50px;text-align:right">%</span><span style="width:85px;text-align:right">Qtd/dia</span></div>
-                <div id="p-i" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden"></div>
-                <div class="tip-box"><b>Ref. custo:</b> Saco 25kg racao de postura R$ 65,00.</div>
-            </div>
+    <!-- FAB -->
+    <button class="fab" id="fabBtn" onclick="acaoFab()"><i class="fa-solid fa-plus"></i></button>
 
-            <div class="card">
-                <div class="card-head"><div class="card-icon orange"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="card-title">Racao de Engorda (Tilapia)</div></div>
-                <p class="card-desc">Tilapia juvenil com consumo medio de 5g/peixe/dia.</p>
-                <div class="form-group"><input class="form-input" type="number" id="eq" min="1" value="300" inputmode="numeric" oninput="cE()" placeholder="Qtd"><label class="form-label">Quantidade de Peixes</label></div>
-                <div class="calc-grid">
-                    <div class="calc-item"><div class="calc-lbl">Consumo Diario</div><div class="calc-val" id="e-d">0 kg</div></div>
-                    <div class="calc-item"><div class="calc-lbl">Consumo Mensal</div><div class="calc-val" id="e-m">0 kg</div></div>
-                    <div class="calc-item highlight"><div class="calc-lbl">Sacos 25kg/mes</div><div class="calc-val" id="e-s">0</div></div>
-                    <div class="calc-item highlight"><div class="calc-lbl">Custo Estimado</div><div class="calc-val" id="e-c">R$ 0</div></div>
-                </div>
-                <div class="divider"></div>
-                <div class="ing-head"><span style="flex:1">Ingrediente</span><span style="width:50px;text-align:right">%</span><span style="width:85px;text-align:right">Qtd/dia</span></div>
-                <div id="e-i" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden"></div>
-                <div class="tip-box"><b>Ref. custo:</b> Saco 25kg racao de engorda R$ 70,00.</div>
-            </div>
-        </section>
-
-        <section id="v-adu" class="view">
-            <div class="card">
-                <div class="card-head"><div class="card-icon brown"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25z"/></svg></div><div class="card-title">Adubo Organico (Cama)</div></div>
-                <p class="card-desc">Calculo real baseado na limpeza periodica.</p>
-                <div class="form-row">
-                    <div class="form-group"><input class="form-input" type="number" id="ag" min="0" value="40" inputmode="numeric" oninput="cA()" placeholder="0"><label class="form-label">Galinhas</label></div>
-                    <div class="form-group"><input class="form-input" type="number" id="ac" min="0" value="150" inputmode="numeric" oninput="cA()" placeholder="0"><label class="form-label">Codornas</label></div>
-                </div>
-                <div class="form-group" style="max-width:200px"><input class="form-input" type="number" id="ap" min="0" step="0.5" value="15" inputmode="decimal" oninput="cA()" placeholder="0"><label class="form-label">Preco Saco 10kg</label></div>
-                <div class="divider"></div>
-                <div class="flow-step">
-                    <div class="flow-dot"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z"/></svg></div>
-                    <div class="flow-content"><div class="flow-title">Producao na Cama (por limpeza)</div><div class="flow-desc">Galinhas: <b id="f-g">0 kg</b> (30d) | Codornas: <b id="f-c">0 kg</b> (15d)</div></div>
-                </div>
-                <div class="flow-step">
-                    <div class="flow-dot"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9z"/></svg></div>
-                    <div class="flow-content"><div class="flow-title">Apos Compostagem (-50% peso)</div><div class="flow-desc">Adubo curado produzido por mes: <b id="f-a">0 kg</b></div></div>
-                </div>
-                <div class="flow-step">
-                    <div class="flow-dot"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
-                    <div class="flow-content"><div class="flow-title">Ensacamento</div><div class="flow-desc">Total de sacos de 10kg gerados por mes: <b id="f-s">0 sacos</b></div></div>
-                </div>
-                <div class="highlight-box">
-                    <div style="font-size:0.85rem;opacity:0.8">Receita Extra Mensal Projetada</div>
-                    <div class="highlight-val" id="a-r">R$ 0,00</div>
-                    <div class="highlight-sub" id="a-d">0 sacos x R$ 0,00</div>
-                </div>
-                <div class="tip-box"><b>Na pratica:</b> Galinhas limpas a cada <b>30 dias</b> (~4,5 kg/ave). Codornas a cada <b>15 dias</b> (~0,6 kg/ave). A compostagem cura o material e gera adubo premium.</div>
-            </div>
-        </section>
-    </main>
-
-    <nav class="nav">
-        <button class="nav-btn active" onclick="navegar('dash')" id="n-dash"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</button>
-        <button class="nav-btn" onclick="navegar('rac')" id="n-rac"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 2c1.93 0 3.5 1.57 3.5 3.5S13.93 11 12 11s-3.5-1.57-3.5-3.5S10.07 4 12 4zm7 14H5v-1.5c0-2.33 4.67-3.5 7-3.5s7 1.17 7 3.5V18z"/></svg>Racoes</button>
-        <button class="nav-btn" onclick="navegar('adu')" id="n-adu"><svg viewBox="0 0 24 24"><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25z"/></svg>Adubos</button>
-    </nav>
-
-    <div class="overlay" id="ov">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <button class="modal-close" onclick="clM()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
-            <div class="modal-title">Novo Registro Financeiro</div>
-            <div class="form-group"><select class="form-select" id="ft"><option value="investimento">Investimento Inicial</option><option value="receita">Receita (Entrada)</option><option value="custo">Custo Operacional</option></select></div>
-            <div class="form-group"><input class="form-input" type="text" id="fd" placeholder=" " autocomplete="off"><label class="form-label">Descricao do Registro</label></div>
-            <div class="form-row">
-                <div class="form-group"><input class="form-input" type="number" id="fq" min="1" value="1" inputmode="numeric" placeholder=" "><label class="form-label">Quantidade</label></div>
-                <div class="form-group"><input class="form-input" type="number" id="fv" min="0" step="0.01" value="0" inputmode="decimal" placeholder=" "><label class="form-label">Valor Unit. (R$)</label></div>
-            </div>
-            <button class="btn btn-primary" onclick="addR()" style="margin-top:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Salvar Registro</button>
+    <!-- NAV INFERIOR -->
+    <div class="nv-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:40;background:#fff;border-top:2px solid #E8E0D0;padding-bottom:env(safe-area-inset-bottom,0px)">
+        <div style="max-width:500px;margin:0 auto;display:flex">
+            <div class="nv on" data-p="inicio" onclick="irPara('inicio')"><i class="fa-solid fa-house" style="font-size:18px;margin-bottom:2px"></i>Inicio<div class="pts"></div></div>
+            <div class="nv" data-p="rebanho" onclick="irPara('rebanho')"><span style="font-size:18px;margin-bottom:2px">🐔</span>Rebanho<div class="pts"></div></div>
+            <div class="nv" data-p="postura" onclick="irPara('postura')"><i class="fa-solid fa-egg" style="font-size:18px;margin-bottom:2px"></i>Postura<div class="pts"></div></div>
+            <div class="nv" data-p="vendas" onclick="irPara('vendas')"><i class="fa-solid fa-coins" style="font-size:18px;margin-bottom:2px"></i>Vendas<div class="pts"></div></div>
+            <div class="nv" onclick="abrirMenu()"><i class="fa-solid fa-ellipsis" style="font-size:18px;margin-bottom:2px"></i>Mais<div class="pts"></div></div>
         </div>
     </div>
-    <div class="toast-area" id="tw" aria-live="polite"></div>
+</div>
+
+<!-- FUNDO ESCURO -->
+<div class="fundo" id="fundo" onclick="fecharTudo()"></div>
+<!-- MODAL -->
+<div class="modal-cima esconde" id="modal">
+    <div style="position:sticky;top:0;background:#fff;border-radius:24px 24px 0 0;z-index:2;padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E8E0D0">
+        <div id="modalTitulo" style="font-size:17px;font-weight:900;color:#2C1810"></div>
+        <button onclick="fecharTudo()" style="width:32px;height:32px;border-radius:50%;background:#E8E0D0;border:none;cursor:pointer;color:#5C4033;font-size:14px"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="modalCorpo" style="padding:20px"></div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-box" id="toasts"></div>
 
 <script>
-/* ===================================================================
-   SITIO CERTO PRO - Motor Principal
-   CUIDADO: Nunca usar palavras reservadas do navegador como 'go'
-   =================================================================== */
+// ============ DADOS ============
+var CHAVE = 'mf_v4';
+var D = {};
 
-var SK = 'sitioCertoPro';
-var D = [];
-
-function ld() {
-    try { var r = localStorage.getItem(SK); D = r ? JSON.parse(r) : []; } 
-    catch (e) { D = []; }
-}
-
-function sv() {
-    try { localStorage.setItem(SK, JSON.stringify(D)); } 
-    catch (e) { tst('Erro ao salvar.', 'err'); }
-}
-
-function fm(v) {
-    return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-function ec(s) {
-    var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
-}
-
-function navegar(v) {
-    var views = document.querySelectorAll('.view');
-    var btns = document.querySelectorAll('.nav-btn');
-    for (var i = 0; i < views.length; i++) { views[i].classList.remove('active'); }
-    for (var j = 0; j < btns.length; j++) { btns[j].classList.remove('active'); }
-    document.getElementById('v-' + v).classList.add('active');
-    document.getElementById('n-' + v).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function tst(m, t) {
-    var e = document.createElement('div');
-    e.className = 'toast ' + (t || 'ok');
-    e.textContent = m;
-    document.getElementById('tw').appendChild(e);
-    setTimeout(function() { if (e.parentNode) e.remove(); }, 2900);
-}
-
-function openM() {
-    document.getElementById('ov').classList.add('open');
-    document.getElementById('fd').value = '';
-    document.getElementById('fq').value = '1';
-    document.getElementById('fv').value = '0';
-    setTimeout(function() { document.getElementById('fd').focus(); }, 350);
-}
-
-function clM() {
-    document.getElementById('ov').classList.remove('open');
-}
-
-document.getElementById('ov').addEventListener('click', function(e) {
-    if (e.target === document.getElementById('ov')) clM();
-});
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') clM();
-});
-
-function addR() {
-    var tp = document.getElementById('ft').value;
-    var dc = document.getElementById('fd').value.trim();
-    var qd = parseInt(document.getElementById('fq').value, 10);
-    var vl = parseFloat(document.getElementById('fv').value);
-    
-    if (!dc) { tst('Preencha a descricao.', 'err'); document.getElementById('fd').focus(); return; }
-    if (isNaN(qd) || qd < 1) { tst('Quantidade invalida.', 'err'); return; }
-    if (isNaN(vl) || vl < 0) { tst('Valor invalido.', 'err'); return; }
-    
-    D.push({ id: Date.now(), tipo: tp, desc: dc, qtd: qd, valor: vl });
-    sv(); rT(); clM(); tst('Registro salvo com sucesso!', 'ok');
-}
-
-function delR(id) {
-    D = D.filter(function(r) { return r.id !== id; });
-    sv(); rT(); tst('Registro excluido.', 'ok');
-}
-
-function rT() {
-    var tb = document.getElementById('tb');
-    if (!D.length) {
-        tb.innerHTML = '<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg><p>Nenhum registro. Toque no botao abaixo.</p></div></td></tr>';
-        uK(0, 0, 0); return;
+function dadosPadrao() {
+    var g = [
+        {id:1, raca:'Isa Brown', qtd:30, data:'2024-08-15', local:'Galpao 1', status:'postura', obs:'Excelente produtora'},
+        {id:2, raca:'Rhode Island Red', qtd:15, data:'2024-10-20', local:'Galpao 2', status:'crescimento', obs:'Pintinhos'},
+        {id:3, raca:'Plymouth Rock', qtd:10, data:'2024-06-01', local:'Galpao 1', status:'postura', obs:'Racao alternativa'}
+    ];
+    var c = [
+        {id:1, raca:'Coturnix japonesa', qtd:120, data:'2024-07-10', local:'Gaiolas A1-A6', status:'postura', obs:'Postura estavel'},
+        {id:2, raca:'Coturnix europeia', qtd:50, data:'2024-11-01', local:'Gaiolas B1-B3', status:'crescimento', obs:'Iniciando'}
+    ];
+    var p = [
+        {id:1, especie:'Tilapia', qtd:200, data:'2024-09-01', caixa:'Caixa 1 (1000L)', status:'engorda', obs:'Alimentacao 3x/dia'},
+        {id:2, especie:'Tambaqui', qtd:50, data:'2024-10-15', caixa:'Caixa 2 (500L)', status:'engorda', obs:'Lento'}
+    ];
+    var po = [];
+    var v = [];
+    var co = [];
+    var hj = new Date();
+    var vg = 1, vc = 1, vco = 1;
+    for (var i = 30; i >= 0; i--) {
+        var dd = new Date(hj); dd.setDate(dd.getDate() - i);
+        var ds = dd.toISOString().split('T')[0];
+        po.push({id: i+1, data: ds, og: Math.floor(22 + Math.random()*10), oc: Math.floor(75 + Math.random()*30)});
+        if (Math.random() > 0.35) { v.push({id:vg, data:ds, tipo:'Ovos Galinha', produto:'Duzia ovos galinha', qtd:Math.floor(1+Math.random()*4), vu:12, cliente:'Feira local'}); vg++; }
+        if (Math.random() > 0.25) { v.push({id:vg, data:ds, tipo:'Ovos Codorna', produto:'Duzia ovos codorna', qtd:Math.floor(2+Math.random()*6), vu:8, cliente:'Restaurante'}); vg++; }
+        if (Math.random() > 0.82) { v.push({id:vg, data:ds, tipo:'Aves', produto:'Galinha viva', qtd:Math.floor(2+Math.random()*4), vu:35, cliente:'Consumidor'}); vg++; }
+        if (Math.random() > 0.82) { v.push({id:vg, data:ds, tipo:'Aves', produto:'Codorna viva', qtd:Math.floor(5+Math.random()*15), vu:12, cliente:'Consumidor'}); vg++; }
+        if (Math.random() > 0.75) { v.push({id:vg, data:ds, tipo:'Adubo', produto:'Saco adubo 10kg', qtd:Math.floor(1+Math.random()*3), vu:15, cliente:'Horticultor'}); vg++; }
+        if (Math.random() > 0.88) { v.push({id:vg, data:ds, tipo:'Peixes', produto:'Tilapia kg', qtd:Math.floor(2+Math.random()*5), vu:25, cliente:'Peixeiro'}); vg++; }
     }
-    var h = '', ti = 0, tr = 0, tc = 0;
-    for (var i = 0; i < D.length; i++) {
-        var r = D[i], t = r.qtd * r.valor;
-        if (r.tipo === 'investimento') ti += t;
-        else if (r.tipo === 'receita') tr += t;
-        else tc += t;
-        var tc2 = r.tipo === 'investimento' ? 'tag-inv' : r.tipo === 'receita' ? 'tag-rec' : 'tag-cust';
-        var tl = r.tipo === 'investimento' ? 'Invest.' : r.tipo === 'receita' ? 'Receita' : 'Custo';
-        h += '<tr><td><span class="tag ' + tc2 + '">' + tl + '</span></td><td>' + ec(r.desc) + '</td><td>' + r.qtd + '</td><td class="money">' + fm(r.valor) + '</td><td class="money">' + fm(t) + '</td><td><button class="btn-ghost" onclick="delR(' + r.id + ')" aria-label="Excluir"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></td></tr>';
+    for (var i = 30; i >= 0; i -= 5) {
+        var dd = new Date(hj); dd.setDate(dd.getDate() - i);
+        var ds = dd.toISOString().split('T')[0];
+        co.push({id:vco, data:ds, tipo:'Racao', produto:'Racao galinha 20kg', qtd:2, vu:65, forn:'Agropecuaria'}); vco++;
+        co.push({id:vco, data:ds, tipo:'Racao', produto:'Racao codorna 10kg', qtd:3, vu:45, forn:'Agropecuaria'}); vco++;
+        if (Math.random()>0.5) { co.push({id:vco, data:ds, tipo:'Insumo', produto:'Milho 50kg', qtd:1, vu:90, forn:'Produtor local'}); vco++; }
     }
-    tb.innerHTML = h;
-    uK(ti, tr, tc);
+    return {galinhas:g, codornas:c, peixes:p, postura:po, vendas:v, compras:co, nid:{g:4,c:3,p:3,po:32,v:vg,co:vco}};
 }
 
-function uK(i, r, c) {
-    var l = r - c, mx = Math.max(i, r, c, 1);
-    document.getElementById('k-i').textContent = fm(i);
-    document.getElementById('k-r').textContent = fm(r);
-    document.getElementById('k-c').textContent = fm(c);
-    document.getElementById('k-p').textContent = (l < 0 ? '- ' : '') + fm(l);
-    document.getElementById('k-p').style.color = l >= 0 ? '#10B981' : 'var(--danger)';
-    document.getElementById('bar-i').style.width = (i / mx * 100) + '%';
-    document.getElementById('bar-r').style.width = (r / mx * 100) + '%';
-    document.getElementById('bar-c').style.width = (c / mx * 100) + '%';
-    document.getElementById('bar-p').style.width = (Math.abs(l) / mx * 100) + '%';
-    document.getElementById('bar-p').style.background = l >= 0 ? '#10B981' : 'var(--danger)';
-    var tf = document.getElementById('tt');
-    tf.textContent = (l < 0 ? '- ' : '') + fm(l);
+function carregar() {
+    try {
+        var r = localStorage.getItem(CHAVE);
+        if (r) { D = JSON.parse(r); if (!D.nid) D.nid = dadosPadrao().nid; }
+        else { D = dadosPadrao(); salvar(); }
+    } catch(e) { D = dadosPadrao(); salvar(); }
 }
 
-function cP() {
-    var an = document.getElementById('pa').value;
-    var q = parseInt(document.getElementById('pq').value, 10) || 0;
-    var bg = an === 'galinha' ? 115 : 30;
-    var dk = (bg * q) / 1000, mk = dk * 30, sc = Math.ceil(mk / 25), cu = sc * 65;
-    document.getElementById('p-d').textContent = dk.toFixed(2) + ' kg';
-    document.getElementById('p-m').textContent = mk.toFixed(1) + ' kg';
-    document.getElementById('p-s').textContent = sc;
-    document.getElementById('p-c').textContent = 'R$ ' + cu;
-    var f = [{ n: 'Milho Moido', p: 60 }, { n: 'Farelo de Soja', p: 25 }, { n: 'Calcario Calcitico', p: 10 }, { n: 'Nucleo de Postura', p: 5 }], h = '';
-    for (var i = 0; i < f.length; i++) {
-        var g = (dk * 1000) * (f[i].p / 100), tx = g >= 1000 ? (g / 1000).toFixed(2) + ' kg' : g.toFixed(0) + ' g';
-        h += '<div class="ing-row"><span class="ing-name">' + f[i].n + '</span><span class="ing-pct">' + f[i].p + '%</span><span class="ing-qty">' + tx + '</span></div>';
-    }
-    document.getElementById('p-i').innerHTML = h;
+function salvar() {
+    try { localStorage.setItem(CHAVE, JSON.stringify(D)); } catch(e) {}
 }
 
-function cE() {
-    var q = parseInt(document.getElementById('eq').value, 10) || 0, bg = 5;
-    var dk = (bg * q) / 1000, mk = dk * 30, sc = Math.ceil(mk / 25), cu = sc * 70;
-    document.getElementById('e-d').textContent = dk.toFixed(2) + ' kg';
-    document.getElementById('e-m').textContent = mk.toFixed(1) + ' kg';
-    document.getElementById('e-s').textContent = sc;
-    document.getElementById('e-c').textContent = 'R$ ' + cu;
-    var f = [{ n: 'Milho Moido', p: 55 }, { n: 'Farelo de Soja', p: 35 }, { n: 'Farinha de Peixe', p: 7 }, { n: 'Nucleo de Engorda', p: 3 }], h = '';
-    for (var i = 0; i < f.length; i++) {
-        var g = (dk * 1000) * (f[i].p / 100), tx = g >= 1000 ? (g / 1000).toFixed(2) + ' kg' : g.toFixed(0) + ' g';
-        h += '<div class="ing-row"><span class="ing-name">' + f[i].n + '</span><span class="ing-pct">' + f[i].p + '%</span><span class="ing-qty">' + tx + '</span></div>';
-    }
-    document.getElementById('e-i').innerHTML = h;
-}
-
-function cA() {
-    var gl = parseInt(document.getElementById('ag').value, 10) || 0;
-    var cd = parseInt(document.getElementById('ac').value, 10) || 0;
-    var pr = parseFloat(document.getElementById('ap').value) || 0;
-    var cg = gl * 4.5, cc = cd * 0.6, ct = (cg * (30 / 30)) + (cc * (30 / 15)), ad = ct / 2, s = Math.floor(ad / 10), rc = s * pr;
-    document.getElementById('f-g').textContent = cg.toFixed(1) + ' kg';
-    document.getElementById('f-c').textContent = cc.toFixed(1) + ' kg';
-    document.getElementById('f-a').textContent = ad.toFixed(0) + ' kg';
-    document.getElementById('f-s').textContent = s + ' sacos';
-    document.getElementById('a-r').textContent = fm(rc);
-    document.getElementById('a-d').textContent = s + ' sacos x R$ ' + pr.toFixed(2).replace('.', ',');
-}
-
-/* ===================================================================
-   PWA: FAVICON ANIMADO VIA CANVAS (Gira em 100% dos celulares)
-   =================================================================== */
-function iniciarFaviconAnimado() {
-    var canvas = document.getElementById('favicon-canvas');
-    var ctx = canvas.getContext('2d');
-    var angulo = 0;
-    
-    // Desenha o frame do favicon e atualiza a tag link
-    function desenhar() {
-        ctx.clearRect(0, 0, 32, 32);
-        
-        // Fundo escuro arredondado
-        ctx.fillStyle = '#1a1a1a';
-        ctx.beginPath();
-        ctx.arc(16, 16, 14, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Anel verde girando
-        ctx.strokeStyle = '#4ADE80';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.arc(16, 16, 10, angulo, angulo + Math.PI * 0.5);
-        ctx.stroke();
-        
-        // Texto SC
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 11px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('SC', 16, 17);
-        
-        // Atualiza o favicon no navegador usando data URL do canvas
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = canvas.toDataURL('image/x-icon');
-        if (!link.parentNode) document.head.appendChild(link);
-        
-        angulo += 0.1;
-        requestAnimationFrame(desenhar);
-    }
-    
+function limparTudo() {
+    if (!confirm('Apagar TODOS os dados? Postura, vendas, compras, tudo!')) return;
+    localStorage.removeItem(CHAVE);
+    D = dadosPadrao();
+    salvar();
+    fecharTudo();
+    toast('Dados limpos com sucesso!');
     desenhar();
 }
 
-/* ===================================================================
-   PWA: SERVICE WORKER (Network First com Fallback Offline)
-   =================================================================== */
-function registrarServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        var swCode = 'var C="sitioPro-v7";self.addEventListener("install",function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(["./"])}));self.skipWaiting()});self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==C}).map(function(x){return caches.delete(x)}))}));self.clients.claim()});self.addEventListener("fetch",function(e){e.respondWith(fetch(e.request).then(function(r){if(r&&r.status===200&&r.type==="basic"){var c=r.clone();caches.open(C).then(function(ca){ca.put(e.request,c)})}return r}).catch(function(){return caches.match(e.request)}))});';
-        
-        var blob = new Blob([swCode], { type: 'application/javascript' });
-        navigator.serviceWorker.register(URL.createObjectURL(blob), { scope: './' })
-            .catch(function() { /* Fallback silencioso */ });
-    }
+// ============ UTIL ============
+function R$(n) { return 'R$ ' + Number(n).toFixed(2).replace('.', ','); }
+function dataBr(d) { var p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function hoje() { return new Date().toISOString().split('T')[0]; }
+function diasAtras(n) { var d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
+function saudacao() { var h = new Date().getHours(); return h<12?'Bom dia, fazendeiro!':h<18?'Boa tarde, fazendeiro!':'Boa noite, fazendeiro!'; }
 
-    // Manifesto PWA Embutido
-    var iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#1a1a1a"/><text x="256" y="320" font-family="Arial" font-size="280" font-weight="900" fill="#4ADE80" text-anchor="middle">SC</text></svg>';
-    var manifest = {
-        name: "Sitio Certo Pro", short_name: "Sitio Certo",
-        start_url: "./", display: "standalone",
-        background_color: "#F2F4F1", theme_color: "#1a1a1a",
-        orientation: "portrait-primary",
-        icons: [{ src: "data:image/svg+xml;base64," + btoa(iconSvg), sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
-    };
-    var link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
-    document.head.appendChild(link);
+function toast(msg, tipo) {
+    tipo = tipo || 'ok';
+    var cor = tipo === 'ok' ? '#3A7D2C' : tipo === 'erro' ? '#dc2626' : '#D4A030';
+    var el = document.createElement('div');
+    el.className = 'toast-item';
+    el.style.background = cor;
+    el.textContent = msg;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2800);
 }
 
-/* ===================================================================
-   INICIALIZAÇÃO SEGURA
-   =================================================================== */
-ld();
-rT();
-cP();
-cE();
-cA();
-iniciarFaviconAnimado();
-registrarServiceWorker();
+function totalVendas(dias) {
+    var ini = diasAtras(dias), t = 0;
+    for (var i = 0; i < D.vendas.length; i++) { if (D.vendas[i].data >= ini) t += D.vendas[i].qtd * D.vendas[i].vu; }
+    return t;
+}
 
-</script>
-</body>
-</html>
+function totalCompras(dias) {
+    var ini = diasAtras(dias), t = 0;
+    for (var i = 0; i < D.compras.length; i++) { if (D.compras[i].data >= ini) t += D.compras[i].qtd * D.compras[i].vu; }
+    return t;
+}
+
+function totalAves(tipo) {
+    var arr = tipo === 'g' ? D.galinhas : tipo === 'c' ? D.codornas : D.peixes;
+    var t = 0; for (var i=0;i<arr.length;i++) t += arr[i].qtd; return t;
+}
+
+// ============ NAVEGACAO ============
+var pagAtual = 'inicio';
+var tabAtual = 'galinhas';
+
+function irPara(pg) {
+    pagAtual = pg;
+    var pags = document.querySelectorAll('.pag');
+    for (var i=0;i<pags.length;i++) pags[i].classList.remove('ativo');
+    var el = document.getElementById('pg-'+pg);
+    if (el) el.classList.add('ativo');
+    var nvs = document.querySelectorAll('.nv');
+    for (var i=0;i<nvs.length;i++) { nvs[i].classList.remove('on'); }
+    var nv = document.querySelector('.nv[data-p="'+pg+'"]');
+    if (nv) nv.classList.add('on');
+    window.scrollTo(0,0);
+    desenhar();
+}
+
+function mudarTab(t) {
+    tabAtual = t;
+    var tabs = document.querySelectorAll('.tab');
+    for (var i=0;i<tabs.length;i++) tabs[i].classList.remove('on');
+    var tb = document.querySelector('.tab[data-t="'+t+'"]');
+    if (tb) tb.classList.add('on');
+    desenhar();
+}
+
+function desenhar() {
+    document.getElementById('saudacao').textContent = saudacao();
+    switch(pagAtual) {
+        case 'inicio': desenharInicio(); break;
+        case 'rebanho': desenharRebanho(); break;
+        case 'postura': desenharPostura(); break;
+        case 'vendas': desenharVendas(); break;
+        case 'financeiro': desenharFinanceiro(); break;
+        case 'racao': desenharRacao(); break;
+        case 'dicas': desenharDicas(); break;
+    }
+}
+
+// ============ INICIO ============
+function desenharInicio() {
+    var oh = {og:0,oc:0};
+    for (var i=0;i<D.postura.length;i++) { if(D.postura[i].data===hoje()){oh=D.postura[i];break;} }
+    var tv7 = totalVendas(7), tc7 = totalCompras(7), tv30 = totalVendas(30), tc30 = totalCompras(30);
+    var h = '';
+    h += '<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    h += cardClique('onclick="irPara(\'rebanho\')','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
+    h += cardClique('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐣</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
+    h += cardClique('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐟</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
+    h += cardClique('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
+    h += '</div>';
+
+    // Financeiro rapido
+    h += '<div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-wallet" style="color:#3A7D2C;margin-right:8px"></i>Financeiro</span><span onclick="irPara(\'financeiro\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Ver mais <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+    var l7 = tv7-tc7, l30 = tv30-tc30;
+    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#f0f7ed"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Semana</div><div style="font-size:16px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div>';
+    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#fef3cd"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Mes</div><div style="font-size:16px;font-weight:900;color:'+(l30>=0?'#3A7D2C':'#dc2626')+'">'+R$(l30)+'</div></div>';
+    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#e0f0ff"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas 30d</div><div style="font-size:16px;font-weight:900;color:#2563eb">'+R$(tv30)+'</div></div>';
+    h += '</div></div>';
+
+    // Ultimas vendas
+    h += '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-receipt" style="color:#D4A030;margin-right:8px"></i>Ultimas Vendas</span><span onclick="irPara(\'vendas\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Todas <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    var ult = D.vendas.slice(-5).reverse();
+    for (var i=0;i<ult.length;i++) {
+        var vv = ult[i];
+        var ic = vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';
+        var bg = vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';
+        var cg = vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border:none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>';
+    }
+    h += '</div>';
+
+    document.getElementById('pg-inicio').innerHTML = h;
+}
+
+function cardClique(onclick,emoji,titulo,valor,sub) {
+    return '<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div s
