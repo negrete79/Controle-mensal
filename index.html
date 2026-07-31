@@ -11,9 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script>
-    tailwind.config={theme:{extend:{colors:{verde:'#3A7D2C','verde-escuro':'#2A5C1E',terra:'#D4A030','terra-claro':'#E8C96A',creme:'#FBF8F1',marrom:'#2C1810','marrom-m':'#5C4033','marrom-c':'#8B7355','marrom-l':'#C4AD8C'}}}}
-    </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;-webkit-tap-highlight-color:transparent}
         body{background:#FBF8F1;color:#2C1810;overflow-x:hidden}
@@ -35,8 +32,8 @@
         .fab{position:fixed;z-index:30;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3A7D2C,#4E9A3E);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(58,125,44,.35);bottom:82px;right:max(16px,calc(50% - 240px));transition:transform .15s}
         .fab:active{transform:scale(.9)}
         .esconde::-webkit-scrollbar{display:none}.esconde{-ms-overflow-style:none;scrollbar-width:none}
-        .toast-box{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
-        .toast-item{padding:10px 20px;border-radius:14px;color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sobe .3s ease;pointer-events:auto}
+        .toast-box{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:90%;max-width:400px}
+        .toast-item{padding:10px 20px;border-radius:14px;color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:sobe .3s ease;pointer-events:auto;text-align:center;width:100%}
         .fundo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none}
         .fundo.abre{display:block}
         .modal-cima{position:fixed;bottom:0;left:0;right:0;z-index:51;background:#fff;border-radius:24px 24px 0 0;max-height:85vh;overflow-y:auto;max-width:500px;margin:0 auto;display:none;animation:sobemodal .3s ease}
@@ -48,7 +45,6 @@
 <body>
 <div class="app" id="app">
 
-    <!-- TOPO -->
     <div class="topo" style="position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(135deg,#3A7D2C,#2A5C1E)">
         <div style="max-width:500px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
             <div><div style="color:#fff;font-size:18px;font-weight:900">MiniFazenda</div><div id="saudacao" style="color:#a8d89a;font-size:11px;font-weight:600"></div></div>
@@ -59,13 +55,12 @@
         </div>
     </div>
 
-    <!-- CONTEUDO -->
     <div style="padding:64px 16px 90px">
         <div id="pg-inicio" class="pag ativo"></div>
         <div id="pg-rebanho" class="pag">
             <div style="display:flex;gap:0;border-bottom:2px solid #E8E0D0;margin:0 -16px 16px;padding:0 16px;overflow-x:auto" class="esconde">
                 <div class="tab on" data-t="galinhas" onclick="mudarTab('galinhas')">🐔 Galinhas</div>
-                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')">🐣 Codornas</div>
+                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')"> Codornas</div>
                 <div class="tab" style="margin-left:20px" data-t="peixes" onclick="mudarTab('peixes')">🐟 Peixes</div>
             </div>
             <div id="reb-conteudo"></div>
@@ -77,10 +72,8 @@
         <div id="pg-dicas" class="pag"></div>
     </div>
 
-    <!-- FAB -->
     <button class="fab" id="fabBtn" onclick="acaoFab()"><i class="fa-solid fa-plus"></i></button>
 
-    <!-- NAV INFERIOR -->
     <div class="nv-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:40;background:#fff;border-top:2px solid #E8E0D0;padding-bottom:env(safe-area-inset-bottom,0px)">
         <div style="max-width:500px;margin:0 auto;display:flex">
             <div class="nv on" data-p="inicio" onclick="irPara('inicio')"><i class="fa-solid fa-house" style="font-size:18px;margin-bottom:2px"></i>Inicio<div class="pts"></div></div>
@@ -92,9 +85,7 @@
     </div>
 </div>
 
-<!-- FUNDO ESCURO -->
 <div class="fundo" id="fundo" onclick="fecharTudo()"></div>
-<!-- MODAL -->
 <div class="modal-cima esconde" id="modal">
     <div style="position:sticky;top:0;background:#fff;border-radius:24px 24px 0 0;z-index:2;padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E8E0D0">
         <div id="modalTitulo" style="font-size:17px;font-weight:900;color:#2C1810"></div>
@@ -103,141 +94,134 @@
     <div id="modalCorpo" style="padding:20px"></div>
 </div>
 
-<!-- TOASTS -->
 <div class="toast-box" id="toasts"></div>
 
 <script>
-// ============ DADOS ============
-var CHAVE = 'mf_v4';
+var CHAVE = 'mf_v6';
 var D = {};
 
-function dadosPadrao() {
-    var g = [
-        {id:1, raca:'Isa Brown', qtd:30, data:'2024-08-15', local:'Galpao 1', status:'postura', obs:'Excelente produtora'},
-        {id:2, raca:'Rhode Island Red', qtd:15, data:'2024-10-20', local:'Galpao 2', status:'crescimento', obs:'Pintinhos'},
-        {id:3, raca:'Plymouth Rock', qtd:10, data:'2024-06-01', local:'Galpao 1', status:'postura', obs:'Racao alternativa'}
-    ];
-    var c = [
-        {id:1, raca:'Coturnix japonesa', qtd:120, data:'2024-07-10', local:'Gaiolas A1-A6', status:'postura', obs:'Postura estavel'},
-        {id:2, raca:'Coturnix europeia', qtd:50, data:'2024-11-01', local:'Gaiolas B1-B3', status:'crescimento', obs:'Iniciando'}
-    ];
-    var p = [
-        {id:1, especie:'Tilapia', qtd:200, data:'2024-09-01', caixa:'Caixa 1 (1000L)', status:'engorda', obs:'Alimentacao 3x/dia'},
-        {id:2, especie:'Tambaqui', qtd:50, data:'2024-10-15', caixa:'Caixa 2 (500L)', status:'engorda', obs:'Lento'}
-    ];
-    var po = [];
-    var v = [];
-    var co = [];
-    var hj = new Date();
-    var vg = 1, vc = 1, vco = 1;
-    for (var i = 30; i >= 0; i--) {
-        var dd = new Date(hj); dd.setDate(dd.getDate() - i);
-        var ds = dd.toISOString().split('T')[0];
-        po.push({id: i+1, data: ds, og: Math.floor(22 + Math.random()*10), oc: Math.floor(75 + Math.random()*30)});
-        if (Math.random() > 0.35) { v.push({id:vg, data:ds, tipo:'Ovos Galinha', produto:'Duzia ovos galinha', qtd:Math.floor(1+Math.random()*4), vu:12, cliente:'Feira local'}); vg++; }
-        if (Math.random() > 0.25) { v.push({id:vg, data:ds, tipo:'Ovos Codorna', produto:'Duzia ovos codorna', qtd:Math.floor(2+Math.random()*6), vu:8, cliente:'Restaurante'}); vg++; }
-        if (Math.random() > 0.82) { v.push({id:vg, data:ds, tipo:'Aves', produto:'Galinha viva', qtd:Math.floor(2+Math.random()*4), vu:35, cliente:'Consumidor'}); vg++; }
-        if (Math.random() > 0.82) { v.push({id:vg, data:ds, tipo:'Aves', produto:'Codorna viva', qtd:Math.floor(5+Math.random()*15), vu:12, cliente:'Consumidor'}); vg++; }
-        if (Math.random() > 0.75) { v.push({id:vg, data:ds, tipo:'Adubo', produto:'Saco adubo 10kg', qtd:Math.floor(1+Math.random()*3), vu:15, cliente:'Horticultor'}); vg++; }
-        if (Math.random() > 0.88) { v.push({id:vg, data:ds, tipo:'Peixes', produto:'Tilapia kg', qtd:Math.floor(2+Math.random()*5), vu:25, cliente:'Peixeiro'}); vg++; }
-    }
-    for (var i = 30; i >= 0; i -= 5) {
-        var dd = new Date(hj); dd.setDate(dd.getDate() - i);
-        var ds = dd.toISOString().split('T')[0];
-        co.push({id:vco, data:ds, tipo:'Racao', produto:'Racao galinha 20kg', qtd:2, vu:65, forn:'Agropecuaria'}); vco++;
-        co.push({id:vco, data:ds, tipo:'Racao', produto:'Racao codorna 10kg', qtd:3, vu:45, forn:'Agropecuaria'}); vco++;
-        if (Math.random()>0.5) { co.push({id:vco, data:ds, tipo:'Insumo', produto:'Milho 50kg', qtd:1, vu:90, forn:'Produtor local'}); vco++; }
-    }
-    return {galinhas:g, codornas:c, peixes:p, postura:po, vendas:v, compras:co, nid:{g:4,c:3,p:3,po:32,v:vg,co:vco}};
+// APP COMECA ZERADO - SEM DADOS DE EXEMPLO
+function dadosVazio() {
+    return {
+        galinhas: [],
+        codornas: [],
+        peixes: [],
+        postura: [],
+        vendas: [],
+        compras: [],
+        nid: {g:1, c:1, p:1, po:1, v:1, co:1}
+    };
 }
 
-function carregar() {
-    try {
+function carregar(){
+    try{
         var r = localStorage.getItem(CHAVE);
-        if (r) { D = JSON.parse(r); if (!D.nid) D.nid = dadosPadrao().nid; }
-        else { D = dadosPadrao(); salvar(); }
-    } catch(e) { D = dadosPadrao(); salvar(); }
+        if (r) {
+            D = JSON.parse(r);
+            if (!D.nid) D.nid = dadosVazio().nid;
+            // Garante que todos os arrays existem
+            if (!D.galinhas) D.galinhas = [];
+            if (!D.codornas) D.codornas = [];
+            if (!D.peixes) D.peixes = [];
+            if (!D.postura) D.postura = [];
+            if (!D.vendas) D.vendas = [];
+            if (!D.compras) D.compras = [];
+        } else {
+            D = dadosVazio();
+            salvar();
+        }
+    } catch(e) {
+        D = dadosVazio();
+        salvar();
+    }
 }
 
-function salvar() {
-    try { localStorage.setItem(CHAVE, JSON.stringify(D)); } catch(e) {}
-}
+function salvar(){try{localStorage.setItem(CHAVE, JSON.stringify(D))}catch(e){}}
 
-function limparTudo() {
-    if (!confirm('Apagar TODOS os dados? Postura, vendas, compras, tudo!')) return;
+// LIMPAR TUDO - remove do localStorage e recarrega zerado
+function limparTudo(){
+    if (!confirm('APAGAR TUDO?\n\nRebanho, postura, vendas, compras...\nTODOS os dados serao apagados!')) return;
     localStorage.removeItem(CHAVE);
-    D = dadosPadrao();
+    D = dadosVazio();
+    salvar();
+    document.getElementById('fundo').classList.remove('abre');
+    document.getElementById('modal').classList.remove('abre');
+    document.body.style.overflow = '';
+    setTimeout(function(){
+        desenhar();
+        toast('Todos os dados foram apagados!');
+    }, 150);
+}
+
+// EXCLUIR HISTORICO DE POSTURA
+function excluirHistoricoPostura(){
+    if (!confirm('Excluir TODO o historico de postura?\n\nEssa acao nao pode ser desfeita.')) return;
+    D.postura = [];
     salvar();
     fecharTudo();
-    toast('Dados limpos com sucesso!');
     desenhar();
+    toast('Historico de postura excluido!', 'aviso');
 }
 
-// ============ UTIL ============
-function R$(n) { return 'R$ ' + Number(n).toFixed(2).replace('.', ','); }
-function dataBr(d) { var p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-function hoje() { return new Date().toISOString().split('T')[0]; }
-function diasAtras(n) { var d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
-function saudacao() { var h = new Date().getHours(); return h<12?'Bom dia, fazendeiro!':h<18?'Boa tarde, fazendeiro!':'Boa noite, fazendeiro!'; }
+// EXCLUIR HISTORICO DE VENDAS
+function excluirHistoricoVendas(){
+    if (!confirm('Excluir TODO o historico de vendas?\n\nEssa acao nao pode ser desfeita.')) return;
+    D.vendas = [];
+    salvar();
+    fecharTudo();
+    desenhar();
+    toast('Historico de vendas excluido!', 'aviso');
+}
 
-function toast(msg, tipo) {
+function R$(n){return 'R$ ' + Number(n).toFixed(2).replace('.', ',')}
+function dataBr(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function hoje(){return new Date().toISOString().split('T')[0]}
+function diasAtras(n){var d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
+function saudacao(){var h=new Date().getHours();return h<12?'Bom dia, fazendeiro!':h<18?'Boa tarde, fazendeiro!':'Boa noite, fazendeiro!'}
+
+function toast(msg, tipo){
     tipo = tipo || 'ok';
-    var cor = tipo === 'ok' ? '#3A7D2C' : tipo === 'erro' ? '#dc2626' : '#D4A030';
+    var cor = tipo==='ok'?'#3A7D2C':tipo==='erro'?'#dc2626':'#D4A030';
     var el = document.createElement('div');
     el.className = 'toast-item';
     el.style.background = cor;
     el.textContent = msg;
     document.getElementById('toasts').appendChild(el);
-    setTimeout(function(){ el.remove(); }, 2800);
+    setTimeout(function(){el.remove()}, 2800);
 }
 
-function totalVendas(dias) {
-    var ini = diasAtras(dias), t = 0;
-    for (var i = 0; i < D.vendas.length; i++) { if (D.vendas[i].data >= ini) t += D.vendas[i].qtd * D.vendas[i].vu; }
-    return t;
-}
+function totalVendas(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.vendas.length;i++){if(D.vendas[i].data>=ini)t+=D.vendas[i].qtd*D.vendas[i].vu}return t}
+function totalCompras(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.compras.length;i++){if(D.compras[i].data>=ini)t+=D.compras[i].qtd*D.compras[i].vu}return t}
+function totalAves(tipo){var arr=tipo==='g'?D.galinhas:tipo==='c'?D.codornas:D.peixes;var t=0;for(var i=0;i<arr.length;i++)t+=arr[i].qtd;return t}
 
-function totalCompras(dias) {
-    var ini = diasAtras(dias), t = 0;
-    for (var i = 0; i < D.compras.length; i++) { if (D.compras[i].data >= ini) t += D.compras[i].qtd * D.compras[i].vu; }
-    return t;
-}
-
-function totalAves(tipo) {
-    var arr = tipo === 'g' ? D.galinhas : tipo === 'c' ? D.codornas : D.peixes;
-    var t = 0; for (var i=0;i<arr.length;i++) t += arr[i].qtd; return t;
-}
-
-// ============ NAVEGACAO ============
 var pagAtual = 'inicio';
 var tabAtual = 'galinhas';
 
-function irPara(pg) {
+function irPara(pg){
     pagAtual = pg;
     var pags = document.querySelectorAll('.pag');
-    for (var i=0;i<pags.length;i++) pags[i].classList.remove('ativo');
-    var el = document.getElementById('pg-'+pg);
-    if (el) el.classList.add('ativo');
+    for(var i=0;i<pags.length;i++) pags[i].classList.remove('ativo');
+    var el = document.getElementById('pg-'+pg); if(el) el.classList.add('ativo');
     var nvs = document.querySelectorAll('.nv');
-    for (var i=0;i<nvs.length;i++) { nvs[i].classList.remove('on'); }
+    for(var i=0;i<nvs.length;i++) nvs[i].classList.remove('on');
     var nv = document.querySelector('.nv[data-p="'+pg+'"]');
-    if (nv) nv.classList.add('on');
+    if(nv) nv.classList.add('on');
     window.scrollTo(0,0);
     desenhar();
 }
 
-function mudarTab(t) {
+function mudarTab(t){
     tabAtual = t;
     var tabs = document.querySelectorAll('.tab');
-    for (var i=0;i<tabs.length;i++) tabs[i].classList.remove('on');
+    for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('on');
     var tb = document.querySelector('.tab[data-t="'+t+'"]');
-    if (tb) tb.classList.add('on');
+    if(tb) tb.classList.add('on');
     desenhar();
 }
 
-function desenhar() {
+function desenhar(){
     document.getElementById('saudacao').textContent = saudacao();
-    switch(pagAtual) {
+    switch(pagAtual){
         case 'inicio': desenharInicio(); break;
         case 'rebanho': desenharRebanho(); break;
         case 'postura': desenharPostura(); break;
@@ -249,42 +233,63 @@ function desenhar() {
 }
 
 // ============ INICIO ============
-function desenharInicio() {
+function desenharInicio(){
     var oh = {og:0,oc:0};
-    for (var i=0;i<D.postura.length;i++) { if(D.postura[i].data===hoje()){oh=D.postura[i];break;} }
-    var tv7 = totalVendas(7), tc7 = totalCompras(7), tv30 = totalVendas(30), tc30 = totalCompras(30);
-    var h = '';
-    h += '<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
+    for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){oh=D.postura[i];break}}
+    var tv7=totalVendas(7),tc7=totalCompras(7),tv30=totalVendas(30),tc30=totalCompras(30);
+    var l7=tv7-tc7,l30=tv30-tc30;
+    var h = '<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
     h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
-    h += cardClique('onclick="irPara(\'rebanho\')','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
-    h += cardClique('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐣</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
-    h += cardClique('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐟</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
-    h += cardClique('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
+    h += cardCli('onclick="irPara(\'rebanho\')"','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
+    h += cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐤</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
+    h += cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐠</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
+    h += cardCli('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
     h += '</div>';
-
-    // Financeiro rapido
     h += '<div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-wallet" style="color:#3A7D2C;margin-right:8px"></i>Financeiro</span><span onclick="irPara(\'financeiro\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Ver mais <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
     h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
-    var l7 = tv7-tc7, l30 = tv30-tc30;
     h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#f0f7ed"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Semana</div><div style="font-size:16px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div>';
     h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#fef3cd"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Mes</div><div style="font-size:16px;font-weight:900;color:'+(l30>=0?'#3A7D2C':'#dc2626')+'">'+R$(l30)+'</div></div>';
     h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#e0f0ff"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas 30d</div><div style="font-size:16px;font-weight:900;color:#2563eb">'+R$(tv30)+'</div></div>';
     h += '</div></div>';
 
-    // Ultimas vendas
     h += '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-receipt" style="color:#D4A030;margin-right:8px"></i>Ultimas Vendas</span><span onclick="irPara(\'vendas\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Todas <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
     var ult = D.vendas.slice(-5).reverse();
-    for (var i=0;i<ult.length;i++) {
-        var vv = ult[i];
-        var ic = vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';
-        var bg = vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';
-        var cg = vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';
-        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border:none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>';
+    if (ult.length === 0) {
+        h += '<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhuma venda registrada ainda</div>';
+    } else {
+        for(var i=0;i<ult.length;i++){
+            var vv = ult[i];
+            var ic = vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';
+            var bg = vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';
+            var cg = vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';
+            h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border:none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>';
+        }
     }
     h += '</div>';
-
     document.getElementById('pg-inicio').innerHTML = h;
 }
 
-function cardClique(onclick,emoji,titulo,valor,sub) {
-    return '<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div s
+function cardCli(onclick,emoji,titulo,valor,sub){
+    return '<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div style="font-size:22px;font-weight:900;color:#2C1810">'+valor+'</div><div style="font-size:11px;color:#8B7355">'+sub+'</div></div>';
+}
+
+// ============ REBANHO ============
+function desenharRebanho(){
+    var arr,label,emoji;
+    if(tabAtual==='galinhas'){arr=D.galinhas;label='Galinhas';emoji='🐔'}
+    else if(tabAtual==='codornas'){arr=D.codornas;label='Codornas';emoji='🐤'}
+    else{arr=D.peixes;label='Peixes';emoji='🐠'}
+    var total=0;for(var i=0;i<arr.length;i++)total+=arr[i].qtd;
+    var h = '<div style="font-size:13px;color:#8B7355;font-weight:600;margin-bottom:14px">'+arr.length+' lotes · '+total+' '+(tabAtual==='peixes'?'peixes':'aves')+'</div>';
+    if(arr.length===0){
+        h += '<div style="text-align:center;padding:40px 0"><i class="fa-solid fa-inbox" style="font-size:40px;color:#C4AD8C;margin-bottom:12px;display:block"></i><div style="font-weight:900;color:#8B7355;margin-bottom:4px">Nenhum '+label.toLowerCase()+'</div><div style="font-size:13px;color:#8B7355">Use o botao + para adicionar</div></div>';
+    } else {
+        for(var i=0;i<arr.length;i++){
+            var item=arr[i];
+            var dias=Math.floor((new Date()-new Date(item.data))/86400000);
+            var stCor=item.status==='postura'?'background:#f0f7ed;color:#3A7D2C':item.status==='engorda'?'background:#eff6ff;color:#2563eb':'background:#fef3cd;color:#92400e';
+            var nome=tabAtual==='peixes'?item.especie:item.raca;
+            var local=tabAtual==='peixes'?item.caixa:item.local;
+            var tipo=tabAtual==='peixes'?'p':tabAtual==='codornas'?'c':'g';
+            h += '<div class="card bp" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:900;color:#2C1810">'+emoji+' '+nome+'</div><div style="font-size:12px;color:#8B7355">'+local+'</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;'+stCor+'">'+item.status+'</span></div>';
+            h += '<div style="display:flex;gap:16px;font-size:13px;margin-bottom:6px"><span style="fon
