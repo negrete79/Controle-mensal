@@ -44,7 +44,6 @@
 </head>
 <body>
 <div class="app" id="app">
-
     <div class="topo" style="position:fixed;top:0;left:0;right:0;z-index:40;background:linear-gradient(135deg,#3A7D2C,#2A5C1E)">
         <div style="max-width:500px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
             <div><div style="color:#fff;font-size:18px;font-weight:900">MiniFazenda</div><div id="saudacao" style="color:#a8d89a;font-size:11px;font-weight:600"></div></div>
@@ -54,13 +53,12 @@
             </div>
         </div>
     </div>
-
     <div style="padding:64px 16px 90px">
         <div id="pg-inicio" class="pag ativo"></div>
         <div id="pg-rebanho" class="pag">
             <div style="display:flex;gap:0;border-bottom:2px solid #E8E0D0;margin:0 -16px 16px;padding:0 16px;overflow-x:auto" class="esconde">
                 <div class="tab on" data-t="galinhas" onclick="mudarTab('galinhas')">🐔 Galinhas</div>
-                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')"> Codornas</div>
+                <div class="tab" style="margin-left:20px" data-t="codornas" onclick="mudarTab('codornas')">🐣 Codornas</div>
                 <div class="tab" style="margin-left:20px" data-t="peixes" onclick="mudarTab('peixes')">🐟 Peixes</div>
             </div>
             <div id="reb-conteudo"></div>
@@ -71,9 +69,7 @@
         <div id="pg-racao" class="pag"></div>
         <div id="pg-dicas" class="pag"></div>
     </div>
-
-    <button class="fab" id="fabBtn" onclick="acaoFab()"><i class="fa-solid fa-plus"></i></button>
-
+    <button class="fab" onclick="acaoFab()"><i class="fa-solid fa-plus"></i></button>
     <div class="nv-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:40;background:#fff;border-top:2px solid #E8E0D0;padding-bottom:env(safe-area-inset-bottom,0px)">
         <div style="max-width:500px;margin:0 auto;display:flex">
             <div class="nv on" data-p="inicio" onclick="irPara('inicio')"><i class="fa-solid fa-house" style="font-size:18px;margin-bottom:2px"></i>Inicio<div class="pts"></div></div>
@@ -84,7 +80,6 @@
         </div>
     </div>
 </div>
-
 <div class="fundo" id="fundo" onclick="fecharTudo()"></div>
 <div class="modal-cima esconde" id="modal">
     <div style="position:sticky;top:0;background:#fff;border-radius:24px 24px 0 0;z-index:2;padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E8E0D0">
@@ -93,203 +88,115 @@
     </div>
     <div id="modalCorpo" style="padding:20px"></div>
 </div>
-
 <div class="toast-box" id="toasts"></div>
-
 <script>
-var CHAVE = 'mf_v6';
-var D = {};
+var CHAVE='mf_v7',D={};
 
-// APP COMECA ZERADO - SEM DADOS DE EXEMPLO
-function dadosVazio() {
-    return {
-        galinhas: [],
-        codornas: [],
-        peixes: [],
-        postura: [],
-        vendas: [],
-        compras: [],
-        nid: {g:1, c:1, p:1, po:1, v:1, co:1}
-    };
-}
+function dadosVazio(){return{galinhas:[],codornas:[],peixes:[],postura:[],vendas:[],compras:[],nid:{g:1,c:1,p:1,po:1,v:1,co:1}}}
 
 function carregar(){
     try{
-        var r = localStorage.getItem(CHAVE);
-        if (r) {
-            D = JSON.parse(r);
-            if (!D.nid) D.nid = dadosVazio().nid;
-            // Garante que todos os arrays existem
-            if (!D.galinhas) D.galinhas = [];
-            if (!D.codornas) D.codornas = [];
-            if (!D.peixes) D.peixes = [];
-            if (!D.postura) D.postura = [];
-            if (!D.vendas) D.vendas = [];
-            if (!D.compras) D.compras = [];
-        } else {
-            D = dadosVazio();
-            salvar();
-        }
-    } catch(e) {
-        D = dadosVazio();
-        salvar();
-    }
+        var r=localStorage.getItem(CHAVE);
+        if(r){D=JSON.parse(r);if(!D.nid)D.nid=dadosVazio().nid;if(!D.galinhas)D.galinhas=[];if(!D.codornas)D.codornas=[];if(!D.peixes)D.peixes=[];if(!D.postura)D.postura=[];if(!D.vendas)D.vendas=[];if(!D.compras)D.compras=[]}
+        else{D=dadosVazio();salvar()}
+    }catch(e){D=dadosVazio();salvar()}
 }
 
-function salvar(){try{localStorage.setItem(CHAVE, JSON.stringify(D))}catch(e){}}
+function salvar(){try{localStorage.setItem(CHAVE,JSON.stringify(D))}catch(e){}}
 
-// LIMPAR TUDO - remove do localStorage e recarrega zerado
 function limparTudo(){
-    if (!confirm('APAGAR TUDO?\n\nRebanho, postura, vendas, compras...\nTODOS os dados serao apagados!')) return;
+    if(!confirm('APAGAR TUDO?\n\nRebanho, postura, vendas, compras...\nTODOS os dados serao apagados!'))return;
     localStorage.removeItem(CHAVE);
-    D = dadosVazio();
+    D=dadosVazio();
     salvar();
     document.getElementById('fundo').classList.remove('abre');
     document.getElementById('modal').classList.remove('abre');
-    document.body.style.overflow = '';
-    setTimeout(function(){
-        desenhar();
-        toast('Todos os dados foram apagados!');
-    }, 150);
+    document.body.style.overflow='';
+    setTimeout(function(){desenhar();toast('Todos os dados foram apagados!')},150);
 }
 
-// EXCLUIR HISTORICO DE POSTURA
 function excluirHistoricoPostura(){
-    if (!confirm('Excluir TODO o historico de postura?\n\nEssa acao nao pode ser desfeita.')) return;
-    D.postura = [];
-    salvar();
-    fecharTudo();
-    desenhar();
-    toast('Historico de postura excluido!', 'aviso');
+    if(!confirm('Excluir TODO o historico de postura?'))return;
+    D.postura=[];salvar();fecharTudo();desenhar();toast('Historico de postura excluido!','aviso');
 }
 
-// EXCLUIR HISTORICO DE VENDAS
 function excluirHistoricoVendas(){
-    if (!confirm('Excluir TODO o historico de vendas?\n\nEssa acao nao pode ser desfeita.')) return;
-    D.vendas = [];
-    salvar();
-    fecharTudo();
-    desenhar();
-    toast('Historico de vendas excluido!', 'aviso');
+    if(!confirm('Excluir TODO o historico de vendas?'))return;
+    D.vendas=[];salvar();fecharTudo();desenhar();toast('Historico de vendas excluido!','aviso');
 }
 
-function R$(n){return 'R$ ' + Number(n).toFixed(2).replace('.', ',')}
+function R$(n){return'R$ '+Number(n).toFixed(2).replace('.',',')}
 function dataBr(d){var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
 function hoje(){return new Date().toISOString().split('T')[0]}
 function diasAtras(n){var d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0]}
 function saudacao(){var h=new Date().getHours();return h<12?'Bom dia, fazendeiro!':h<18?'Boa tarde, fazendeiro!':'Boa noite, fazendeiro!'}
 
-function toast(msg, tipo){
-    tipo = tipo || 'ok';
-    var cor = tipo==='ok'?'#3A7D2C':tipo==='erro'?'#dc2626':'#D4A030';
-    var el = document.createElement('div');
-    el.className = 'toast-item';
-    el.style.background = cor;
-    el.textContent = msg;
-    document.getElementById('toasts').appendChild(el);
-    setTimeout(function(){el.remove()}, 2800);
+function toast(msg,tipo){
+    tipo=tipo||'ok';var cor=tipo==='ok'?'#3A7D2C':tipo==='erro'?'#dc2626':'#D4A030';
+    var el=document.createElement('div');el.className='toast-item';el.style.background=cor;el.textContent=msg;
+    document.getElementById('toasts').appendChild(el);setTimeout(function(){el.remove()},2800);
 }
 
 function totalVendas(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.vendas.length;i++){if(D.vendas[i].data>=ini)t+=D.vendas[i].qtd*D.vendas[i].vu}return t}
 function totalCompras(dias){var ini=diasAtras(dias),t=0;for(var i=0;i<D.compras.length;i++){if(D.compras[i].data>=ini)t+=D.compras[i].qtd*D.compras[i].vu}return t}
 function totalAves(tipo){var arr=tipo==='g'?D.galinhas:tipo==='c'?D.codornas:D.peixes;var t=0;for(var i=0;i<arr.length;i++)t+=arr[i].qtd;return t}
 
-var pagAtual = 'inicio';
-var tabAtual = 'galinhas';
+var pagAtual='inicio',tabAtual='galinhas';
 
 function irPara(pg){
-    pagAtual = pg;
-    var pags = document.querySelectorAll('.pag');
-    for(var i=0;i<pags.length;i++) pags[i].classList.remove('ativo');
-    var el = document.getElementById('pg-'+pg); if(el) el.classList.add('ativo');
-    var nvs = document.querySelectorAll('.nv');
-    for(var i=0;i<nvs.length;i++) nvs[i].classList.remove('on');
-    var nv = document.querySelector('.nv[data-p="'+pg+'"]');
-    if(nv) nv.classList.add('on');
-    window.scrollTo(0,0);
-    desenhar();
+    pagAtual=pg;var pags=document.querySelectorAll('.pag');for(var i=0;i<pags.length;i++)pags[i].classList.remove('ativo');
+    var el=document.getElementById('pg-'+pg);if(el)el.classList.add('ativo');
+    var nvs=document.querySelectorAll('.nv');for(var i=0;i<nvs.length;i++)nvs[i].classList.remove('on');
+    var nv=document.querySelector('.nv[data-p="'+pg+'"]');if(nv)nv.classList.add('on');
+    window.scrollTo(0,0);desenhar();
 }
 
 function mudarTab(t){
-    tabAtual = t;
-    var tabs = document.querySelectorAll('.tab');
-    for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('on');
-    var tb = document.querySelector('.tab[data-t="'+t+'"]');
-    if(tb) tb.classList.add('on');
-    desenhar();
+    tabAtual=t;var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('on');
+    var tb=document.querySelector('.tab[data-t="'+t+'"]');if(tb)tb.classList.add('on');desenhar();
 }
 
 function desenhar(){
-    document.getElementById('saudacao').textContent = saudacao();
-    switch(pagAtual){
-        case 'inicio': desenharInicio(); break;
-        case 'rebanho': desenharRebanho(); break;
-        case 'postura': desenharPostura(); break;
-        case 'vendas': desenharVendas(); break;
-        case 'financeiro': desenharFinanceiro(); break;
-        case 'racao': desenharRacao(); break;
-        case 'dicas': desenharDicas(); break;
-    }
+    document.getElementById('saudacao').textContent=saudacao();
+    if(pagAtual==='inicio')desenharInicio();
+    else if(pagAtual==='rebanho')desenharRebanho();
+    else if(pagAtual==='postura')desenharPostura();
+    else if(pagAtual==='vendas')desenharVendas();
+    else if(pagAtual==='financeiro')desenharFinanceiro();
+    else if(pagAtual==='racao')desenharRacao();
+    else if(pagAtual==='dicas')desenharDicas();
 }
 
-// ============ INICIO ============
 function desenharInicio(){
-    var oh = {og:0,oc:0};
-    for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){oh=D.postura[i];break}}
-    var tv7=totalVendas(7),tc7=totalCompras(7),tv30=totalVendas(30),tc30=totalCompras(30);
-    var l7=tv7-tc7,l30=tv30-tc30;
-    var h = '<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
-    h += cardCli('onclick="irPara(\'rebanho\')"','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
-    h += cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐤</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
-    h += cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐠</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
-    h += cardCli('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
-    h += '</div>';
-    h += '<div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-wallet" style="color:#3A7D2C;margin-right:8px"></i>Financeiro</span><span onclick="irPara(\'financeiro\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Ver mais <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
-    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
-    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#f0f7ed"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Semana</div><div style="font-size:16px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div>';
-    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#fef3cd"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Mes</div><div style="font-size:16px;font-weight:900;color:'+(l30>=0?'#3A7D2C':'#dc2626')+'">'+R$(l30)+'</div></div>';
-    h += '<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#e0f0ff"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas 30d</div><div style="font-size:16px;font-weight:900;color:#2563eb">'+R$(tv30)+'</div></div>';
-    h += '</div></div>';
-
-    h += '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-receipt" style="color:#D4A030;margin-right:8px"></i>Ultimas Vendas</span><span onclick="irPara(\'vendas\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Todas <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
-    var ult = D.vendas.slice(-5).reverse();
-    if (ult.length === 0) {
-        h += '<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhuma venda registrada ainda</div>';
-    } else {
-        for(var i=0;i<ult.length;i++){
-            var vv = ult[i];
-            var ic = vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';
-            var bg = vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';
-            var cg = vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';
-            h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border:none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>';
-        }
-    }
-    h += '</div>';
-    document.getElementById('pg-inicio').innerHTML = h;
+    var oh={og:0,oc:0};for(var i=0;i<D.postura.length;i++){if(D.postura[i].data===hoje()){oh=D.postura[i];break}}
+    var tv7=totalVendas(7),tc7=totalCompras(7),tv30=totalVendas(30),tc30=totalCompras(30),l7=tv7-tc7,l30=tv30-tc30;
+    var h='<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:900;color:#2C1810">'+saudacao()+'</div><div style="font-size:13px;color:#8B7355">Resumo da sua fazendinha</div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    h+=cardCli('onclick="irPara(\'rebanho\')"','<span style="font-size:24px">🐔</span>','Galinhas',''+totalAves('g')+' aves',D.galinhas.length+' lotes');
+    h+=cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'codornas\')},100)"','<span style="font-size:24px">🐣</span>','Codornas',''+totalAves('c')+' aves',D.codornas.length+' lotes');
+    h+=cardCli('onclick="irPara(\'rebanho\');setTimeout(function(){mudarTab(\'peixes\')},100)"','<span style="font-size:24px">🐟</span>','Peixes',''+totalAves('p')+' peixes',D.peixes.length+' caixas');
+    h+=cardCli('onclick="irPara(\'postura\')"','<span style="font-size:24px">🥚</span>','Ovos Hoje',''+(oh.og+oh.oc),oh.og+' gal / '+oh.oc+' cod');
+    h+='</div><div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-wallet" style="color:#3A7D2C;margin-right:8px"></i>Financeiro</span><span onclick="irPara(\'financeiro\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Ver mais <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#f0f7ed"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Semana</div><div style="font-size:16px;font-weight:900;color:'+(l7>=0?'#3A7D2C':'#dc2626')+'">'+R$(l7)+'</div></div>';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#fef3cd"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Mes</div><div style="font-size:16px;font-weight:900;color:'+(l30>=0?'#3A7D2C':'#dc2626')+'">'+R$(l30)+'</div></div>';
+    h+='<div style="text-align:center;padding:12px 8px;border-radius:14px;background:#e0f0ff"><div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;margin-bottom:4px">Vendas 30d</div><div style="font-size:16px;font-weight:900;color:#2563eb">'+R$(tv30)+'</div></div>';
+    h+='</div></div><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:900;color:#2C1810"><i class="fa-solid fa-receipt" style="color:#D4A030;margin-right:8px"></i>Ultimas Vendas</span><span onclick="irPara(\'vendas\')" style="font-size:12px;font-weight:700;color:#3A7D2C;cursor:pointer">Todas <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></span></div>';
+    var ult=D.vendas.slice(-5).reverse();
+    if(ult.length===0){h+='<div style="text-align:center;padding:20px 0;color:#8B7355;font-size:13px">Nenhuma venda registrada</div>'}
+    else{for(var i=0;i<ult.length;i++){var vv=ult[i];var ic=vv.tipo.includes('Galinha')?'fa-egg':vv.tipo.includes('Codorna')?'fa-egg':vv.tipo==='Adubo'?'fa-seedling':vv.tipo==='Peixes'?'fa-fish':'fa-dove';var bg=vv.tipo.includes('Galinha')?'#fff7ed':vv.tipo.includes('Codorna')?'#fefce8':vv.tipo==='Adubo'?'#fffbeb':vv.tipo==='Peixes'?'#eff6ff':'#f0f7ed';var cg=vv.tipo.includes('Galinha')?'#f97316':vv.tipo.includes('Codorna')?'#eab308':vv.tipo==='Adubo'?'#d97706':vv.tipo==='Peixes'?'#3b82f6':'#3A7D2C';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ebe0'+(i===ult.length-1?';border-none':'')+'"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:10px;background:'+bg+';display:flex;align-items:center;justify-content:center"><i class="fa-solid '+ic+'" style="font-size:12px;color:'+cg+'"></i></div><div><div style="font-size:13px;font-weight:700;color:#2C1810">'+vv.produto+'</div><div style="font-size:11px;color:#8B7355">'+dataBr(vv.data)+' · '+vv.qtd+'x</div></div></div><div style="font-size:13px;font-weight:900;color:#3A7D2C">'+R$(vv.qtd*vv.vu)+'</div></div>'}}
+    h+='</div>';document.getElementById('pg-inicio').innerHTML=h;
 }
 
-function cardCli(onclick,emoji,titulo,valor,sub){
-    return '<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div style="font-size:22px;font-weight:900;color:#2C1810">'+valor+'</div><div style="font-size:11px;color:#8B7355">'+sub+'</div></div>';
-}
+function cardCli(onclick,emoji,titulo,valor,sub){return'<div class="card bp" style="cursor:pointer" '+onclick+'><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+emoji+'<span style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase">'+titulo+'</span></div><div style="font-size:22px;font-weight:900;color:#2C1810">'+valor+'</div><div style="font-size:11px;color:#8B7355">'+sub+'</div></div>'}
 
-// ============ REBANHO ============
 function desenharRebanho(){
-    var arr,label,emoji;
-    if(tabAtual==='galinhas'){arr=D.galinhas;label='Galinhas';emoji='🐔'}
-    else if(tabAtual==='codornas'){arr=D.codornas;label='Codornas';emoji='🐤'}
-    else{arr=D.peixes;label='Peixes';emoji='🐠'}
+    var arr,label,emoji;if(tabAtual==='galinhas'){arr=D.galinhas;label='Galinhas';emoji='🐔'}else if(tabAtual==='codornas'){arr=D.codornas;label='Codornas';emoji='🐣'}else{arr=D.peixes;label='Peixes';emoji='🐟'}
     var total=0;for(var i=0;i<arr.length;i++)total+=arr[i].qtd;
-    var h = '<div style="font-size:13px;color:#8B7355;font-weight:600;margin-bottom:14px">'+arr.length+' lotes · '+total+' '+(tabAtual==='peixes'?'peixes':'aves')+'</div>';
-    if(arr.length===0){
-        h += '<div style="text-align:center;padding:40px 0"><i class="fa-solid fa-inbox" style="font-size:40px;color:#C4AD8C;margin-bottom:12px;display:block"></i><div style="font-weight:900;color:#8B7355;margin-bottom:4px">Nenhum '+label.toLowerCase()+'</div><div style="font-size:13px;color:#8B7355">Use o botao + para adicionar</div></div>';
-    } else {
-        for(var i=0;i<arr.length;i++){
-            var item=arr[i];
-            var dias=Math.floor((new Date()-new Date(item.data))/86400000);
-            var stCor=item.status==='postura'?'background:#f0f7ed;color:#3A7D2C':item.status==='engorda'?'background:#eff6ff;color:#2563eb':'background:#fef3cd;color:#92400e';
-            var nome=tabAtual==='peixes'?item.especie:item.raca;
-            var local=tabAtual==='peixes'?item.caixa:item.local;
-            var tipo=tabAtual==='peixes'?'p':tabAtual==='codornas'?'c':'g';
-            h += '<div class="card bp" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:900;color:#2C1810">'+emoji+' '+nome+'</div><div style="font-size:12px;color:#8B7355">'+local+'</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;'+stCor+'">'+item.status+'</span></div>';
-            h += '<div style="display:flex;gap:16px;font-size:13px;margin-bottom:6px"><span style="fon
+    var h='<div style="font-size:13px;color:#8B7355;font-weight:600;margin-bottom:14px">'+arr.length+' lotes · '+total+' '+(tabAtual==='peixes'?'peixes':'aves')+'</div>';
+    if(arr.length===0){h+='<div style="text-align:center;padding:40px 0"><i class="fa-solid fa-inbox" style="font-size:40px;color:#C4AD8C;margin-bottom:12px;display:block"></i><div style="font-weight:900;color:#8B7355;margin-bottom:4px">Nenhum '+label.toLowerCase()+'</div><div style="font-size:13px;color:#8B7355">Use o botao + para adicionar</div></div>'}
+    else{for(var i=0;i<arr.length;i++){var item=arr[i];var dias=Math.floor((new Date()-new Date(item.data))/86400000);var stCor=item.status==='postura'?'background:#f0f7ed;color:#3A7D2C':item.status==='engorda'?'background:#eff6ff;color:#2563eb':'background:#fef3cd;color:#92400e';var nome=tabAtual==='peixes'?item.especie:item.raca;var local=tabAtual==='peixes'?item.caixa:item.local;var tipo=tabAtual==='peixes'?'p':tabAtual==='codornas'?'c':'g';h+='<div class="card bp" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><div style="font-weight:900;color:#2C1810">'+emoji+' '+nome+'</div><div style="font-size:12px;color:#8B7355">'+local+'</div></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;'+stCor+'">'+item.status+'</span></div><div style="display:flex;gap:16px;font-size:13px;margin-bottom:6px"><span style="font-weight:700;color:#2C1810">'+item.qtd+' '+(tabAtual==='peixes'?'peixes':'aves')+'</span><span style="color:#8B7355">'+dias+' dias</span></div>';if(item.obs)h+='<div style="font-size:12px;color:#8B7355;font-style:italic;margin-bottom:8px">'+item.obs+'</div>';h+='<div style="display:flex;gap:8px;padding-top:8px;border-top:1px solid #f0ebe0"><button onclick="editarLote(\''+tipo+'\','+item.id+')" class="bp" style="font-size:12px;font-weight:700;color:#3A7D2C;background:none;border:none;cursor:pointer;padding:4px 0"><i class="fa-solid fa-pen" style="margin-right:4px"></i>Editar</button><button onclick="excluirLote(\''+tipo+'\','+item.id+')" class="bp" style="font-size:12px;font-weight:700;color:#ef4444;background:none;border:none;cursor:pointer;padding:4px 0;margin-left:auto"><i class="fa-solid fa-trash" style="margin-right:4px"></i>Remover</button></div></div>'}}
+    document.getElementById('reb-conteudo').innerHTML=h;
+}
+
+function excluirLote(tipo,id){if(!confirm('Remover este lote?'))return;if(tipo==='g')D.galinhas=D.galinhas.filter(function(x){return x.id!==id});if(tipo==='c')D.codornas=D.codornas.filter(function(x){return x.id!==id});if(tipo==='p')D.peixes=D.peixes.filter(function(x){return x.id!==id});salvar();toast('Lote removido!','aviso');desenhar(
