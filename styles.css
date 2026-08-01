@@ -2,7 +2,6 @@
 :root {
   --primary: #2E7D32;
   --primary-dark: #1B5E20;
-  --secondary: #8D6E63;
   --danger: #D32F2F;
   --success: #388E3C;
   --bg: #F5F7FA;
@@ -11,6 +10,8 @@
   --text-light: #757575;
   --border-radius: 12px;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --header-height: 60px;
+  --nav-height: 70px;
 }
 
 * {
@@ -21,22 +22,23 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* SOLUÇÃO DO PROBLEMA: Layout Flexível Absoluto */
+html, body {
+  height: 100%;
+  overflow: hidden; /* Impede scroll no body inteiro */
+}
+
 body {
   background-color: var(--bg);
   color: var(--text-dark);
-  padding-top: 60px;
-  padding-bottom: 80px;
-  height: 100vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Header */
+/* Header Fixo */
 .app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
+  flex-shrink: 0; /* Impede que o header encolha */
+  height: var(--header-height);
   background-color: var(--primary);
   color: white;
   display: flex;
@@ -53,18 +55,15 @@ body {
 
 /* Navegação Inferior */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
+  flex-shrink: 0; /* Impede que o nav encolha */
+  height: var(--nav-height);
   background-color: var(--card-bg);
   display: flex;
   justify-content: space-around;
   align-items: center;
   border-top: 1px solid #e0e0e0;
   z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom); /* Para iPhones com notch */
+  padding-bottom: env(safe-area-inset-bottom); /* Para iPhones */
 }
 
 .nav-item {
@@ -76,6 +75,7 @@ body {
   color: var(--text-light);
   cursor: pointer;
   transition: color 0.2s;
+  padding: 10px;
 }
 
 .nav-item.active {
@@ -86,16 +86,21 @@ body {
 .nav-icon { font-size: 1.5rem; }
 .nav-label { font-size: 0.75rem; margin-top: 4px; }
 
+/* Área de Conteúdo (Rolagem Segura) */
+.app-content {
+  flex-grow: 1; /* Ocupa todo o espaço sobrando */
+  overflow-y: auto; /* Adiciona scroll apenas aqui dentro */
+  -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+}
+
 /* Telas */
 .screen {
   display: none;
   padding: 20px;
-  animation: fadeIn 0.3s ease;
+  padding-bottom: 30px; /* Espaço extra antes de chegar no fundo */
 }
 
 .screen.active { display: block; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Dashboard */
 .cards-resumo {
@@ -150,7 +155,7 @@ body {
 
 input[type="text"], input[type="number"], input[type="password"] {
   width: 100%;
-  padding: 12px;
+  padding: 14px; /* Maior área de toque */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
@@ -165,7 +170,7 @@ input:focus {
 
 /* Botões */
 .btn {
-  padding: 12px;
+  padding: 14px; /* Maior área de toque */
   border: none;
   border-radius: 8px;
   color: white;
@@ -175,7 +180,7 @@ input:focus {
   transition: filter 0.2s;
 }
 
-.btn:active { filter: brightness(0.9); }
+.btn:active { filter: brightness(0.8); }
 .btn-danger { background-color: var(--danger); }
 .btn-success { background-color: var(--success); }
 .w-100 { width: 100%; }
@@ -193,10 +198,8 @@ input:focus {
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   text-align: center;
-  transition: transform 0.2s;
 }
 
-.guia-card:active { transform: scale(0.98); }
 .guia-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
 .guia-card h3 { font-size: 0.9rem; margin-bottom: 6px; color: var(--primary-dark); }
 .guia-card p { font-size: 0.75rem; color: var(--text-light); line-height: 1.4; }
@@ -205,7 +208,7 @@ input:focus {
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -235,12 +238,12 @@ input:focus {
   font-weight: 600;
 }
 
-.chat-hidden { display: none; }
+.chat-hidden { display: none !important; }
 
 #chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 140px); /* Header + Nav */
+  height: 100%; /* Ocupa 100% da tela ativa */
   background: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
@@ -284,7 +287,8 @@ input:focus {
   padding: 12px;
   border-top: 1px solid #eee;
   gap: 8px;
+  background: #fff;
 }
 
 .chat-input-area input { flex: 1; }
-.chat-input-area button { padding: 12px 20px; }
+.chat-input-area button { padding: 14px 20px; }
