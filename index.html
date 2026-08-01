@@ -17,7 +17,7 @@
     <h1>🌱 AgroFamília</h1>
   </header>
 
-  <!-- Conteúdo Principal -->
+  <!-- Conteúdo Principal (Área de Rolagem Segura) -->
   <main class="app-content">
     
     <!-- TELA 1: DASHBOARD FINANCEIRO -->
@@ -38,7 +38,6 @@
       </div>
 
       <div class="forms-container">
-        <!-- Formulário de Compras -->
         <div class="form-box">
           <h3>Registrar Compra</h3>
           <form id="form-compra">
@@ -48,7 +47,6 @@
           </form>
         </div>
 
-        <!-- Formulário de Vendas -->
         <div class="form-box">
           <h3>Registrar Venda</h3>
           <form id="form-venda">
@@ -63,36 +61,12 @@
     <!-- TELA 2: GUIA TÉCNICO -->
     <section id="screen-guia" class="screen">
       <div class="guia-grid">
-        <div class="guia-card" data-topic="galinhas">
-          <span class="guia-icon">🐔</span>
-          <h3>Galinhas Poedeiras</h3>
-          <p>Ração de qualidade, água fresca, luz artificial e controle de parasitas.</p>
-        </div>
-        <div class="guia-card" data-topic="codornas">
-          <span class="guia-icon">🐦</span>
-          <h3>Codornas</h3>
-          <p>Manejo térmico rigoroso, espaço adequado e proteção contra correntes de ar.</p>
-        </div>
-        <div class="guia-card" data-topic="peixes">
-          <span class="guia-icon">🐟</span>
-          <h3>Piscicultura</h3>
-          <p>Monitoramento de oxigênio, pH da água e adubação natural dos viveiros.</p>
-        </div>
-        <div class="guia-card" data-topic="horta">
-          <span class="guia-icon">🥬</span>
-          <h3>Horta Orgânica</h3>
-          <p>Rotação de culturas, controle natural de pragas e irrigação por gotejamento.</p>
-        </div>
-        <div class="guia-card" data-topic="adubos">
-          <span class="guia-icon">🪱</span>
-          <h3>Adubos Orgânicos</h3>
-          <p>Compostagem, bokashi, uso de esterco curtido e biofertilizantes.</p>
-        </div>
-        <div class="guia-card" data-topic="racao">
-          <span class="guia-icon">🌾</span>
-          <h3>Ração de Postura</h3>
-          <p>Balanceamento de proteína, cálcio (para a casca do ovo) e energia.</p>
-        </div>
+        <div class="guia-card"><span class="guia-icon">🐔</span><h3>Galinhas Poedeiras</h3><p>Ração de qualidade, água fresca, luz artificial e controle de parasitas.</p></div>
+        <div class="guia-card"><span class="guia-icon">🐦</span><h3>Codornas</h3><p>Manejo térmico rigoroso, espaço adequado e proteção contra ventos.</p></div>
+        <div class="guia-card"><span class="guia-icon">🐟</span><h3>Piscicultura</h3><p>Monitoramento de oxigênio, pH da água e adubação natural.</p></div>
+        <div class="guia-card"><span class="guia-icon">🥬</span><h3>Horta Orgânica</h3><p>Rotação de culturas, controle natural de pragas e irrigação.</p></div>
+        <div class="guia-card"><span class="guia-icon">🪱</span><h3>Adubos Orgânicos</h3><p>Compostagem, bokashi, uso de esterco curtido e biofertilizantes.</p></div>
+        <div class="guia-card"><span class="guia-icon">🌾</span><h3>Ração de Postura</h3><p>Balanceamento de proteína, cálcio para a casca do ovo e energia.</p></div>
       </div>
     </section>
 
@@ -117,7 +91,7 @@
       <div id="chat-container" class="chat-hidden">
         <div id="chat-messages"></div>
         <form id="form-chat" class="chat-input-area">
-          <input type="text" id="input-chat-msg" placeholder="Pergunte sobre manejo, ração, adubo..." required autocomplete="off">
+          <input type="text" id="input-chat-msg" placeholder="Pergunte sobre manejo..." required autocomplete="off">
           <button type="submit" class="btn btn-success">Enviar</button>
         </form>
       </div>
