@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0e17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="AgroPro">
+  <meta name="description" content="Gestão financeira agrícola inteligente com IA">
+  <title>AgroPro</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+  <script>
+    /* ===== GERA ÍCONE PRÓPRIO VIA CANVAS (sem Google/CDN) ===== */
+    function gerarIconePng(tamanho) {
+      const c = document.createElement('canvas');
+      c.width = c.height = tamanho;
+      const ctx = c.getContext('2d');
+      /* Fundo gradiente escuro premium */
+      const g = ctx.createLinearGradient(0, 0, tamanho, tamanho);
+      g.addColorStop(0, '#0a0e17');
+      g.addColorStop(1, '#111827');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, tamanho, tamanho, tamanho * 0.22);
+      ctx.fill();
+      /* Brilho sutil no topo */
+      const glow = ctx.createLinearGradient(0, 0, 0, tamanho * 0.5);
+      glow.addColorStop(0, 'rgba(16,185,129,0.15)');
+      glow.addColorStop(1, 'rgba(16,185,129,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, tamanho, tamanho, tamanho * 0.22);
+      ctx.fill();
+      /* Desenho estilizado de espiga de arroz */
+      const cx = tamanho / 2, cy = tamanho / 2;
+      const s = tamanho / 512;
+      /* Haste */
+      ctx.strokeStyle = '#d4a017';
+      ctx.lineWidth = 6 * s;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + 140 * s);
+      ctx.quadraticCurveTo(cx - 10 * s, cy, cx + 5 * s, cy - 160 * s);
+      ctx.stroke();
+      /* Folha esquerda */
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.moveTo(cx - 8 * s, cy + 20 * s);
+      ctx.quadraticCurveTo(cx - 80 * s, cy - 30 * s, cx - 60 * s, cy - 80 * s);
+      ctx.quadraticCurveTo(cx - 30 * s, cy - 40 * s, cx - 8 * s, cy + 20 * s);
+      ctx.fill();
+      /* Folha direita */
+      ctx.fillStyle = '#059669';
+      ctx.beginPath();
+      ctx.moveTo(cx + 10 * s, cy - 20 * s);
+      ctx.quadraticCurveTo(cx + 70 * s, cy - 70 * s, cx + 55 * s, cy - 120 * s);
+      ctx.quadraticCurveTo(cx + 30 * s, cy - 80 * s, cx + 10 * s, cy - 20 * s);
+      ctx.fill();
+      /* Grãos da espiga */
+      const grãos = [
+        [0, -130], [-18, -105], [18, -105], [-22, -78], [22, -78],
+        [-18, -52], [18, -52], [-12, -28], [12, -28], [0, -8]
+      ];
+      ctx.fillStyle = '#d4a017';
+      grãos.forEach(([ox, oy]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx + ox * s, cy + oy * s, 14 * s, 20 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      /* Brilho nos grãos */
+      ctx.fillStyle = 'rgba(255,223,100,0.4)';
+      grãos.forEach(([ox, oy]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx + ox * s - 3 * s, cy + oy * s - 6 * s, 5 * s, 8 * s, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      /* Texto "AP" sutil */
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.font = `bold ${36 * s}px "DM Sans", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('AP', cx, cy + 195 * s);
+      return c.toDataURL('image/png');
+    }
+
+    /* Monta manifest com ícones gerados */
+    const icon192 = gerarIconePng(192);
+    const icon512 = gerarIconePng(512);
+    const manifest = {
+      name: "AgroPro", short_name: "AgroPro", start_url: "./", display: "standalone",
+      background_color: "#0a0e17", theme_color: "#0a0e17", orientation: "portrait",
+      icons: [
+        { src: icon192, sizes: "192x192", type: "image/png" },
+        { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+      ]
+    };
+    const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const mLink = document.createElement('link');
+    mLink.rel = 'manifest';
+    mLink.href = URL.createObjectURL(mBlob);
+    document.head.appendChild(mLink);
+
+    /* Ícones normais da aba */
+    const linkIcon = document.createElement('link');
+    linkIcon.rel = 'icon'; linkIcon.type = 'image/png'; linkIcon.href = icon192;
+    document.head.appendChild(linkIcon);
+    const linkApple = document.createElement('link');
+    linkApple.rel = 'apple-touch-icon'; linkApple.href = icon192;
+    document.head.appendChild(linkApple);
+  </script>
+
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --bg-card: #111827;
+      --bg-elevated: #1a2234;
+      --bg-input: #0d1220;
+      --border: rgba(255,255,255,0.06);
+      --border-focus: #10b981;
+      --fg: #f1f5f9;
+      --fg-muted: #64748b;
+      --fg-dim: #475569;
+      --accent: #10b981;
+      --accent-glow: rgba(16,185,129,0.25);
+      --gold: #d4a017;
+      --gold-soft: rgba(212,160,23,0.15);
+      --danger: #ef4444;
+      --danger-soft: rgba(239,68,68,0.12);
+      --success-soft: rgba(16,185,129,0.12);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-lg: 24px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --font: 'DM Sans', system-ui, sans-serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      position: fixed; top: 0; left: 0;
+      display: grid; grid-template-rows: auto 1fr auto;
+      background: var(--bg); color: var(--fg);
+      font-family: var(--font);
+    }
+
+    /* ===== FUNDO ATMOSFÉRICO ===== */
+    body::before {
+      content: ''; position: fixed; top: -40%; left: -20%;
+      width: 80vw; height: 80vw;
+      background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+      animation: floatOrb 20s ease-in-out infinite alternate;
+    }
+    body::after {
+      content: ''; position: fixed; bottom: -30%; right: -20%;
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(212,160,23,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+      animation: floatOrb 15s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, -20px) scale(1.1); }
+    }
+
+    /* ===== CABEÇALHOS ===== */
+    .header {
+      grid-row: 1; padding: 16px 20px;
+      display: none; flex-direction: column; justify-content: center; z-index: 10;
+      padding-top: max(16px, env(safe-area-inset-top));
+      position: relative;
+    }
+    .header.active { display: flex; }
+    .h-fin {
+      background: linear-gradient(180deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.7) 100%);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .h-fin .top { display: flex; justify-content: space-between; align-items: center; }
+    .h-fin .logo { display: flex; align-items: center; gap: 10px; }
+    .h-fin .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #059669);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; box-shadow: 0 4px 12px var(--accent-glow);
+    }
+    .h-fin h1 {
+      font-family: var(--font-display); font-size: 1.3rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--fg) 40%, var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .h-fin .bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px; }
+    .saldo-label { font-size: 0.75rem; color: var(--fg-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .saldo-valor { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; margin-top: 2px; }
+    .date { font-size: 0.8rem; color: var(--fg-dim); font-weight: 600; }
+    .btn-pdf {
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      color: var(--fg-muted); padding: 8px 16px; border-radius: 50px;
+      font-size: 0.8rem; cursor: pointer; font-weight: 600;
+      font-family: var(--font); transition: all 0.2s;
+    }
+    .btn-pdf:hover { background: var(--bg-card); color: var(--fg); border-color: rgba(255,255,255,0.12); }
+    .btn-pdf:active { transform: scale(0.95); }
+
+    .h-gen, .h-chat {
+      background: linear-gradient(180deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.7) 100%);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      height: 60px; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; letter-spacing: -0.3px;
+    }
+
+    /* ===== CONTEÚDO ===== */
+    .app-content {
+      grid-row: 2; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+      position: relative; z-index: 1;
+    }
+    .app-content::-webkit-scrollbar { width: 0; }
+    .screen { display: none; padding: 20px; padding-bottom: 30px; }
+    .screen.active { display: block; animation: screenFade 0.35s ease; }
+    @keyframes screenFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== CARDS RESUMO ===== */
+    .resume-grid { display: flex; gap: 12px; margin-bottom: 28px; margin-top: -4px; }
+    .resume-card {
+      background: var(--bg-card); padding: 18px 16px; border-radius: var(--radius);
+      border: 1px solid var(--border); flex: 1 1 0%; min-width: 0;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .resume-card:active { transform: scale(0.97); }
+    .resume-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .resume-card.entrada::before { background: linear-gradient(90deg, var(--accent), #34d399); }
+    .resume-card.saida::before { background: linear-gradient(90deg, var(--danger), #f87171); }
+    .rc-label {
+      font-size: 0.7rem; color: var(--fg-muted); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rc-value {
+      font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rc-value.entrada { color: var(--accent); }
+    .rc-value.saida { color: var(--danger); }
+
+    .section-title {
+      font-size: 1.05rem; font-weight: 700; margin-bottom: 16px;
+      color: var(--fg); letter-spacing: -0.3px;
+    }
+
+    /* ===== FAB ===== */
+    .btn-add {
+      width: 56px; height: 56px; border-radius: 50%; border: none; color: white;
+      background: linear-gradient(135deg, var(--accent), #059669);
+      font-size: 1.8rem; font-weight: 300;
+      box-shadow: 0 8px 24px var(--accent-glow), 0 0 0 0 var(--accent-glow);
+      position: fixed; bottom: 84px; right: 20px; z-index: 20; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s; line-height: 1;
+    }
+    .btn-add:hover { transform: scale(1.08); box-shadow: 0 12px 32px var(--accent-glow); }
+    .btn-add:active { transform: scale(0.92); }
+
+    /* ===== LISTA EXTRATO ===== */
+    .extrato-list { display: flex; flex-direction: column; gap: 8px; }
+    .extrato-item {
+      background: var(--bg-card); padding: 14px 16px; border-radius: var(--radius);
+      border: 1px solid var(--border); display: flex; align-items: center;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+    .extrato-item:active { transform: scale(0.98); border-color: rgba(255,255,255,0.1); }
+    .ei-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .ei-icon {
+      width: 42px; height: 42px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+    }
+    .ei-info { flex: 1; min-width: 0; }
+    .ei-info h4 {
+      font-size: 0.92rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--fg);
+    }
+    .ei-info p {
+      font-size: 0.8rem; color: var(--fg-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
+    }
+    .ei-right { text-align: right; flex-shrink: 0; margin-left: 10px; }
+    .ei-value { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.3px; }
+    .ei-value.in { color: var(--accent); }
+    .ei-value.out { color: var(--danger); }
+    .ei-date { font-size: 0.7rem; color: var(--fg-dim); margin-top: 2px; }
+    .ei-actions { display: flex; gap: 0; margin-left: 6px; flex-shrink: 0; }
+    .btn-icon {
+      background: none; border: none; font-size: 0.95rem; cursor: pointer;
+      padding: 6px; border-radius: 8px; transition: background 0.15s;
+    }
+    .btn-icon:hover { background: var(--bg-elevated); }
+    .btn-icon:active { transform: scale(0.85); }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 50; display: none; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet {
+      background: var(--bg-card); width: 100%; max-height: 90vh;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 12px 24px 32px; transform: translateY(100%);
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      overflow-y: auto; border-top: 1px solid var(--border);
+    }
+    @keyframes slideUp { to { transform: translateY(0); } }
+    .modal-handle {
+      width: 40px; height: 4px; background: rgba(255,255,255,0.15);
+      border-radius: 2px; margin: 0 auto 20px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 0.72rem; font-weight: 700;
+      margin-bottom: 8px; color: var(--fg-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .form-control {
+      width: 100%; padding: 14px 16px; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-size: 16px;
+      background: var(--bg-input); outline: none; color: var(--fg);
+      font-family: var(--font); transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-control:focus { border-color: var(--border-focus); background: var(--bg-elevated); }
+    .form-control option { background: var(--bg-card); color: var(--fg); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .type-btn {
+      padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--bg-input); text-align: center; font-weight: 700;
+      cursor: pointer; font-size: 0.95rem; font-family: var(--font);
+      transition: all 0.2s;
+    }
+    .type-btn:active { transform: scale(0.96); }
+    .type-btn.selected-in { border-color: var(--accent); background: var(--success-soft); color: var(--accent); }
+    .type-btn.selected-out { border-color: var(--danger); background: var(--danger-soft); color: var(--danger); }
+    .total-preview-box {
+      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-input));
+      padding: 18px; border-radius: var(--radius-sm); text-align: center;
+      color: var(--fg); margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .total-preview-box label { font-size: 0.7rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 1.5px; }
+    .total-preview-box span { font-size: 1.6rem; font-weight: 900; display: block; margin-top: 6px; letter-spacing: -1px; }
+    .btn-submit-modal {
+      width: 100%; padding: 16px; border: none; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent), #059669);
+      color: white; font-size: 1rem; font-weight: 700; cursor: pointer;
+      font-family: var(--font); transition: all 0.2s;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .btn-submit-modal:active { transform: scale(0.97); }
+
+    /* ===== GUIA ===== */
+    .guia-grid { display: flex; flex-direction: column; gap: 10px; }
+    .guia-card {
+      background: var(--bg-card); border-radius: var(--radius);
+      border: 1px solid var(--border); display: flex; overflow: hidden;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .guia-card:active { transform: scale(0.98); border-color: rgba(255,255,255,0.12); }
+    .guia-color { width: 4px; flex-shrink: 0; }
+    .guia-content { padding: 16px 18px; flex: 1; display: flex; justify-content: space-between; align-items: center; }
+    .gc-text h3 { font-size: 0.95rem; color: var(--fg); margin-bottom: 4px; font-weight: 700; }
+    .gc-text p { font-size: 0.8rem; color: var(--fg-muted); }
+    .gc-arrow { color: var(--fg-dim); font-size: 1.2rem; transition: transform 0.2s; }
+    .guia-card:hover .gc-arrow { transform: translateX(3px); }
+
+    /* ===== COMPRAS ===== */
+    .compras-list { display: flex; flex-direction: column; gap: 14px; }
+    .compra-item {
+      background: var(--bg-card); border-radius: var(--radius);
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .compra-header {
+      background: var(--bg-elevated); padding: 12px 18px;
+      font-size: 0.75rem; font-weight: 700; color: var(--fg-muted);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compra-linha {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.9rem;
+    }
+    .compra-linha:last-child { border-bottom: none; }
+    .compra-linha small { color: var(--fg-dim); }
+
+    /* ===== CHAT ===== */
+    .chat-hidden { display: none !important; }
+    #chat-container {
+      display: flex; flex-direction: column; height: 100%;
+      background: var(--bg); border-radius: 0; overflow: hidden;
+    }
+    #chat-messages {
+      flex: 1; padding: 16px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    #chat-messages::-webkit-scrollbar { width: 0; }
+    .msg {
+      max-width: 88%; padding: 12px 16px; font-size: 0.95rem;
+      line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;
+    }
+    .msg-user {
+      background: linear-gradient(135deg, var(--accent), #059669);
+      color: white; align-self: flex-end;
+      border-radius: 18px 18px 4px 18px;
+    }
+    .msg-bot {
+      background: var(--bg-card); color: var(--fg);
+      align-self: flex-start; border-radius: 18px 18px 18px 4px;
+      border: 1px solid var(--border);
+      animation: msgPop 0.3s ease;
+    }
+    @keyframes msgPop { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .chat-input-area {
+      display: flex; padding: 12px 16px; background: var(--bg-card);
+      border-top: 1px solid var(--border); gap: 10px; align-items: center;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .chat-input-area input {
+      flex: 1; border: 1.5px solid var(--border); background: var(--bg-input);
+      padding: 12px 18px; border-radius: 50px; font-size: 16px;
+      outline: none; color: var(--fg); font-family: var(--font);
+      transition: border-color 0.2s;
+    }
+    .chat-input-area input:focus { border-color: var(--accent); }
+    .chat-input-area input::placeholder { color: var(--fg-dim); }
+    .chat-send-btn {
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      color: white; background: linear-gradient(135deg, var(--accent), #059669);
+      font-size: 1.1rem; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; transition: all 0.2s;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+    .chat-send-btn:active { transform: scale(0.9); }
+    .typing-indicator { display: flex; align-items: center; padding: 8px 0; }
+    .typing-indicator span {
+      height: 7px; width: 7px; background: var(--fg-dim);
+      border-radius: 50%; display: block; margin: 0 2px;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    .msg-bot-typing {
+      background: var(--bg-card); border-radius: 18px 18px 18px 4px;
+      padding: 10px 18px; align-self: flex-start;
+      border: 1px solid var(--border);
+    }
+
+    /* ===== MODAL API KEY ===== */
+    .api-modal { align-items: center !important; }
+    .api-box {
+      background: var(--bg-card); padding: 32px 28px; border-radius: var(--radius-lg);
+      width: 90%; max-width: 400px; text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+      animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .api-box .api-icon {
+      width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--accent), #059669);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    .api-box h3 { font-size: 1.3rem; margin-bottom: 8px; font-weight: 800; }
+    .api-box p { color: var(--fg-muted); margin-bottom: 24px; font-size: 0.9rem; line-height: 1.5; }
+    .api-box form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .api-link {
+      color: var(--accent); text-decoration: none; font-weight: 700;
+      font-size: 0.85rem; transition: opacity 0.2s;
+    }
+    .api-link:hover { opacity: 0.8; }
+
+    /* ===== ESTADO VAZIO ===== */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--fg-dim); font-size: 0.95rem;
+    }
+    .empty-state .empty-icon {
+      width: 72px; height: 72px; border-radius: 24px;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin: 0 auto 16px; opacity: 0.6;
+    }
+
+    /* ===== NAVEGAÇÃO INFERIOR ===== */
+    .bottom-nav {
+      grid-row: 3; width: 100%; height: 68px;
+      background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(10,14,23,0.98));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: grid; grid-template-columns: repeat(4, 1fr); z-index: 10;
+      border-top: 1px solid var(--border);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: none; border: none; color: var(--fg-dim); cursor: pointer;
+      position: relative; margin: 0; padding: 0; width: 100%; height: 100%;
+      outline: none; transition: color 0.2s;
+    }
+    .nav-item:active { transform: scale(0.9); }
+    .nav-item.active { color: var(--accent); }
+    .nav-item.active::after {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 3px;
+      background: linear-gradient(90deg, var(--accent), #34d399);
+      border-radius: 0 0 4px 4px;
+    }
+    .nav-icon { font-size: 20px; line-height: 20px; margin-bottom: 4px; display: block; }
+    .nav-label {
+      font-size: 9px; line-height: 9px; font-weight: 700;
+      display: block; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--bg-elevated); color: var(--fg); padding: 12px 24px;
+      border-radius: 50px; font-size: 0.85rem; font-weight: 600; z-index: 100;
+      border: 1px solid var(--border); opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none; white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== SCROLLBAR PERSONALIZADA (desktop) ===== */
+    @media (hover: hover) {
+      .app-content::-webkit-scrollbar { width: 4px; }
+      .app-content::-webkit-scrollbar-track { background: transparent; }
+      .app-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+      .modal-sheet::-webkit-scrollbar { width: 4px; }
+      .modal-sheet::-webkit-scrollbar-track { background: transparent; }
+      .modal-sheet::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    }
+
+    /* ===== ANIMAÇÃO DE ENTRADA PARA ITENS ===== */
+    .extrato-item, .compra-item, .guia-card {
+      animation: itemSlide 0.4s ease backwards;
+    }
+    .extrato-item:nth-child(1), .compra-item:nth-child(1) { animation-delay: 0.02s; }
+    .extrato-item:nth-child(2), .compra-item:nth-child(2) { animation-delay: 0.05s; }
+    .extrato-item:nth-child(3), .compra-item:nth-child(3) { animation-delay: 0.08s; }
+    .extrato-item:nth-child(4), .compra-item:nth-child(4) { animation-delay: 0.11s; }
+    .extrato-item:nth-child(5) { animation-delay: 0.14s; }
+    .extrato-item:nth-child(6) { animation-delay: 0.17s; }
+    .extrato-item:nth-child(n+7) { animation-delay: 0.2s; }
+    @keyframes itemSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== ACESSIBILIDADE ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- CABEÇALHOS -->
+  <header class="header h-fin active" id="header-fin">
+    <div class="top">
+      <div class="logo">
+        <div class="logo-icon">🌾</div>
+        <h1>AgroPro</h1>
+      </div>
+      <button class="btn-pdf" id="btn-gerar-pdf" aria-label="Gerar relatório PDF">Relatório PDF</button>
+    </div>
+    <div class="bottom">
+      <div>
+        <div class="saldo-label">Saldo Total</div>
+        <div class="saldo-valor" id="saldo-header">R$ 0,00</div>
+      </div>
+      <div class="date" id="header-date"></div>
+    </div>
+  </header>
+  <header class="header h-gen" id="header-gen">Guia Agrícola</header>
+  <header class="header h-chat" id="header-chat">Assistente IA</header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="app-content">
+    <!-- DASHBOARD -->
+    <section id="screen-dashboard" class="screen active">
+      <div class="resume-grid">
+        <div class="resume-card entrada">
+          <span class="rc-label">Entradas</span>
+          <span class="rc-value entrada" id="total-entrada">R$ 0,00</span>
+        </div>
+        <div class="resume-card saida">
+          <span class="rc-label">Saídas</span>
+          <span class="rc-value saida" id="total-saida">R$ 0,00</span>
+        </div>
+      </div>
+      <h2 class="section-title">Atividades Recentes</h2>
+      <div id="extrato-container" class="extrato-list">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <p>Nenhum lançamento ainda.<br>Toque em + para começar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPRAS & VENDAS -->
+    <section id="screen-compras" class="screen">
+      <h2 class="section-title">Movimentações</h2>
+      <div id="compras-container" class="compras-list">
+        <div class="empty-state">
+          <div class="empty-icon">🛒</div>
+          <p>Nenhuma movimentação registrada.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GUIA -->
+    <section id="screen-guia" class="screen">
+      <h2 class="section-title">Dúvidas Rápidas</h2>
+      <p style="color: var(--fg-muted); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">Toque em um tema para perguntar ao especialista IA.</p>
+      <div class="guia-grid">
+        <div class="guia-card" data-prompt="Quem é você?">
+          <div class="guia-color" style="background: var(--accent);"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Quem sou eu!</h3><p>Especislista IA</p></div><span class="gc-arrow">›</span></div>
+        </div>
+                   <div class="guia-card" data-prompt="Quantos gramas de cálcio preciso colocar em cada quilo de ração para que a casca do ovo da galinha não fique mole?">
+          <div class="guia-color" style="background: #d41717;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Casca do Ovo Mole</h3><p>Cálcio exato na raçao</p></div><span class="gc-arrow">›</span></div>
+        </div>
+        <div class="guia-card" data-prompt="Qual é a temperatura ideal e quantas horas de luz artificial devo deixar acesas à noite no galinheiro para manter a postura no inverno?">
+          <div class="guia-color" style="background: #8D6E63;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Luz no Inverno</h3><p>Temperatura e luz para postura</p></div><span class="gc-arrow">›</span></div>
+        </div>
+        <div class="guia-card" data-prompt="Como montar um viveiro escavado de baixo custo para criar tilápia e como faço para controlar o oxigênio da água naturalmente?">
+          <div class="guia-color" style="background: #2980B9;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Viveiro de Tilápia</h3><p>Estrutura barata e oxigênio</p></div><span class="gc-arrow">›</span></div>
+        </div>
+        <div class="guia-card" data-prompt="Como preparar um biofertilizante líquido usando esterco de galinha para pulverizar na horta e combater pragas sem usar veneno?">
+          <div class="guia-color" style="background: #27AE60;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Biofertilizante</h3><p>Receita com esterco para pragas</p></div><span class="gc-arrow">›</span></div>
+        </div>
+        <div class="guia-card" data-prompt="Qual a receita caseira completa para fazer ração de postura usando milho, farelo de soja e calcário, sem precisar comprar ração pronta?">
+          <div class="guia-color" style="background: #F39C12;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Ração Caseira</h3><p>Receita exata para economizar</p></div><span class="gc-arrow">›</span></div>
+        </div>
+        <div class="guia-card" data-prompt="Como fazer a vermifugação natural das codornas e galinhas usando alho ou ervas, e qual a quantidade de espaço mínimo por ave?">
+          <div class="guia-color" style="background: #6D4C41;"></div>
+          <div class="guia-content"><div class="gc-text"><h3>Vermifugação Natural</h3><p>Alho, ervas e espaço mínimo</p></div><span class="gc-arrow">›</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT IA -->
+    <section id="screen-chat" class="screen" style="padding:0;">
+      <div id="api-key-modal" class="modal-overlay api-modal active">
+        <div class="api-box">
+          <div class="api-icon">🤖</div>
+          <h3>Conectar à IA</h3>
+          <p>Insira sua chave da Groq para conversar com o especialista agrícola.</p>
+          <form id="form-api-key">
+            <input type="password" id="input-api-key" class="form-control" placeholder="gsk_xxxxx..." required autocomplete="off">
+            <button type="submit" class="btn-submit-modal">Conectar</button>
+          </form>
+          <a href="https://console.groq.com/keys" target="_blank" rel="noopener" class="api-link">Criar chave gratuita no Groq</a>
+        </div>
+      </div>
+      <div id="chat-container" class="chat-hidden">
+        <div id="chat-messages"></div>
+        <form id="form-chat" class="chat-input-area">
+          <input type="text" id="input-chat-msg" placeholder="Pergunte ao especialista..." required autocomplete="off">
+          <button type="submit" class="chat-send-btn" aria-label="Enviar mensagem">➤</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTÃO FLUTUANTE -->
+  <button class="btn-add" id="btn-fab" title="Novo Lançamento" aria-label="Adicionar lançamento">+</button>
+
+  <!-- MODAL DE LANÇAMENTO -->
+  <div class="modal-overlay" id="modal-lancamento">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3 style="margin-bottom: 20px; font-size: 1.2rem; font-weight: 800;" id="modal-lanc-title">Novo Lançamento</h3>
+      <div class="type-toggle">
+        <div class="type-btn selected-in" id="btn-type-in" role="button" tabindex="0" aria-label="Tipo venda">Venda</div>
+        <div class="type-btn" id="btn-type-out" role="button" tabindex="0" aria-label="Tipo compra">Compra</div>
+      </div>
+      <form id="form-lancamento">
+        <input type="hidden" id="lan-edit-id" value="">
+        <div class="form-group">
+          <label for="lan-cat">Categoria</label>
+          <select id="lan-cat" class="form-control" required>
+            <option value="">Selecione...</option>
+            <option value="Venda de Ovos">Venda de Ovos</option>
+            <option value="Venda de Aves">Venda de Aves</option>
+            <option value="Venda de Peixes">Venda de Peixes</option>
+            <option value="Venda de Hortaliças">Venda de Hortaliças</option>
+            <option value="Ração">Ração</option>
+            <option value="Medicamentos">Medicamentos</option>
+            <option value="Insumos">Insumos</option>
+            <option value="Manutenção">Manutenção</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="lan-desc">Descrição</label>
+          <input type="text" id="lan-desc" class="form-control" placeholder="Ex: 4 Bandejas de ovos">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="lan-qtd">Quantidade</label>
+            <input type="number" id="lan-qtd" class="form-control" min="1" value="1" required>
+          </div>
+          <div class="form-group">
+            <label for="lan-vr-unit">Valor Unit.</label>
+            <input type="number" id="lan-vr-unit" class="form-control" step="0.01" min="0.01" placeholder="0.00" required>
+          </div>
+        </div>
+        <div class="total-preview-box">
+          <label>Total</label>
+          <span id="lan-total-preview">R$ 0,00</span>
+        </div>
+        <div class="form-group">
+          <label for="lan-data">Data</label>
+          <input type="date" id="lan-data" class="form-control" required>
+        </div>
+        <button type="submit" class="btn-submit-modal" style="background: linear-gradient(135deg, var(--bg-elevated), var(--bg-input)); box-shadow: none; border: 1.5px solid var(--border);">Salvar Lançamento</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- NAVEGAÇÃO INFERIOR -->
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="nav-item active" data-screen="dashboard" aria-label="Gestão financeira">
+      <span class="nav-icon">📊</span><span class="nav-label">Gestão</span>
+    </button>
+    <button class="nav-item" data-screen="compras" aria-label="Movimentações">
+      <span class="nav-icon">📋</span><span class="nav-label">Mov.</span>
+    </button>
+    <button class="nav-item" data-screen="guia" aria-label="Guia agrícola">
+      <span class="nav-icon">🌱</span><span class="nav-label">Guia</span>
+    </button>
+    <button class="nav-item" data-screen="chat" aria-label="Assistente de inteligência artificial">
+      <span class="nav-icon">🤖</span><span class="nav-label">IA</span>
+    </button>
+  </nav>
+
+  <script>
+    /* ===== SISTEMA DE TOAST ===== */
+    function showToast(msg, duracao = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), duracao);
+    }
+
+    /* ===== ÁUDIO ===== */
+    let audioCtx;
+    const initAudio = () => {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    };
+    function playSound(type) {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        gain.gain.value = 0.06;
+        if (type === 'send') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'receive') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(780, audioCtx.currentTime + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.18);
+        } else if (type === 'delete') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.15);
+        }
+      } catch (e) { /* silencioso */ }
+    }
+
+    /* ===== SERVICE WORKER PARA PWA ===== */
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE = 'agropro-v2';
+        self.addEventListener('install', e => {
+          e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./'])));
+          self.skipWaiting();
+        });
+        self.addEventListener('activate', e => {
+          e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+          self.clients.claim();
+        });
+        self.addEventListener('fetch', e => {
+          e.respondWith(
+            caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+              if (res.status === 200 && res.type === 'basic') {
+                const clone = res.clone();
+                caches.open(CACHE).then(c => c.put(e.request, clone));
+              }
+              return res;
+            }).catch(() => caches.match('./')))
+          );
+        });
+      `;
+      navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(() => {});
+    }
+
+    /* ===== NAVEGAÇÃO ===== */
+    const navBtns = document.querySelectorAll('.nav-item');
+    const screens = document.querySelectorAll('.screen');
+    const fab = document.getElementById('btn-fab');
+    const chatInput = document.getElementById('input-chat-msg');
+    const formChatEl = document.getElementById('form-chat');
+    const headerFin = document.getElementById('header-fin');
+    const headerGen = document.getElementById('header-gen');
+    const headerChat = document.getElementById('header-chat');
+
+    function goToScreen(screenName) {
+      screens.forEach(s => s.classList.remove('active'));
+      navBtns.forEach(b => b.classList.remove('active'));
+      document.getElementById(`screen-${screenName}`).classList.add('active');
+      document.querySelector(`.nav-item[data-screen="${screenName}"]`).classList.add('active');
+      fab.style.display = screenName === 'dashboard' ? 'flex' : 'none';
+      headerFin.classList.remove('active');
+      headerGen.classList.remove('active');
+      headerChat.classList.remove('active');
+      if (screenName === 'dashboard') headerFin.classList.add('active');
+      else if (screenName === 'chat') headerChat.classList.add('active');
+      else headerGen.classList.add('active');
+      if (screenName === 'compras') renderCompras();
+    }
+
+    document.body.addEventListener('click', initAudio, { once: true });
+    navBtns.forEach(btn => btn.addEventListener('click', () => goToScreen(btn.dataset.screen)));
+
+    /* ===== DATA ===== */
+    const today = new Date();
+    document.getElementById('header-date').textContent = today.toLocaleDateString('pt-BR', {
+      weekday: 'short', day: 'numeric', month: 'short'
+    }).replace('.', '');
+    const todayISO = today.toISOString().split('T')[0];
+
+    /* ===== DADOS ===== */
+    let currentType = 'entrada';
+    const dataKey = 'agropro_lancamentos_v5';
+    let lancamentos = JSON.parse(localStorage.getItem(dataKey) || '[]');
+    const fmt = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    const getIconMap = (cat) => {
+      const c = cat.toLowerCase();
+      if (c.includes('ovo')) return '🥚';
+      if (c.includes('ave')) return '🐔';
+      if (c.includes('peixe')) return '🐟';
+      if (c.includes('hort')) return '🥬';
+      if (c.includes('ração') || c.includes('racao')) return '🌾';
+      if (c.includes('medic')) return '💉';
+      if (c.includes('insumo')) return '🧪';
+      if (c.includes('manut')) return '🔧';
+      return '💰';
+    };
+
+    /* ===== ATUALIZA INTERFACE ===== */
+    const updateUI = () => {
+      const entradas = lancamentos.filter(l => l.type === 'entrada').reduce((a, c) => a + c.valorTotal, 0);
+      const saidas = lancamentos.filter(l => l.type === 'saida').reduce((a, c) => a + c.valorTotal, 0);
+      const saldo = entradas - saidas;
+
+      document.getElementById('total-entrada').textContent = fmt(entradas);
+      document.getElementById('total-saida').textContent = fmt(saidas);
+
+      const saldoEl = document.getElementById('saldo-header');
+      saldoEl.textContent = fmt(saldo);
+      saldoEl.style.color = saldo >= 0 ? 'var(--accent)' : 'var(--danger)';
+
+      const container = document.getElementById('extrato-container');
+      if (lancamentos.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><p>Nenhum lançamento ainda.<br>Toque em + para começar.</p></div>`;
+        return;
+      }
+      const sorted = [...lancamentos].sort((a, b) => new Date(b.data) - new Date(a.data));
+      container.innerHTML = sorted.map(l => `
+        <div class="extrato-item">
+          <div class="ei-left">
+            <div class="ei-icon">${getIconMap(l.cat)}</div>
+            <div class="ei-info">
+              <h4>${l.cat} (x${l.qtd})</h4>
+              <p>${l.desc || '—'}</p>
+            </div>
+          </div>
+          <div class="ei-right">
+            <div class="ei-value ${l.type === 'entrada' ? 'in' : 'out'}">
+              ${l.type === 'entrada' ? '+' : '-'} ${fmt(l.valorTotal)}
+            </div>
+            <div class="ei-date">${new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR')}</div>
+          </div>
+          <div class="ei-actions">
+            <button class="btn-icon" onclick="editLanc('${l.id}')" aria-label="Editar">✏️</button>
+            <button class="btn-icon" onclick="deleteLanc('${l.id}')" aria-label="Excluir">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    /* ===== EXCLUIR ===== */
+    window.deleteLanc = (id) => {
+      if (confirm('Excluir este lançamento?')) {
+        playSound('delete');
+        lancamentos = lancamentos.filter(l => l.id !== id);
+        localStorage.setItem(dataKey, JSON.stringify(lancamentos));
+        updateUI();
+        showToast('Lançamento excluído');
+      }
+    };
+
+    /* ===== EDITAR ===== */
+    window.editLanc = (id) => {
+      const l = lancamentos.find(x => x.id === id);
+      if (!l) return;
+      document.getElementById('lan-edit-id').value = l.id;
+      document.getElementById('lan-cat').value = l.cat;
+      document.getElementById('lan-desc').value = l.desc;
+      document.getElementById('lan-qtd').value = l.qtd;
+      document.getElementById('lan-vr-unit').value = l.vrUnitario;
+      document.getElementById('lan-data').value = l.data;
+      document.getElementById('modal-lanc-title').textContent = 'Editar Lançamento';
+      if (l.type === 'entrada') document.getElementById('btn-type-in').click();
+      else document.getElementById('btn-type-out').click();
+      calcTotalPreview();
+      document.getElementById('modal-lancamento').classList.add('active');
+    };
+
+    /* ===== MODAL ===== */
+    const modal = document.getElementById('modal-lancamento');
+    const btnIn = document.getElementById('btn-type-in');
+    const btnOut = document.getElementById('btn-type-out');
+    const qtdInput = document.getElementById('lan-qtd');
+    const vrInput = document.getElementById('lan-vr-unit');
+
+    fab.addEventListener('click', () => {
+      document.getElementById('form-lancamento').reset();
+      document.getElementById('lan-edit-id').value = '';
+      document.getElementById('modal-lanc-title').textContent = 'Novo Lançamento';
+      document.getElementById('lan-data').value = todayISO;
+      btnIn.click();
+      calcTotalPreview();
+      modal.classList.add('active');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    btnIn.addEventListener('click', () => {
+      currentType = 'entrada';
+      btnIn.className = 'type-btn selected-in';
+      btnOut.className = 'type-btn';
+    });
+    btnOut.addEventListener('click', () => {
+      currentType = 'saida';
+      btnOut.className = 'type-btn selected-out';
+      btnIn.className = 'type-btn';
+    });
+
+    /* Suporte a teclado nos toggles */
+    btnIn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnIn.click(); } });
+    btnOut.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnOut.click(); } });
+
+    const calcTotalPreview = () => {
+      const qtd = parseFloat(qtdInput.value) || 0;
+      const vr = parseFloat(vrInput.value) || 0;
+      document.getElementById('lan-total-preview').textContent = fmt(qtd * vr);
+    };
+    qtdInput.addEventListener('input', calcTotalPreview);
+    vrInput.addEventListener('input', calcTotalPreview);
+
+    /* ===== SALVAR LANÇAMENTO ===== */
+    document.getElementById('form-lancamento').addEventListener('submit', (e) => {
+      e.preventDefault();
+      playSound('send');
+      const editId = document.getElementById('lan-edit-id').value;
+      const qtd = parseInt(qtdInput.value);
+      const vrUnit = parseFloat(vrInput.value);
+      const dadosLanc = {
+        id: editId || Date.now().toString(),
+        type: currentType,
+        cat: document.getElementById('lan-cat').value,
+        desc: document.getElementById('lan-desc').value,
+        qtd: qtd,
+        vrUnitario: vrUnit,
+        valorTotal: qtd * vrUnit,
+        data: document.getElementById('lan-data').value
+      };
+      if (editId) {
+        const idx = lancamentos.findIndex(l => l.id === editId);
+        if (idx !== -1) lancamentos[idx] = dadosLanc;
+        showToast('Lançamento atualizado');
+      } else {
+        lancamentos.push(dadosLanc);
+        showToast('Lançamento adicionado');
+      }
+      localStorage.setItem(dataKey, JSON.stringify(lancamentos));
+      modal.classList.remove('active');
+      updateUI();
+    });
+
+    /* ===== COMPRAS & VENDAS ===== */
+    const renderCompras = () => {
+      const container = document.getElementById('compras-container');
+      if (lancamentos.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><p>Nenhuma movimentação registrada.</p></div>`;
+        return;
+      }
+      const saidas = lancamentos.filter(l => l.type === 'saida').sort((a, b) => new Date(b.data) - new Date(a.data));
+      const entradas = lancamentos.filter(l => l.type === 'entrada').sort((a, b) => new Date(b.data) - new Date(a.data));
+      let html = '';
+
+      if (saidas.length > 0) {
+        const totalSaidas = saidas.reduce((a, c) => a + c.valorTotal, 0);
+        html += `<div class="compra-item"><div class="compra-header">Compras (${saidas.length}) — ${fmt(totalSaidas)}</div>`;
+        saidas.forEach(l => {
+          html += `<div class="compra-linha">
+            <div><strong>${l.cat}</strong> (x${l.qtd})<br><small>${l.desc || '—'}</small></div>
+            <div style="text-align:right; color:var(--danger); font-weight:700;">- ${fmt(l.valorTotal)}<br><small>${new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR')}</small></div>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      if (entradas.length > 0) {
+        const totalEntradas = entradas.reduce((a, c) => a + c.valorTotal, 0);
+        html += `<div class="compra-item" style="margin-top:14px;"><div class="compra-header">Vendas (${entradas.length}) — ${fmt(totalEntradas)}</div>`;
+        entradas.forEach(l => {
+          html += `<div class="compra-linha">
+            <div><strong>${l.cat}</strong> (x${l.qtd})<br><small>${l.desc || '—'}</small></div>
+            <div style="text-align:right; color:var(--accent); font-weight:700;">+ ${fmt(l.valorTotal)}<br><small>${new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR')}</small></div>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      container.innerHTML = html;
+    };
+
+    /* ===== GERAR PDF ===== */
+    document.getElementById('btn-gerar-pdf').addEventListener('click', () => {
+      if (lancamentos.length === 0) {
+        showToast('Nenhum dado para gerar o relatório');
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const entradas = lancamentos.filter(l => l.type === 'entrada').reduce((a, c) => a + c.valorTotal, 0);
+      const saidas = lancamentos.filter(l => l.type === 'saida').reduce((a, c) => a + c.valorTotal, 0);
+
+      /* Cabeçalho */
+      doc.setFillColor(10, 14, 23);
+      doc.rect(0, 0, 210, 45, 'F');
+      doc.setTextColor(241, 245, 249);
+      doc.setFontSize(20);
+      doc.text("AgroPro", 14, 22);
+      doc.setFontSize(10);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`Relatório gerado em: ${today.toLocaleDateString('pt-BR')} ${today.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`, 14, 32);
+
+      /* Resumo */
+      let y = 56;
+      doc.setFillColor(17, 24, 39);
+      doc.roundedRect(14, y - 6, 58, 20, 3, 3, 'F');
+      doc.roundedRect(76, y - 6, 58, 20, 3, 3, 'F');
+      doc.roundedRect(138, y - 6, 58, 20, 3, 3, 'F');
+
+      doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+      doc.text('ENTRADAS', 22, y); doc.text('SAÍDAS', 84, y); doc.text('SALDO', 146, y);
+      doc.setFontSize(12);
+      doc.setTextColor(16, 185, 129); doc.text(fmt(entradas), 22, y + 9);
+      doc.setTextColor(239, 68, 68); doc.text(fmt(saidas), 84, y + 9);
+      doc.setTextColor(entradas - saidas >= 0 ? 16 : 239, entradas - saidas >= 0 ? 185 : 68, entradas - saidas >= 0 ? 129 : 68);
+      doc.text(fmt(entradas - saidas), 146, y + 9);
+
+      y += 26;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(14, y, 196, y);
+      y += 8;
+
+      /* Tabela */
+      doc.setFontSize(8); doc.setTextColor(100, 116, 139); doc.setFont(undefined, 'bold');
+      doc.text('DATA', 14, y); doc.text('CATEGORIA', 50, y); doc.text('QTD', 115, y); doc.text('TOTAL', 140, y); doc.text('TIPO', 175, y);
+      y += 2; doc.line(14, y, 196, y); y += 6;
+      doc.setFont(undefined, 'normal'); doc.setFontSize(9);
+
+      const sorted = [...lancamentos].sort((a, b) => new Date(a.data) - new Date(b.data));
+      sorted.forEach(l => {
+        if (y > 275) { doc.addPage(); y = 20; }
+        const isEntry = l.type === 'entrada';
+        doc.setTextColor(isEntry ? 16 : 239, isEntry ? 185 : 68, isEntry ? 129 : 68);
+        doc.text(new Date(l.data + 'T00:00:00').toLocaleDateString('pt-BR'), 14, y);
+        doc.setTextColor(30, 30, 30);
+        doc.text(l.cat, 50, y);
+        doc.text(l.qtd.toString(), 120, y);
+        doc.setTextColor(isEntry ? 16 : 239, isEntry ? 185 : 68, isEntry ? 129 : 68);
+        doc.text(fmt(l.valorTotal), 140, y);
+        doc.text(isEntry ? 'Venda' : 'Compra', 175, y);
+        y += 7;
+      });
+
+      /* Rodapé */
+      doc.setFontSize(7); doc.setTextColor(160, 160, 160);
+      doc.text('AgroPro — Gestão Agrícola Inteligente', 14, 290);
+
+      doc.save(`AgroPro_${todayISO}.pdf`);
+      showToast('PDF gerado com sucesso');
+    });
+
+    /* ===== GUIA -> CHAT ===== */
+    document.querySelectorAll('.guia-card').forEach(card => {
+      card.addEventListener('click', () => {
+        goToScreen('chat');
+        setTimeout(() => {
+          chatInput.value = card.getAttribute('data-prompt');
+          formChatEl.dispatchEvent(new Event('submit', { cancelable: true }));
+        }, 250);
+      });
+    });
+
+    /* ===== INICIALIZAÇÃO ===== */
+    updateUI();
+
+    /* ===== CHAT IA ===== */
+    const apiModal = document.getElementById('api-key-modal');
+    const chatBox = document.getElementById('chat-container');
+    const chatMsgs = document.getElementById('chat-messages');
+    const SYS_PROMPT = "Você é um Especialista Técnico em Agricultura Familiar. Seu foco estrito é ajudar pequenos produtores com: galinhas poedeiras, codornas, peixes, horta orgânica, adubos orgânicos e ração de postura. Respostas objetivas, práticas e rurais. Sempre que possível, dê receitas exatas com medidas.";
+
+    const checkKey = () => {
+      if (localStorage.getItem('agro_groq_key')) {
+        apiModal.classList.remove('active');
+        chatBox.classList.remove('chat-hidden');
+      }
+    };
+
+    document.getElementById('form-api-key').addEventListener('submit', (e) => {
+      e.preventDefault();
+      playSound('send');
+      const inp = document.getElementById('input-api-key');
+      if (inp.value.trim()) {
+        localStorage.setItem('agro_groq_key', inp.value.trim());
+        inp.value = '••••••••••••••••';
+        inp.disabled = true;
+        checkKey();
+        showToast('Conectado com sucesso');
+      }
+    });
+
+    const addMsg = (t, tipo) => {
+      const d = document.createElement('div');
+      d.className = `msg msg-${tipo}`;
+      d.textContent = t;
+      chatMsgs.appendChild(d);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    };
+
+    const showTyping = () => {
+      const d = document.createElement('div');
+      d.className = 'msg-bot-typing';
+      d.id = 'typing-ind';
+      d.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+      chatMsgs.appendChild(d);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    };
+
+    const hideTyping = () => {
+      const el = document.getElementById('typing-ind');
+      if (el) el.remove();
+    };
+
+    formChatEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = chatInput.value.trim();
+      if (!msg || !localStorage.getItem('agro_groq_key')) return;
+      playSound('send');
+      addMsg(msg, 'user');
+      chatInput.value = '';
+      showTyping();
+
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('agro_groq_key')}`
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: SYS_PROMPT },
+              { role: "user", content: msg }
+            ],
+            temperature: 0.7,
+            max_tokens: 1024
+          })
+        });
+        hideTyping();
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        playSound('receive');
+        addMsg(data.choices[0].message.content, 'bot');
+      } catch (err) {
+        hideTyping();
+        addMsg('Erro de conexão com a IA. Verifique sua chave e tente novamente.', 'bot');
+        showToast('Falha na conexão com IA');
+      }
+    });
+
+    checkKey();
+  </script>
+</body>
+</html>
