@@ -1,169 +1,1238 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0e17">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>AgroPro</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-  <script>
-    function gerarIconePng(t){var c=document.createElement('canvas');c.width=c.height=t;var x=c.getContext('2d'),g=x.createLinearGradient(0,0,t,t);g.addColorStop(0,'#0a0e17');g.addColorStop(1,'#111827');x.fillStyle=g;x.beginPath();x.roundRect(0,0,t,t,t*.22);x.fill();var s=t/512,cx=t/2,cy=t/2;x.strokeStyle='#d4a017';x.lineWidth=6*s;x.lineCap='round';x.beginPath();x.moveTo(cx,cy+140*s);x.quadraticCurveTo(cx-10*s,cy,cx+5*s,cy-160*s);x.stroke();x.fillStyle='#10b981';x.beginPath();x.moveTo(cx-8*s,cy+20*s);x.quadraticCurveTo(cx-80*s,cy-30*s,cx-60*s,cy-80*s);x.quadraticCurveTo(cx-30*s,cy-40*s,cx-8*s,cy+20*s);x.fill();x.fillStyle='#059669';x.beginPath();x.moveTo(cx+10*s,cy-20*s);x.quadraticCurveTo(cx+70*s,cy-70*s,cx+55*s,cy-120*s);x.quadraticCurveTo(cx+30*s,cy-80*s,cx+10*s,cy-20*s);x.fill();var gr=[[0,-130],[-18,-105],[18,-105],[-22,-78],[22,-78],[-18,-52],[18,-52],[-12,-28],[12,-28],[0,-8]];x.fillStyle='#d4a017';gr.forEach(function(o){x.beginPath();x.ellipse(cx+o[0]*s,cy+o[1]*s,14*s,20*s,0,0,Math.PI*2);x.fill()});x.fillStyle='rgba(255,255,255,0.25)';x.font='bold '+36*s+'px sans-serif';x.textAlign='center';x.fillText('AP',cx,cy+195*s);return c.toDataURL('image/png')}
-    var i192=gerarIconePng(192),i512=gerarIconePng(512),mf={name:"AgroPro",short_name:"AgroPro",start_url:"./",display:"standalone",background_color:"#0a0e17",theme_color:"#0a0e17",orientation:"portrait",icons:[{src:i192,sizes:"192x192",type:"image/png"},{src:i512,sizes:"512x512",type:"image/png",purpose:"any maskable"}]};var mb=new Blob([JSON.stringify(mf)],{type:'application/json'}),ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);var li=document.createElement('link');li.rel='icon';li.type='image/png';li.href=i192;document.head.appendChild(li);
-  </script>
-  <style>
-    :root{--bg:#0a0e17;--bg-card:#111827;--bg-el:#1a2234;--bg-inp:#0d1220;--bdr:rgba(255,255,255,0.06);--bdr-f:#10b981;--fg:#f1f5f9;--fg-m:#64748b;--fg-d:#475569;--ac:#10b981;--ac2:#059669;--ac-g:rgba(16,185,129,0.25);--gold:#d4a017;--gold-s:rgba(212,160,23,0.12);--dng:#ef4444;--dng-s:rgba(239,68,68,0.12);--suc-s:rgba(16,185,129,0.12);--r:16px;--rs:10px;--rl:24px;--f:'DM Sans',system-ui,sans-serif;--fd:'Playfair Display',Georgia,serif}
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;display:grid;grid-template-rows:auto 1fr auto;background:var(--bg);color:var(--fg);font-family:var(--f)}
-    body::before{content:'';position:fixed;top:-40%;left:-20%;width:80vw;height:80vw;background:radial-gradient(circle,rgba(16,185,129,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;animation:fo 20s ease-in-out infinite alternate}
-    body::after{content:'';position:fixed;bottom:-30%;right:-20%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(212,160,23,0.03) 0%,transparent 70%);pointer-events:none;z-index:0;animation:fo 15s ease-in-out infinite alternate-reverse}
-    @keyframes fo{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,-20px) scale(1.1)}}
-    .header{grid-row:1;padding:14px 16px;display:none;flex-direction:column;justify-content:center;z-index:10;padding-top:max(14px,env(safe-area-inset-top));position:relative}
-    .header.active{display:flex}
-    .h-fin{background:linear-gradient(180deg,rgba(10,14,23,.97),rgba(10,14,23,.75));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr)}
-    .h-fin .top{display:flex;justify-content:space-between;align-items:center}
-    .h-fin .logo{display:flex;align-items:center;gap:8px}
-    .h-fin .logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:.95rem;box-shadow:0 4px 14px var(--ac-g)}
-    .h-fin h1{font-family:var(--fd);font-size:1.2rem;font-weight:900;background:linear-gradient(135deg,var(--fg) 40%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .h-fin .bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:10px}
-    .saldo-label{font-size:.65rem;color:var(--fg-m);font-weight:600;text-transform:uppercase;letter-spacing:1px}
-    .saldo-valor{font-size:1.6rem;font-weight:900;letter-spacing:-1.2px;margin-top:2px}
-    .date{font-size:.75rem;color:var(--fg-d);font-weight:600}
-    .btn-pdf{background:var(--bg-el);border:1px solid var(--bdr);color:var(--fg-m);padding:6px 12px;border-radius:50px;font-size:.72rem;cursor:pointer;font-weight:600;font-family:var(--f);transition:all .2s;white-space:nowrap}
-    .btn-pdf:active{transform:scale(.95)}
-    .h-gen{background:linear-gradient(180deg,rgba(10,14,23,.97),rgba(10,14,23,.75));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr);height:56px;align-items:center;justify-content:center;font-size:1.05rem;font-weight:700}
-    .app-content{grid-row:2;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1}
-    .app-content::-webkit-scrollbar{width:0}
-    .screen{display:none;padding:14px 14px 28px}
-    .screen.active{display:block;animation:sf .35s ease}
-    @keyframes sf{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .dash-saldo{background:linear-gradient(135deg,var(--bg-el),rgba(16,185,129,.06));border:1px solid var(--bdr);border-radius:var(--r);padding:14px 12px;margin-bottom:14px;position:relative;overflow:hidden}
-    .dash-saldo::after{content:'';position:absolute;top:-25px;right:-25px;width:80px;height:80px;background:radial-gradient(circle,rgba(16,185,129,.08),transparent 70%);pointer-events:none}
-    .ds-label{font-size:.62rem;color:var(--fg-m);font-weight:700;text-transform:uppercase;letter-spacing:1.2px}
-    .ds-valor{font-size:1.6rem;font-weight:900;letter-spacing:-1px;margin-top:2px}
-    .ds-meta{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
-    .ds-meta-item{display:flex;align-items:center;gap:4px;font-size:.7rem;font-weight:600;color:var(--fg-m)}
-    .ds-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-    .ds-dot.g{background:var(--ac)}.ds-dot.r{background:var(--dng)}
-    .resume-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-    .resume-card{background:var(--bg-card);padding:14px 12px;border-radius:12px;border:1px solid var(--bdr);position:relative;overflow:hidden;transition:transform .2s}
-    .resume-card:active{transform:scale(.97)}
-    .resume-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-    .resume-card.entrada::before{background:linear-gradient(90deg,var(--ac),#34d399)}
-    .resume-card.saida::before{background:linear-gradient(90deg,var(--dng),#f87171)}
-    .rc-label{font-size:.6rem;color:var(--fg-m);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .rc-value{font-size:1rem;font-weight:900;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .rc-value.entrada{color:var(--ac)}.rc-value.saida{color:var(--dng)}
-    .section-title{font-size:1rem;font-weight:700;margin-bottom:12px;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
-    .section-title::before{content:'';width:3px;height:16px;background:linear-gradient(180deg,var(--ac),var(--ac2));border-radius:2px}
-    .btn-add{width:52px;height:52px;border-radius:50%;border:none;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));font-size:1.7rem;font-weight:300;box-shadow:0 8px 24px var(--ac-g);position:fixed;bottom:80px;right:14px;z-index:20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;line-height:1}
-    .btn-add:active{transform:scale(.92)}
-    .extrato-list{display:flex;flex-direction:column;gap:6px}
-    .extrato-item{background:var(--bg-card);padding:10px 12px;border-radius:var(--r);border:1px solid var(--bdr);display:flex;align-items:center;transition:transform .15s,background .2s;gap:8px}
-    .extrato-item:active{transform:scale(.98);background:var(--bg-el)}
-    .ei-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-    .ei-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;border:1px solid var(--bdr)}
-    .ei-icon.ic-in{background:var(--suc-s)}.ei-icon.ic-out{background:var(--dng-s)}
-    .ei-info{flex:1;min-width:0}
-    .ei-info h4{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ei-info p{font-size:.7rem;color:var(--fg-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-    .ei-right{text-align:right;flex-shrink:0}
-    .ei-value{font-size:.85rem;font-weight:800;letter-spacing:-.2px}
-    .ei-value.in{color:var(--ac)}.ei-value.out{color:var(--dng)}
-    .ei-date{font-size:.6rem;color:var(--fg-d);margin-top:1px}
-    .ei-actions{display:flex;flex-shrink:0}
-    .btn-icon{background:none;border:none;font-size:.85rem;cursor:pointer;padding:4px;border-radius:8px;transition:background .15s}
-    .btn-icon:active{transform:scale(.85)}
-    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:50;display:none;align-items:flex-end;justify-content:center}
-    .modal-overlay.active{display:flex}
-    .modal-sheet{background:var(--bg-card);width:100%;max-height:90vh;border-radius:var(--rl) var(--rl) 0 0;padding:10px 18px 28px;transform:translateY(100%);animation:su .35s cubic-bezier(.16,1,.3,1) forwards;overflow-y:auto;border-top:1px solid var(--bdr)}
-    @keyframes su{to{transform:translateY(0)}}
-    .modal-handle{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 10px}
-    .modal-back{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--fg-m);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--f);padding:3px 0;margin-bottom:6px;transition:color .2s}
-    .modal-back:active{transform:scale(.95)}
-    .modal-back svg{width:16px;height:16px}
-    .modal-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .modal-title-row h3{font-size:1.1rem;font-weight:800}
-    .form-group{margin-bottom:14px}
-    .form-group label{display:block;font-size:.68rem;font-weight:700;margin-bottom:6px;color:var(--fg-m);text-transform:uppercase;letter-spacing:1px}
-    .form-control{width:100%;padding:12px 12px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:15px;background:var(--bg-inp);outline:none;color:var(--fg);font-family:var(--f);transition:border-color .2s;-webkit-appearance:none;appearance:none}
-    .form-control:focus{border-color:var(--bdr-f);background:var(--bg-el)}
-    .form-control option{background:var(--bg-card);color:var(--fg)}
-    .form-control optgroup{background:var(--bg-el);color:var(--fg-m);font-weight:700;font-style:normal}
-    .form-control optgroup option{background:var(--bg-card);color:var(--fg);font-weight:400}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-    .type-btn{padding:12px;border:1.5px solid var(--bdr);border-radius:var(--rs);background:var(--bg-inp);text-align:center;font-weight:700;cursor:pointer;font-size:.9rem;font-family:var(--f);transition:all .2s}
-    .type-btn:active{transform:scale(.96)}
-    .type-btn.sel-in{border-color:var(--ac);background:var(--suc-s);color:var(--ac)}
-    .type-btn.sel-out{border-color:var(--dng);background:var(--dng-s);color:var(--dng)}
-    .tp-box{background:linear-gradient(135deg,var(--bg-el),var(--bg-inp));padding:14px;border-radius:var(--rs);text-align:center;margin-bottom:14px;border:1px solid var(--bdr)}
-    .tp-box label{font-size:.65rem;opacity:.5;text-transform:uppercase;letter-spacing:1.2px}
-    .tp-box span{font-size:1.4rem;font-weight:900;display:block;margin-top:4px;letter-spacing:-.8px}
-    .btn-sbm{width:100%;padding:14px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--bg-el),var(--bg-inp));color:var(--fg);font-size:.95rem;font-weight:700;cursor:pointer;font-family:var(--f);transition:all .2s;border:1.5px solid var(--bdr)}
-    .btn-sbm:active{transform:scale(.97)}
-    .guia-grid{display:flex;flex-direction:column;gap:8px}
-    .guia-card{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--bdr);display:flex;overflow:hidden;cursor:pointer;transition:all .2s}
-    .guia-card:active{transform:scale(.98)}
-    .guia-color{width:4px;flex-shrink:0}
-    .guia-content{padding:14px 16px;flex:1;display:flex;justify-content:space-between;align-items:center}
-    .gc-text h3{font-size:.9rem;margin-bottom:3px;font-weight:700}
-    .gc-text p{font-size:.76rem;color:var(--fg-m)}
-    .gc-arrow{color:var(--fg-d);font-size:1.1rem}
-    .compras-list{display:flex;flex-direction:column;gap:12px}
-    .compra-item{background:var(--bg-card);border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr)}
-    .compra-header{background:var(--bg-el);padding:10px 14px;font-size:.7rem;font-weight:700;color:var(--fg-m);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bdr)}
-    .compra-linha{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;font-size:.84rem;gap:6px}
-    .compra-linha:last-child{border-bottom:none}
-    .compra-linha small{color:var(--fg-d)}
-    .cl-actions{display:flex;flex-shrink:0}
-    .lotes-grid{display:flex;flex-direction:column;gap:8px}
-    .lote-card{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--bdr);padding:14px 16px;transition:transform .15s;animation:isl .4s ease backwards}
-    .lote-card:active{transform:scale(.98)}
-    .lote-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-    .lote-top h3{font-size:.95rem;font-weight:800}
-    .lote-badge{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.4px}
-    .lote-badge.ativo{background:var(--suc-s);color:var(--ac)}
-    .lote-badge.finalizado{background:var(--dng-s);color:var(--dng)}
-    .lote-info{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-    .lote-info-item{font-size:.78rem;color:var(--fg-m);display:flex;align-items:center;gap:4px}
-    .lote-info-item strong{color:var(--fg);font-weight:700}
-    .lote-actions{display:flex;margin-top:10px;justify-content:flex-end}
-    .empty-state{text-align:center;padding:50px 16px;color:var(--fg-d);font-size:.9rem}
-    .empty-state .empty-icon{width:64px;height:64px;border-radius:20px;background:var(--bg-el);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;opacity:.6}
-    .chat-hidden{display:none!important}
-    #chat-container{display:flex;flex-direction:column;height:100%;background:var(--bg);overflow:hidden}
-    #chat-messages{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-    #chat-messages::-webkit-scrollbar{width:0}
-    .msg{max-width:88%;padding:10px 14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
-    .msg-user{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;align-self:flex-end;border-radius:16px 16px 4px 16px}
-    .msg-bot{background:var(--bg-card);align-self:flex-start;border-radius:16px 16px 16px 4px;border:1px solid var(--bdr);animation:mp .3s ease}
-    @keyframes mp{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-    .chat-input-area{display:flex;padding:10px 14px;background:var(--bg-card);border-top:1px solid var(--bdr);gap:8px;align-items:center;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-    .chat-input-area input{flex:1;border:1.5px solid var(--bdr);background:var(--bg-inp);padding:10px 16px;border-radius:50px;font-size:15px;outline:none;color:var(--fg);font-family:var(--f);transition:border-color .2s}
-    .chat-input-area input:focus{border-color:var(--ac)}
-    .chat-input-area input::placeholder{color:var(--fg-d)}
-    .chat-send-btn{width:42px;height:42px;border-radius:50%;border:none;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 4px 12px var(--ac-g)}
-    .chat-send-btn:active{transform:scale(.9)}
-    .typing-indicator span{height:6px;width:6px;background:var(--fg-d);border-radius:50%;display:block;margin:0 2px;animation:ty 1.4s infinite ease-in-out both}
-    .typing-indicator span:nth-child(1){animation-delay:-.32s}.typing-indicator span:nth-child(2){animation-delay:-.16s}
-    @keyframes ty{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
-    .msg-bot-typing{background:var(--bg-card);border-radius:16px 16px 16px 4px;padding:8px 16px;align-self:flex-start;border:1px solid var(--bdr)}
-    .api-modal{align-items:center!important}
-    .api-box{background:var(--bg-card);padding:28px 24px;border-radius:var(--rl);width:88%;max-width:380px;text-align:center;border:1px solid var(--bdr);box-shadow:0 24px 48px rgba(0,0,0,.5);animation:mpop .4s cubic-bezier(.16,1,.3,1);position:relative}
-    @keyframes mpop{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .api-box .api-icon{width:56px;height:56px;border-radius:18px;margin:0 auto 16px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 8px 24px var(--ac-g)}
-    .api-box h3{font-size:1.2rem;margin-bottom:6px;font-weight:800}
-    .api-box p{color:var(--fg-m);margin-bottom:20px;font-size:.85rem;line-height:1.4}
-    .api-box form{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-    .api-link{color:var(--ac);text-decoration:none;font-weight:700;font-size:.8rem}
-    .bottom-nav{grid-row:3;width:100%;height:64px;background:linear-gradient(180deg,rgba(17,24,39,.97),rgba(10,14,23,.99));backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:grid;grid-template-columns:repeat(5,1fr);z-index:10;border-top:1px solid var(--bdr);padding-bottom:env(safe-area-inset-bottom)}
-    .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;color:var(--fg-d);cursor:pointer;position:relative;width:100%;height:100%;outline:none;transition:color .2s}
-    .nav-item:active{transform:scale(.9)}
-    .nav-item.active{color:var(--ac)}
-    .nav-item.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:2.5px;background:linear-gradient(90deg,var(--ac),#34d399);border-radius:0 0 3px 3px}
-    .nav-icon{font-size:18px;line-height:18px;margin-bottom:3px;display:block}
-    .nav-label{font-size:8px;line-height:8px;font-weight:700;display:block;text-transform:uppercase;letter-spacing:.4px}
-    .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#eef1f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AgroPro">
+<meta name="description" content="Gerenciamento financeiro para avicultura">
+<link rel="manifest" id="manifestLink">
+<link rel="apple-touch-icon" id="appleIcon">
+<title>AgroPro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f5;--bg-card:#fff;--bg-el:#f4f6f9;--bg-inp:#f8f9fb;
+  --bdr:#e2e6ec;--bdr-f:#22c55e;--fg:#1a1d23;--fg-m:#6b7280;--fg-d:#9ca3af;
+  --ac:#22c55e;--ac2:#16a34a;--ac-g:rgba(34,197,94,.18);
+  --gold:#d97706;--gold-s:rgba(217,119,6,.1);
+  --dng:#ef4444;--dng-s:rgba(239,68,68,.08);
+  --suc-s:rgba(34,197,94,.08);
+  --r:16px;--rs:10px;--rl:24px;
+  --f:'DM Sans',system-ui,sans-serif;--fd:'Playfair Display',Georgia,serif;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh-md:0 4px 12px rgba(0,0,0,.07);
+  --sh-lg:0 10px 30px rgba(0,0,0,.1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;display:grid;grid-template-rows:auto 1fr auto;background:var(--bg);color:var(--fg);font-family:var(--f)}
+.header{grid-row:1;padding:12px 16px;display:none;flex-direction:column;z-index:10;padding-top:max(12px,env(safe-area-inset-top));background:var(--bg);position:relative}
+.header.active{display:flex}
+.h-fin .top{display:flex;justify-content:space-between;align-items:center}
+.h-fin .logo{display:flex;align-items:center;gap:8px}
+.h-fin .logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.78rem;font-weight:700;box-shadow:0 2px 8px var(--ac-g)}
+.h-fin h1{font-family:var(--fd);font-size:1.15rem;font-weight:900;color:var(--fg)}
+.h-fin .bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px}
+.saldo-label{font-size:.62rem;color:var(--fg-m);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.saldo-valor{font-size:1.5rem;font-weight:900;letter-spacing:-1px;margin-top:1px;color:var(--fg)}
+.date{font-size:.72rem;color:var(--fg-d);font-weight:500}
+.btn-pdf{background:var(--bg-el);border:1px solid var(--bdr);color:var(--fg-m);padding:6px 14px;border-radius:50px;font-size:.7rem;cursor:pointer;font-weight:600;font-family:var(--f);transition:all .2s;white-space:nowrap}
+.btn-pdf:active{transform:scale(.95);background:var(--bdr)}
+.h-gen{height:54px;align-items:center;justify-content:center;font-size:1rem;font-weight:700;background:var(--bg);border-bottom:1px solid var(--bdr)}
+.app-content{grid-row:2;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1}
+.app-content::-webkit-scrollbar{width:0}
+.screen{display:none;padding:14px 14px 90px}
+.screen.active{display:block;animation:sf .3s ease}
+@keyframes sf{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.dash-saldo{background:linear-gradient(135deg,#1a1d23 0%,#2d3139 100%);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden;color:#fff}
+.dash-saldo::before{content:'';position:absolute;top:-50px;right:-30px;width:160px;height:160px;background:radial-gradient(circle,rgba(34,197,94,.15),transparent 70%);pointer-events:none}
+.ds-label{font-size:.62rem;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;position:relative;z-index:1}
+.ds-valor{font-size:1.7rem;font-weight:900;letter-spacing:-1px;margin-top:3px;position:relative;z-index:1}
+.ds-valor.pos{color:#4ade80}.ds-valor.neg{color:#f87171}.ds-valor.zero{color:rgba(255,255,255,.7)}
+.ds-meta{display:flex;gap:14px;margin-top:10px;position:relative;z-index:1}
+.ds-meta-item{display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.55)}
+.ds-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ds-dot.g{background:#4ade80;box-shadow:0 0 6px rgba(74,222,128,.5)}
+.ds-dot.r{background:#f87171;box-shadow:0 0 6px rgba(248,113,113,.5)}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.kpi-card{background:var(--bg-card);padding:14px 8px;border-radius:14px;border:1px solid var(--bdr);text-align:center;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .15s}
+.kpi-card:active{transform:scale(.97)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px}
+.kpi-card.k-ent::before{background:linear-gradient(90deg,var(--ac),#4ade80)}
+.kpi-card.k-sai::before{background:linear-gradient(90deg,var(--dng),#f87171)}
+.kpi-card.k-lan::before{background:linear-gradient(90deg,var(--gold),#fbbf24)}
+.kpi-icon{font-size:1.2rem;margin-bottom:5px;display:block}
+.kpi-label{font-size:.56rem;color:var(--fg-d);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.kpi-value{font-size:.88rem;font-weight:900;letter-spacing:-.3px}
+.kpi-value.v-ent{color:var(--ac2)}.kpi-value.v-sai{color:var(--dng)}.kpi-value.v-lan{color:var(--gold)}
+.dash-chart{background:var(--bg-card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh);overflow:hidden}
+.dash-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.dash-chart-head h3{font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--fg)}
+.dash-chart-head h3::before{content:'';width:3px;height:14px;background:linear-gradient(180deg,var(--ac),var(--ac2));border-radius:2px}
+.chart-legend{display:flex;gap:12px}
+.chart-legend-item{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--fg-d);font-weight:600}
+.chart-legend-dot{width:8px;height:8px;border-radius:2px}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:100px;padding-top:6px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart-bar-pair{display:flex;gap:2px;align-items:flex-end;width:100%;height:100%;justify-content:center}
+.chart-bar{width:38%;min-height:2px;border-radius:3px 3px 1px 1px;transition:height .6s cubic-bezier(.16,1,.3,1)}
+.chart-bar.bar-ent{background:linear-gradient(180deg,#22c55e,rgba(34,197,94,.3))}
+.chart-bar.bar-sai{background:linear-gradient(180deg,#ef4444,rgba(239,68,68,.3))}
+.chart-day{font-size:.55rem;color:var(--fg-d);font-weight:600}
+.section-title{font-size:.95rem;font-weight:700;margin-bottom:12px;letter-spacing:-.2px;display:flex;align-items:center;gap:7px;color:var(--fg)}
+.section-title::before{content:'';width:3px;height:15px;background:linear-gradient(180deg,var(--ac),var(--ac2));border-radius:2px}
+.st-count{font-size:.65rem;color:var(--fg-d);font-weight:600;margin-left:auto;background:var(--bg-el);padding:2px 10px;border-radius:50px;border:1px solid var(--bdr)}
+.timeline-list{position:relative;padding-left:18px}
+.timeline-list::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:1.5px;background:linear-gradient(180deg,var(--ac),var(--bdr),transparent)}
+.timeline-item{position:relative;margin-bottom:8px;animation:isl .3s ease backwards}
+.timeline-item::before{content:'';position:absolute;left:-18px;top:15px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);z-index:1}
+.timeline-item.ti-in::before{background:var(--ac);box-shadow:0 0 8px var(--ac-g)}
+.timeline-item.ti-out::before{background:var(--dng);box-shadow:0 0 8px rgba(239,68,68,.25)}
+.timeline-card{background:var(--bg-card);padding:12px 14px;border-radius:12px;border:1px solid var(--bdr);display:flex;align-items:center;gap:10px;box-shadow:var(--sh);transition:transform .15s}
+.timeline-card:active{transform:scale(.98)}
+.tc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.tc-icon.ic-in{background:var(--suc-s);border:1px solid rgba(34,197,94,.12)}
+.tc-icon.ic-out{background:var(--dng-s);border:1px solid rgba(239,68,68,.12)}
+.tc-body{flex:1;min-width:0}
+.tc-body h4{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-body p{font-size:.66rem;color:var(--fg-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.tc-right{text-align:right;flex-shrink:0}
+.tc-value{font-size:.85rem;font-weight:800;letter-spacing:-.2px}
+.tc-value.in{color:var(--ac2)}.tc-value.out{color:var(--dng)}
+.tc-date{font-size:.56rem;color:var(--fg-d);font-weight:600;background:var(--bg-el);padding:1px 6px;border-radius:4px;margin-top:2px;display:inline-block}
+.tc-actions{display:flex;flex-shrink:0;margin-left:2px}
+.btn-icon{background:none;border:none;font-size:.82rem;cursor:pointer;padding:4px;border-radius:8px;transition:background .15s;color:var(--fg-d)}
+.btn-icon:active{transform:scale(.85)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--fg-d)}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:10px;opacity:.5}
+.empty-state p{font-size:.82rem;font-weight:500;line-height:1.5}
+.empty-state small{font-size:.72rem;display:block;margin-top:6px;opacity:.7}
+.resume-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.resume-card{background:var(--bg-card);padding:14px 12px;border-radius:12px;border:1px solid var(--bdr);box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .15s}
+.resume-card:active{transform:scale(.97)}
+.resume-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.resume-card.entrada::before{background:linear-gradient(90deg,var(--ac),#4ade80)}
+.resume-card.saida::before{background:linear-gradient(90deg,var(--dng),#f87171)}
+.rc-label{font-size:.6rem;color:var(--fg-m);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.rc-value{font-size:1rem;font-weight:900;letter-spacing:-.4px}
+.rc-value.entrada{color:var(--ac2)}.rc-value.saida{color:var(--dng)}
+.extrato-list{display:flex;flex-direction:column;gap:6px}
+.extrato-item{background:var(--bg-card);padding:10px 12px;border-radius:var(--rs);border:1px solid var(--bdr);display:flex;align-items:center;box-shadow:var(--sh);transition:transform .15s;gap:8px}
+.extrato-item:active{transform:scale(.98)}
+.ei-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.ei-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.ei-icon.ic-in{background:var(--suc-s)}.ei-icon.ic-out{background:var(--dng-s)}
+.ei-info{flex:1;min-width:0}
+.ei-info h4{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ei-info p{font-size:.66rem;color:var(--fg-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ei-right{text-align:right;flex-shrink:0}
+.ei-value{font-size:.82rem;font-weight:800}
+.ei-value.in{color:var(--ac2)}.ei-value.out{color:var(--dng)}
+.ei-date{font-size:.58rem;color:var(--fg-d);margin-top:1px}
+.ei-actions{display:flex;flex-shrink:0}
+.btn-add{width:52px;height:52px;border-radius:50%;border:none;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));font-size:1.6rem;font-weight:300;box-shadow:0 6px 20px var(--ac-g),0 2px 8px rgba(0,0,0,.1);position:fixed;bottom:78px;right:14px;z-index:20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;line-height:1}
+.btn-add:active{transform:scale(.9)}
+.btn-add.hide{display:none}
+.nav-bar{grid-row:3;display:flex;background:var(--bg-card);border-top:1px solid var(--bdr);padding:6px 8px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:10;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;border:none;background:none;font-family:var(--f);transition:all .2s;position:relative;border-radius:10px}
+.nav-item .ni-icon{font-size:1.2rem;transition:transform .2s}
+.nav-item .ni-label{font-size:.58rem;font-weight:600;color:var(--fg-d);transition:color .2s}
+.nav-item.active .ni-icon{transform:scale(1.1)}
+.nav-item.active .ni-label{color:var(--ac);font-weight:700}
+.nav-item.active::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--ac);border-radius:0 0 3px 3px}
+.nav-item:active .ni-icon{transform:scale(.9)}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-sheet{background:var(--bg-card);width:100%;max-height:88vh;border-radius:var(--rl) var(--rl) 0 0;padding:10px 18px 28px;transform:translateY(100%);animation:su .3s cubic-bezier(.16,1,.3,1) forwards;overflow-y:auto;border-top:1px solid var(--bdr);box-shadow:var(--sh-lg)}
+@keyframes su{to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 10px}
+.modal-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-title-row h3{font-size:1.05rem;font-weight:800}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:.65rem;font-weight:700;margin-bottom:5px;color:var(--fg-m);text-transform:uppercase;letter-spacing:1px}
+.form-control{width:100%;padding:11px 12px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:15px;background:var(--bg-inp);outline:none;color:var(--fg);font-family:var(--f);transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.form-control:focus{border-color:var(--bdr-f);background:var(--bg-el);box-shadow:0 0 0 3px var(--ac-g)}
+.form-control option{background:var(--bg-card);color:var(--fg)}
+.form-control optgroup{background:var(--bg-el);color:var(--fg-m);font-weight:700;font-style:normal}
+.form-control optgroup option{background:var(--bg-card);color:var(--fg);font-weight:400}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.type-btn{padding:11px;border:1.5px solid var(--bdr);border-radius:var(--rs);background:var(--bg-inp);text-align:center;font-weight:700;cursor:pointer;font-size:.88rem;font-family:var(--f);transition:all .2s;color:var(--fg-m)}
+.type-btn:active{transform:scale(.96)}
+.type-btn.sel-in{border-color:var(--ac);background:var(--suc-s);color:var(--ac2)}
+.type-btn.sel-out{border-color:var(--dng);background:var(--dng-s);color:var(--dng)}
+.tp-box{background:var(--bg-el);padding:14px;border-radius:var(--rs);text-align:center;margin-bottom:14px;border:1px solid var(--bdr)}
+.tp-box label{font-size:.62rem;color:var(--fg-d);text-transform:uppercase;letter-spacing:1.2px;font-weight:600}
+.tp-box span{font-size:1.35rem;font-weight:900;display:block;margin-top:4px;letter-spacing:-.8px;color:var(--fg)}
+.btn-sbm{width:100%;padding:13px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:.92rem;font-weight:700;cursor:pointer;font-family:var(--f);transition:all .2s;box-shadow:0 4px 12px var(--ac-g)}
+.btn-sbm:active{transform:scale(.97)}
+.btn-del{width:100%;padding:11px;border:1.5px solid rgba(239,68,68,.2);border-radius:var(--rs);background:var(--dng-s);color:var(--dng);font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--f);margin-top:8px;transition:all .2s}
+.btn-del:active{transform:scale(.97)}
+.guia-grid{display:flex;flex-direction:column;gap:8px}
+.guia-card{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--bdr);display:flex;overflow:hidden;cursor:pointer;box-shadow:var(--sh);transition:all .15s}
+.guia-card:active{transform:scale(.98)}
+.guia-color{width:4px;flex-shrink:0}
+.guia-content{padding:14px 16px;flex:1;display:flex;justify-content:space-between;align-items:center}
+.gc-text h3{font-size:.88rem;margin-bottom:3px;font-weight:700}
+.gc-text p{font-size:.74rem;color:var(--fg-m);line-height:1.4}
+.gc-arrow{color:var(--fg-d);font-size:1rem}
+.compras-list{display:flex;flex-direction:column;gap:10px}
+.compra-item{background:var(--bg-card);border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);box-shadow:var(--sh)}
+.compra-header{background:var(--bg-el);padding:10px 14px;font-size:.68rem;font-weight:700;color:var(--fg-m);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
+.compra-linha{padding:11px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;font-size:.82rem;gap:6px}
+.compra-linha:last-child{border-bottom:none}
+.compra-linha small{color:var(--fg-d)}
+.lotes-grid{display:flex;flex-direction:column;gap:8px}
+.lote-card{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--bdr);padding:14px 16px;box-shadow:var(--sh);transition:transform .15s}
+.lote-card:active{transform:scale(.98)}
+.lc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.lc-top h4{font-size:.88rem;font-weight:700}
+.lc-badge{font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px}
+.lc-badge.ativo{background:var(--suc-s);color:var(--ac2);border:1px solid rgba(34,197,94,.15)}
+.lc-badge.finalizado{background:var(--gold-s);color:var(--gold);border:1px solid rgba(217,119,6,.15)}
+.lc-detail{font-size:.74rem;color:var(--fg-m);line-height:1.6}
+.lc-detail strong{color:var(--fg);font-weight:600}
+.lc-actions{display:flex;gap:6px;margin-top:10px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a1d23;color:#fff;padding:10px 20px;border-radius:50px;font-size:.78rem;font-weight:600;z-index:100;transition:transform .3s cubic-bezier(.16,1,.3,1);box-shadow:var(--sh-lg);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.t-ok{background:linear-gradient(135deg,#16a34a,#15803d)}
+.toast.t-err{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.toast.t-info{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.gestao-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gestao-card{background:var(--bg-card);border:1px solid var(--bdr);border-radius:var(--r);padding:20px 14px;text-align:center;box-shadow:var(--sh);cursor:pointer;transition:all .15s}
+.gestao-card:active{transform:scale(.96)}
+.gestao-card .gc-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.gestao-card h3{font-size:.85rem;font-weight:700;margin-bottom:3px}
+.gestao-card p{font-size:.68rem;color:var(--fg-m)}
+.modal-section{margin-bottom:14px}
+.modal-section h4{font-size:.82rem;font-weight:700;margin-bottom:8px;color:var(--fg)}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:.82rem}
+.info-row:last-child{border-bottom:none}
+.info-row .ir-label{color:var(--fg-m);font-weight:500}
+.info-row .ir-value{font-weight:700;text-align:right;max-width:55%;word-break:break-word}
+.btn-sm{padding:7px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:var(--f);border:1px solid var(--bdr);background:var(--bg-el);color:var(--fg-m);transition:all .15s}
+.btn-sm:active{transform:scale(.95)}
+.btn-sm.danger{border-color:rgba(239,68,68,.2);background:var(--dng-s);color:var(--dng)}
+.btn-sm.edit{border-color:rgba(34,197,94,.2);background:var(--suc-s);color:var(--ac2)}
+@keyframes isl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* === CHAT GROQ === */
+.chat-container{display:flex;flex-direction:column;height:calc(100vh - 54px - 62px - max(6px,env(safe-area-inset-bottom)));overflow:hidden}
+.chat-messages{flex:1;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch}
+.chat-messages::-webkit-scrollbar{width:0}
+.chat-msg{display:flex;gap:8px;max-width:88%;animation:msgIn .3s ease}
+.chat-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.chat-msg.bot{align-self:flex-start}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.chat-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
+.chat-msg.bot .chat-avatar{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:.65rem;font-weight:700}
+.chat-msg.user .chat-avatar{background:var(--bg-el);border:1px solid var(--bdr);font-size:.82rem}
+.chat-bubble{padding:10px 14px;border-radius:16px;font-size:.82rem;line-height:1.55;word-break:break-word}
+.chat-msg.bot .chat-bubble{background:var(--bg-card);border:1px solid var(--bdr);border-bottom-left-radius:4px;box-shadow:var(--sh);color:var(--fg)}
+.chat-msg.user .chat-bubble{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-bottom-right-radius:4px}
+.chat-bubble strong{font-weight:700}
+.chat-bubble ul,.chat-bubble ol{margin:6px 0 6px 16px}
+.chat-bubble li{margin-bottom:3px}
+.chat-bubble p{margin-bottom:6px}
+.chat-bubble p:last-child{margin-bottom:0}
+.chat-typing{display:flex;gap:4px;padding:12px 16px}
+.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--fg-d);animation:typingBounce .6s ease-in-out infinite}
+.chat-typing span:nth-child(2){animation-delay:.15s}
+.chat-typing span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+.chat-input-area{padding:10px 0 0;border-top:1px solid var(--bdr);display:flex;gap:8px;align-items:flex-end;background:var(--bg);position:relative}
+.chat-input-area textarea{flex:1;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:20px;font-size:.84rem;font-family:var(--f);background:var(--bg-inp);outline:none;resize:none;max-height:100px;min-height:40px;color:var(--fg);transition:border-color .2s;line-height:1.4}
+.chat-input-area textarea:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px var(--ac-g)}
+.chat-send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 3px 10px var(--ac-g)}
+.chat-send:active{transform:scale(.88)}
+.chat-send:disabled{opacity:.4;cursor:not-allowed}
+
+/* === API KEY SETUP === */
+.apikey-setup{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 54px - 62px - max(6px,env(safe-area-inset-bottom)));padding:30px 20px;text-align:center}
+.apikey-icon{width:70px;height:70px;border-radius:50%;background:var(--bg-el);border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:16px}
+.apikey-setup h3{font-size:1.1rem;font-weight:800;margin-bottom:6px}
+.apikey-setup p{font-size:.8rem;color:var(--fg-m);line-height:1.5;margin-bottom:20px;max-width:300px}
+.apikey-input-wrap{width:100%;max-width:340px;position:relative}
+.apikey-input-wrap input{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:.88rem;font-family:var(--f);background:var(--bg-inp);outline:none;color:var(--fg);text-align:center;letter-spacing:.5px}
+.apikey-input-wrap input:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px var(--ac-g)}
+.apikey-input-wrap .btn-sbm{margin-top:12px}
+
+/* === CHAT SETTINGS (na gestao) === */
+.chat-settings-card{background:var(--bg-card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-top:10px}
+.chat-settings-card h4{font-size:.85rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.chat-settings-card p{font-size:.74rem;color:var(--fg-m);line-height:1.4;margin-bottom:10px}
+.chat-settings-card .apikey-row{display:flex;gap:8px}
+.chat-settings-card .apikey-row input{flex:1;padding:9px 12px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:.8rem;font-family:var(--f);background:var(--bg-inp);outline:none;color:var(--fg)}
+.chat-settings-card .apikey-row input:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px var(--ac-g)}
+.chat-settings-card .btn-sbm{width:auto;padding:9px 18px;font-size:.78rem;white-space:nowrap}
+.chat-status{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:50px;margin-top:8px}
+.chat-status.connected{background:var(--suc-s);color:var(--ac2)}
+.chat-status.disconnected{background:var(--dng-s);color:var(--dng)}
+.chat-status::before{content:'';width:6px;height:6px;border-radius:50%}
+.chat-status.connected::before{background:var(--ac)}
+.chat-status.disconnected::before{background:var(--dng)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<header class="header h-fin active" id="headerFin">
+  <div class="top">
+    <div class="logo">
+      <div class="logo-icon">AP</div>
+      <h1>AgroPro</h1>
+    </div>
+    <button class="btn-pdf" onclick="gerarPDF()" id="btnPdfHeader">Relatorio PDF</button>
+  </div>
+  <div class="bottom">
+    <div>
+      <div class="saldo-label">Saldo Total</div>
+      <div class="saldo-valor" id="headerSaldo">R$ 0,00</div>
+    </div>
+    <div class="date" id="headerDate"></div>
+  </div>
+</header>
+<header class="header h-gen" id="headerGen">
+  <span id="headerGenTitle"></span>
+</header>
+
+<main class="app-content" id="appContent">
+  <section class="screen active" id="screenDashboard">
+    <div class="dash-saldo">
+      <div class="ds-label">Saldo Total</div>
+      <div class="ds-valor zero" id="dashSaldo">R$ 0,00</div>
+      <div class="ds-meta">
+        <div class="ds-meta-item"><span class="ds-dot g"></span>Entradas: <strong id="dashMetaEnt">R$ 0,00</strong></div>
+        <div class="ds-meta-item"><span class="ds-dot r"></span>Saidas: <strong id="dashMetaSai">R$ 0,00</strong></div>
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-card k-ent"><span class="kpi-icon">&#x1F4C8;</span><div class="kpi-label">Entradas</div><div class="kpi-value v-ent" id="kpiEnt">R$ 0</div></div>
+      <div class="kpi-card k-sai"><span class="kpi-icon">&#x1F4C9;</span><div class="kpi-label">Saidas</div><div class="kpi-value v-sai" id="kpiSai">R$ 0</div></div>
+      <div class="kpi-card k-lan"><span class="kpi-icon">&#x1F4DD;</span><div class="kpi-label">Lancamentos</div><div class="kpi-value v-lan" id="kpiLan">0</div></div>
+    </div>
+    <div class="dash-chart">
+      <div class="dash-chart-head">
+        <h3>Ultimos 7 dias</h3>
+        <div class="chart-legend">
+          <div class="chart-legend-item"><span class="chart-legend-dot" style="background:#22c55e"></span>Entradas</div>
+          <div class="chart-legend-item"><span class="chart-legend-dot" style="background:#ef4444"></span>Saidas</div>
+        </div>
+      </div>
+      <div class="chart-bars" id="chartBars"></div>
+    </div>
+    <div class="section-title">Atividades Recentes <span class="st-count" id="stCount">0</span></div>
+    <div id="dashTimeline"></div>
+  </section>
+
+  <section class="screen" id="screenMov">
+    <div class="resume-grid">
+      <div class="resume-card entrada"><div class="rc-label">Total Entradas</div><div class="rc-value entrada" id="movTotalEnt">R$ 0,00</div></div>
+      <div class="resume-card saida"><div class="rc-label">Total Saidas</div><div class="rc-value saida" id="movTotalSai">R$ 0,00</div></div>
+    </div>
+    <div class="section-title">Todas as Movimentacoes</div>
+    <div class="extrato-list" id="movList"></div>
+  </section>
+
+  <section class="screen" id="screenLotes">
+    <div class="section-title">Meus Lotes</div>
+    <div class="lotes-grid" id="lotesList"></div>
+  </section>
+
+  <section class="screen" id="screenGuia">
+    <div id="guiaContent"></div>
+  </section>
+
+  <section class="screen" id="screenGestao">
+    <div class="section-title">Gestao</div>
+    <div class="gestao-cards">
+      <div class="gestao-card" onclick="openModalLote()"><span class="gc-emoji">&#x1F4E6;</span><h3>Novo Lote</h3><p>Cadastre um lote</p></div>
+      <div class="gestao-card" onclick="gerarPDF()"><span class="gc-emoji">&#x1F4CA;</span><h3>Relatorio</h3><p>Exportar PDF</p></div>
+      <div class="gestao-card" onclick="openModalCompra()"><span class="gc-emoji">&#x1F6D2;</span><h3>Nova Compra</h3><p>Registre compras</p></div>
+      <div class="gestao-card" onclick="confirmarLimparDados()"><span class="gc-emoji">&#x1F5D1;</span><h3>Limpar Dados</h3><p>Resetar tudo</p></div>
+    </div>
+    <!-- Configuracao do Chat Groq -->
+    <div class="chat-settings-card" id="chatSettingsCard">
+      <h4>&#x1F4AC; Assistente IA (Groq)</h4>
+      <p>Conecte sua chave API do Groq para ter um assistente inteligente que tira duvidas sobre avicultura, gestao financeira e muito mais.</p>
+      <div class="apikey-row">
+        <input type="password" id="inpApiKeyGestao" placeholder="gsk_..." oninput="this.type=this.value.length>0?'password':'text'">
+        <button class="btn-sbm" onclick="salvarApiKeyDaGestao()">Salvar</button>
+      </div>
+      <div id="chatStatusGestao"></div>
+    </div>
+    <div style="margin-top:20px"><div class="section-title">Compras Recentes</div><div class="compras-list" id="comprasListGestao"></div></div>
+  </section>
+</main>
+
+<button class="btn-add" id="fabAdd" onclick="openModalLancamento()">+</button>
+
+<nav class="nav-bar" id="navBar">
+  <button class="nav-item active" data-screen="screenDashboard" onclick="navigateTo('screenDashboard',this)"><span class="ni-icon">&#x1F4CA;</span><span class="ni-label">Dashboard</span></button>
+  <button class="nav-item" data-screen="screenMov" onclick="navigateTo('screenMov',this)"><span class="ni-icon">&#x1F4CB;</span><span class="ni-label">Mov.</span></button>
+  <button class="nav-item" data-screen="screenLotes" onclick="navigateTo('screenLotes',this)"><span class="ni-icon">&#x1F4E6;</span><span class="ni-label">Lotes</span></button>
+  <button class="nav-item" data-screen="screenGuia" onclick="navigateTo('screenGuia',this)"><span class="ni-icon">&#x1F331;</span><span class="ni-label">Guia</span></button>
+  <button class="nav-item" data-screen="screenGestao" onclick="navigateTo('screenGestao',this)"><span class="ni-icon">&#x2699;</span><span class="ni-label">Gestao</span></button>
+</nav>
+
+<!-- MODAL LANCAMENTO -->
+<div class="modal-overlay" id="modalLancamento" onclick="fecharModalFora(event,'modalLancamento')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row"><h3 id="lancTitle">Novo Lancamento</h3></div>
+    <form id="formLancamento" onsubmit="salvarLancamento(event)">
+      <input type="hidden" id="lancEditId" value="">
+      <div class="type-toggle">
+        <div class="type-btn sel-in" id="tbEntrada" onclick="setTipo('entrada')">&#x2B06; Entrada</div>
+        <div class="type-btn" id="tbSaida" onclick="setTipo('saida')">&#x2B07; Saida</div>
+      </div>
+      <div class="tp-box"><label>Valor Total</label><span id="tpPreview">R$ 0,00</span></div>
+      <div class="form-group"><label>Categoria</label><select class="form-control" id="inpCategoria" required></select></div>
+      <div class="form-group"><label>Descricao</label><input class="form-control" id="inpDescricao" placeholder="Ex: Venda de ovos" required></div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantidade</label><input class="form-control" id="inpQtd" type="number" min="0" step="0.01" placeholder="0" oninput="atualizarTP()"></div>
+        <div class="form-group"><label>Preco Unit. (R$)</label><input class="form-control" id="inpPreco" type="number" min="0" step="0.01" placeholder="0,00" oninput="atualizarTP()"></div>
+      </div>
+      <div class="form-group"><label>Data</label><input class="form-control" id="inpData" type="date" required></div>
+      <button type="submit" class="btn-sbm" id="lancBtn">Salvar Lancamento</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL LOTE -->
+<div class="modal-overlay" id="modalLote" onclick="fecharModalFora(event,'modalLote')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row"><h3 id="loteTitle">Novo Lote</h3></div>
+    <form id="formLote" onsubmit="salvarLote(event)">
+      <input type="hidden" id="loteEditId" value="">
+      <div class="form-group"><label>Identificacao</label><input class="form-control" id="inpLoteId" placeholder="Ex: Galinhao 01" required></div>
+      <div class="form-group"><label>Tipo</label>
+        <select class="form-control" id="inpLoteTipo" required>
+          <option value="galinhas">Galinhas</option>
+          <option value="codornas">Codornas</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Cultura/Raca</label><input class="form-control" id="inpLoteCultura" placeholder="Ex: Poedeira Isa Brown" required></div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantidade (cabecas)</label><input class="form-control" id="inpLoteArea" type="number" min="0" step="1" placeholder="0" required></div>
+        <div class="form-group"><label>Status</label>
+          <select class="form-control" id="inpLoteStatus"><option value="ativo">Ativo</option><option value="finalizado">Finalizado</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Observacoes</label><input class="form-control" id="inpLoteObs" placeholder="Opcional"></div>
+      <button type="submit" class="btn-sbm" id="loteBtn">Salvar Lote</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL COMPRA -->
+<div class="modal-overlay" id="modalCompra" onclick="fecharModalFora(event,'modalCompra')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row"><h3 id="compTitle">Nova Compra</h3></div>
+    <form id="formCompra" onsubmit="salvarCompra(event)">
+      <input type="hidden" id="compEditId" value="">
+      <div class="form-group"><label>Fornecedor</label><input class="form-control" id="inpCompFor" placeholder="Ex: AgroShop" required></div>
+      <div class="form-group"><label>Produto</label><input class="form-control" id="inpCompProd" placeholder="Ex: Racao para poedeiras" required></div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantidade</label><input class="form-control" id="inpCompQtd" type="number" min="0" step="0.01" placeholder="0" required></div>
+        <div class="form-group"><label>Valor Total (R$)</label><input class="form-control" id="inpCompVal" type="number" min="0" step="0.01" placeholder="0,00" required></div>
+      </div>
+      <div class="form-group"><label>Data</label><input class="form-control" id="inpCompData" type="date" required></div>
+      <button type="submit" class="btn-sbm" id="compBtn">Salvar Compra</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div class="modal-overlay" id="modalDetalhe" onclick="fecharModalFora(event,'modalDetalhe')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row"><h3 id="detTitle">Detalhe</h3></div>
+    <div id="detContent"></div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR -->
+<div class="modal-overlay" id="modalConfirmar" onclick="fecharModalFora(event,'modalConfirmar')">
+  <div class="modal-sheet" style="max-height:40vh">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row"><h3 id="confTitle">Confirmar</h3></div>
+    <p style="font-size:.88rem;color:var(--fg-m);margin-bottom:16px;line-height:1.5" id="confMsg"></p>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm" style="flex:1;padding:12px" onclick="fecharModal('modalConfirmar')">Cancelar</button>
+      <button class="btn-sm danger" style="flex:1;padding:12px" id="confBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === PWA: Gerar icon e manifest dinamicamente === */
+(function initPWA(){
+  /* Gerar icone SVG como data URI */
+  var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="%2316a34a"/><text x="256" y="310" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="200" fill="white">AP</text></svg>';
+  var iconDataUri = 'data:image/svg+xml,' + svgIcon;
+
+  /* Aplicar apple-touch-icon */
+  var appleLink = document.getElementById('appleIcon');
+  if(appleLink) appleLink.href = iconDataUri;
+
+  /* Gerar e injetar manifest */
+  var manifest = {
+    name: "AgroPro - Gestao Avicola",
+    short_name: "AgroPro",
+    description: "Gerenciamento financeiro para avicultura",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#eef1f5",
+    theme_color: "#eef1f5",
+    orientation: "portrait-primary",
+    icons: [
+      { src: iconDataUri, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+    ]
+  };
+  var manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  var manifestUrl = URL.createObjectURL(manifestBlob);
+  var manifestLink = document.getElementById('manifestLink');
+  if(manifestLink) manifestLink.href = manifestUrl;
+
+  /* Registrar Service Worker via Blob */
+  if('serviceWorker' in navigator){
+    var swCode = [
+      'const CACHE="agopro-v2";',
+      'self.addEventListener("install",e=>{self.skipWaiting();});',
+      'self.addEventListener("activate",e=>{e.waitUntil(clients.claim());});',
+      'self.addEventListener("fetch",e=>{',
+      '  if(e.request.method!=="GET")return;',
+      '  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));',
+      '});'
+    ].join('\n');
+    var swBlob = new Blob([swCode], {type: 'application/javascript'});
+    var swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl, {scope: './'}).catch(function(){});
+  }
+})();
+
+/* === CATEGORIAS === */
+var CATS = {
+  entrada: [
+    {v:'venda_ovos',l:'Venda de Ovos'},
+    {v:'venda_aves',l:'Venda de Aves'},
+    {v:'venda_codornas',l:'Venda de Codornas'},
+    {v:'venda_ovos_codorna',l:'Venda Ovos Codorna'},
+    {v:'subsidiogov',l:'Subsidio Governamental'},
+    {v:'outra_entrada',l:'Outra Entrada'}
+  ],
+  saida: [
+    {v:'racao',l:'Racao'},
+    {v:'medicamento',l:'Medicamento/Vacina'},
+    {v:'mao_obra',l:'Mao de Obra'},
+    {v:'energia',l:'Energia/Agua'},
+    {v:'manutencao',l:'Manutencao'},
+    {v:'avos',l:'Aquisicao de Aves'},
+    {v:'embalagem',l:'Embalagem'},
+    {v:'transporte',l:'Transporte'},
+    {v:'impostos',l:'Impostos'},
+    {v:'outra_saida',l:'Outra Saida'}
+  ]
+};
+var CAT_LABELS = {};
+CATS.entrada.forEach(function(c){ CAT_LABELS[c.v] = c.l; });
+CATS.saida.forEach(function(c){ CAT_LABELS[c.v] = c.l; });
+
+/* === ESTADO === */
+var lancamentos = JSON.parse(localStorage.getItem('agro_lanc') || '[]');
+var lotes = JSON.parse(localStorage.getItem('agro_lotes') || '[]');
+var compras = JSON.parse(localStorage.getItem('agro_compras') || '[]');
+var tipoAtual = 'entrada';
+var currentScreen = 'screenDashboard';
+var groqApiKey = localStorage.getItem('agro_groq_key') || '';
+var chatHistory = JSON.parse(localStorage.getItem('agro_chat_hist') || '[]');
+var chatLoading = false;
+
+/* === UTILIDADES === */
+function fmt(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtShort(v){ if(v>=1000000) return 'R$ '+(v/1000000).toFixed(1)+'M'; if(v>=1000) return 'R$ '+(v/1000).toFixed(1)+'K'; return fmt(v); }
+function fmtDate(d){ if(!d) return '-'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function fmtDateExt(d){ if(!d) return '-'; var m=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']; var p=d.split('-'); return parseInt(p[2])+' de '+m[parseInt(p[1])-1]; }
+function hoje(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function diaSemana(d){ var ds=['dom','seg','ter','qua','qui','sex','sab']; return ds[new Date(d+'T12:00:00').getDay()]; }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr(2,5); }
+function salvar(){ localStorage.setItem('agro_lanc',JSON.stringify(lancamentos)); localStorage.setItem('agro_lotes',JSON.stringify(lotes)); localStorage.setItem('agro_compras',JSON.stringify(compras)); }
+function esc(s){ if(!s) return ''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* === TOAST === */
+function toast(msg,tipo){ var t=document.getElementById('toast'); t.textContent=msg; t.className='toast t-'+(tipo||'ok'); setTimeout(function(){t.classList.add('show');},10); setTimeout(function(){t.classList.remove('show');},2500); }
+
+/* === MODAIS === */
+function abrirModal(id){ document.getElementById(id).classList.add('active'); }
+function fecharModal(id){ document.getElementById(id).classList.remove('active'); }
+function fecharModalFora(e,id){ if(e.target===e.currentTarget) fecharModal(id); }
+
+/* === NAVEGACAO === */
+function navigateTo(screenId,navEl){
+  currentScreen=screenId;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(screenId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  if(navEl) navEl.classList.add('active');
+  else document.querySelector('.nav-item[data-screen="'+screenId+'"]').classList.add('active');
+  var hf=document.getElementById('headerFin'),hg=document.getElementById('headerGen'),fab=document.getElementById('fabAdd'),pdf=document.getElementById('btnPdfHeader');
+  if(screenId==='screenDashboard'){hf.classList.add('active');hg.classList.remove('active');fab.classList.remove('hide');pdf.style.display='';}
+  else if(screenId==='screenMov'){hf.classList.add('active');hg.classList.remove('active');fab.classList.remove('hide');pdf.style.display='none';}
+  else{hf.classList.remove('active');hg.classList.add('active');fab.classList.add('hide');var t={screenLotes:'Meus Lotes',screenGuia:'Assistente IA',screenGestao:'Gestao'};document.getElementById('headerGenTitle').textContent=t[screenId]||'';}
+  document.getElementById('appContent').scrollTop=0;
+  if(screenId==='screenGuia') renderGuia();
+  atualizarTela();
+}
+
+/* === CALCULOS === */
+function calcTotais(){ var e=0,s=0; lancamentos.forEach(function(l){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;}); return {entrada:e,saida:s,saldo:e-s,count:lancamentos.length}; }
+function calcUltimos7Dias(){ var dados=[];var hd=new Date(); for(var i=6;i>=0;i--){var d=new Date(hd);d.setDate(d.getDate()-i);var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var e=0,s=0;lancamentos.forEach(function(l){if(l.data===ds){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;}});dados.push({data:ds,dia:diaSemana(ds),ent:e,sai:s});}return dados;}
+function getRecentes(n){return lancamentos.slice().sort(function(a,b){return b.data>a.data?1:b.data<a.data?-1:b.ts-a.ts;}).slice(0,n);}
+function getCatIcon(cat){var ic={venda_ovos:'\u{1F95A}',venda_aves:'\u{1F414}',venda_codornas:'\u{1F426}',venda_ovos_codorna:'\u{1F95A}',subsidiogov:'\u{1F3DB}\u{FE0F}',outra_entrada:'\u{1F4B0}',racao:'\u{1F33E}',medicamento:'\u{1F489}',mao_obra:'\u{1F477}',energia:'\u{1F4A1}',manutencao:'\u{1F527}',avos:'\u{1F423}',embalagem:'\u{1F4E6}',transporte:'\u{1F69A}',impostos:'\u{1F4CB}',outra_saida:'\u{1F4E4}'};return ic[cat]||'\u{1F4DD}';}
+
+/* === ATUALIZAR TELA === */
+function atualizarTela(){
+  var t=calcTotais();var sete=calcUltimos7Dias();
+  var hs=document.getElementById('headerSaldo');hs.textContent=fmt(t.saldo);hs.style.color=t.saldo>0?'#22c55e':t.saldo<0?'#ef4444':'#6b7280';
+  var hd=new Date();var ds2=['dom','seg','ter','qua','qui','sex','sab'];var ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];document.getElementById('headerDate').textContent=ds2[hd.getDay()]+', '+hd.getDate()+' de '+ms[hd.getMonth()]+'.';
+  var ds=document.getElementById('dashSaldo');ds.textContent=fmt(t.saldo);ds.className='ds-valor '+(t.saldo>0?'pos':t.saldo<0?'neg':'zero');
+  document.getElementById('dashMetaEnt').textContent=fmt(t.entrada);
+  document.getElementById('dashMetaSai').textContent=fmt(t.saida);
+  document.getElementById('kpiEnt').textContent=fmtShort(t.entrada);
+  document.getElementById('kpiSai').textContent=fmtShort(t.saida);
+  document.getElementById('kpiLan').textContent=t.count;
+  renderChart(sete);
+  var rec=getRecentes(8);document.getElementById('stCount').textContent=t.count;renderTimeline(rec);
+  document.getElementById('movTotalEnt').textContent=fmt(t.entrada);
+  document.getElementById('movTotalSai').textContent=fmt(t.saida);
+  renderExtrato();renderLotes();renderComprasGestao();renderChatStatusGestao();
+}
+
+/* === GRAFICO === */
+function renderChart(dados){
+  var c=document.getElementById('chartBars');var mx=0;dados.forEach(function(d){mx=Math.max(mx,d.ent,d.sai);});if(mx===0)mx=1;
+  var h='';dados.forEach(function(d){var he=Math.max(2,(d.ent/mx)*85);var hs=Math.max(2,(d.sai/mx)*85);h+='<div class="chart-col"><div class="chart-bar-pair"><div class="chart-bar bar-ent" style="height:'+he+'px"></div><div class="chart-bar bar-sai" style="height:'+hs+'px"></div></div><span class="chart-day">'+d.dia+'</span></div>';});c.innerHTML=h;
+  setTimeout(function(){var bars=c.querySelectorAll('.chart-bar');bars.forEach(function(b){var hh=b.style.height;b.style.height='2px';setTimeout(function(){b.style.height=hh;},50);});},50);
+}
+
+/* === TIMELINE === */
+function renderTimeline(items){
+  var el=document.getElementById('dashTimeline');
+  if(items.length===0){el.innerHTML='<div class="empty-state"><div class="es-icon">\u{1F4CA}</div><p>Nenhum lancamento ainda.</p><small>Toque em + para comecar.</small></div>';return;}
+  var h='<div class="timeline-list">';
+  items.forEach(function(l,i){var is=l.tipo==='entrada';h+='<div class="timeline-item ti-'+(is?'in':'out')+'" style="animation-delay:'+(i*0.06)+'s"><div class="timeline-card"><div class="tc-icon ic-'+(is?'in':'out')+'">'+getCatIcon(l.categoria)+'</div><div class="tc-body"><h4>'+esc(l.descricao)+'</h4><p>'+esc(CAT_LABELS[l.categoria]||l.categoria)+'</p></div><div class="tc-right"><div class="tc-value '+(is?'in':'out')+'">'+(is?'+':'-')+fmt(l.valor)+'</div><span class="tc-date">'+fmtDate(l.data)+'</span></div><div class="tc-actions"><button class="btn-icon" onclick="verDetalheLanc(\''+l.id+'\')">\u{1F50D}</button><button class="btn-icon" onclick="confirmarExcluirLanc(\''+l.id+'\')" style="color:#ef4444">\u{1F5D1}</button></div></div></div>';});
+  h+='</div>';el.innerHTML=h;
+}
+
+/* === EXTRATO === */
+function renderExtrato(){
+  var el=document.getElementById('movList');var sorted=lancamentos.slice().sort(function(a,b){return b.data>a.data?1:b.data<a.data?-1:b.ts-a.ts;});
+  if(sorted.length===0){el.innerHTML='<div class="empty-state"><div class="es-icon">\u{1F4CB}</div><p>Nenhuma movimentacao registrada.</p></div>';return;}
+  var h='';sorted.forEach(function(l){var is=l.tipo==='entrada';h+='<div class="extrato-item"><div class="ei-left"><div class="ei-icon ic-'+(is?'in':'out')+'">'+getCatIcon(l.categoria)+'</div><div class="ei-info"><h4>'+esc(l.descricao)+'</h4><p>'+esc(CAT_LABELS[l.categoria]||l.categoria)+'</p></div></div><div class="ei-right"><div class="ei-value '+(is?'in':'out')+'">'+(is?'+':'-')+fmt(l.valor)+'</div><div class="ei-date">'+fmtDate(l.data)+'</div></div><div class="ei-actions"><button class="btn-icon" onclick="verDetalheLanc(\''+l.id+'\')">\u{1F50D}</button><button class="btn-icon" onclick="confirmarExcluirLanc(\''+l.id+'\')" style="color:#ef4444">\u{1F5D1}</button></div></div>';});el.innerHTML=h;
+}
+
+/* === LOTES === */
+function renderLotes(){
+  var el=document.getElementById('lotesList');
+  if(lotes.length===0){el.innerHTML='<div class="empty-state"><div class="es-icon">\u{1F4E6}</div><p>Nenhum lote cadastrado.</p><small>Va em Gestao > Novo Lote.</small></div>';return;}
+  var h='';lotes.forEach(function(l){var tipoLabel=l.tipo==='galinhas'?'\u{1F414} Galinhas':'\u{1F426} Codornas';h+='<div class="lote-card"><div class="lc-top"><h4>'+esc(l.identificacao)+'</h4><span class="lc-badge '+l.status+'">'+l.status+'</span></div><div class="lc-detail"><strong>Tipo:</strong> '+tipoLabel+'<br><strong>Raca:</strong> '+esc(l.cultura)+'<br><strong>Qtd cabecas:</strong> '+Number(l.area).toLocaleString('pt-BR')+(l.observacoes?'<br><strong>Obs:</strong> '+esc(l.observacoes):'')+'</div><div class="lc-actions"><button class="btn-sm edit" onclick="editarLote(\''+l.id+'\')">Editar</button><button class="btn-sm danger" onclick="confirmarExcluirLote(\''+l.id+'\')">Excluir</button></div></div>';});el.innerHTML=h;
+}
+
+/* === GUIA - Agora e o Chat Groq === */
+function renderGuia(){
+  var el = document.getElementById('guiaContent');
+  /* Se nao tem chave API, mostra tela de configuracao */
+  if(!groqApiKey){
+    el.innerHTML = '<div class="apikey-setup">'
+      +'<div class="apikey-icon">\u{1F510}</div>'
+      +'<h3>Conectar Assistente IA</h3>'
+      +'<p>Insira sua chave API do Groq para ativar o assistente inteligente. Ele vai tirar suas duvidas sobre avicultura, gestao financeira, nutricao animal e muito mais.</p>'
+      +'<div class="apikey-input-wrap">'
+      +'<input type="text" id="inpApiKeySetup" placeholder="Cole sua chave gsk_... aqui">'
+      +'<button class="btn-sbm" onclick="salvarApiKeyDoGuia()">Conectar</button>'
+      +'</div>'
+      +'<p style="font-size:.68rem;color:var(--fg-d);margin-top:14px;max-width:300px">Obtenha sua chave gratis em <strong>console.groq.com</strong></p>'
+      +'</div>';
+    return;
+  }
+  /* Tem chave: mostra o chat */
+  el.innerHTML = '<div class="chat-container">'
+    +'<div class="chat-messages" id="chatMessages"></div>'
+    +'<div class="chat-input-area">'
+    +'<textarea id="chatInput" placeholder="Pergunte sobre avicultura..." rows="1" onkeydown="chatKeyDown(event)" oninput="autoResize(this)"></textarea>'
+    +'<button class="chat-send" id="chatSendBtn" onclick="enviarMensagemChat()">\u27A4</button>'
+    +'</div>'
+    +'</div>';
+  renderChatMessages();
+}
+
+/* === CHAT STATUS NA GESTAO === */
+function renderChatStatusGestao(){
+  var el = document.getElementById('chatStatusGestao');
+  if(!el) return;
+  var inp = document.getElementById('inpApiKeyGestao');
+  if(inp && groqApiKey) inp.value = '********';
+  if(groqApiKey){
+    el.innerHTML = '<span class="chat-status connected">Conectado</span>';
+  } else {
+    el.innerHTML = '<span class="chat-status disconnected">Nao conectado</span>';
+  }
+}
+
+/* === SALVAR API KEY === */
+function salvarApiKeyDoGuia(){
+  var inp = document.getElementById('inpApiKeySetup');
+  var key = inp ? inp.value.trim() : '';
+  if(!key){toast('Cole sua chave API','err');return;}
+  if(!key.startsWith('gsk_')){toast('Chave invalida - deve comecar com gsk_','err');return;}
+  groqApiKey = key;
+  localStorage.setItem('agro_groq_key', key);
+  toast('Conectado com sucesso!','ok');
+  renderGuia();
+}
+
+function salvarApiKeyDaGestao(){
+  var inp = document.getElementById('inpApiKeyGestao');
+  var key = inp ? inp.value.trim() : '';
+  if(key === '********'){toast('Chave ja esta salva','info');return;}
+  if(!key){toast('Cole sua chave API','err');return;}
+  if(!key.startsWith('gsk_')){toast('Chave invalida - deve comecar com gsk_','err');return;}
+  groqApiKey = key;
+  localStorage.setItem('agro_groq_key', key);
+  toast('Chave salva com sucesso!','ok');
+  inp.value = '********';
+  renderChatStatusGestao();
+}
+
+/* === CHAT MESSAGES === */
+function renderChatMessages(){
+  var el = document.getElementById('chatMessages');
+  if(!el) return;
+  if(chatHistory.length === 0){
+    /* Mensagem de boas-vindas */
+    chatHistory.push({
+      role: 'assistant',
+      content: 'Ola! Sou o assistente AgroPro. Posso te ajudar com duvidas sobre:\n\n- Criacao de galinhas e codornas\n- Nutricao e racao\n- Doencas e vacinas\n- Gestao financeira da granja\n- Categorias de lancamentos\n- Melhores praticas de producao\n\nComo posso te ajudar hoje?'
+    });
+    localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
+  }
+  var h = '';
+  chatHistory.forEach(function(msg){
+    if(msg.role === 'assistant'){
+      h += '<div class="chat-msg bot"><div class="chat-avatar">AP</div><div class="chat-bubble">'+formatarTextoChat(msg.content)+'</div></div>';
+    } else {
+      h += '<div class="chat-msg user"><div class="chat-avatar">\u{1F9D1}\u{200D}\u{1F33E}</div><div class="chat-bubble">'+esc(msg.content)+'</div></div>';
+    }
+  });
+  el.innerHTML = h;
+  el.scrollTop = el.scrollHeight;
+}
+
+function formatarTextoChat(texto){
+  var t = esc(texto);
+  /* Negrito */
+  t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  /* Listas */
+  t = t.replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>');
+  t = t.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  /* Numeradas */
+  t = t.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+  /* Quebras de linha */
+  t = t.replace(/\n/g, '<br>');
+  return t;
+}
+
+/* === ENVIAR MENSAGEM === */
+function chatKeyDown(e){
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    enviarMensagemChat();
+  }
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+async function enviarMensagemChat(){
+  if(chatLoading) return;
+  var inp = document.getElementById('chatInput');
+  var text = inp ? inp.value.trim() : '';
+  if(!text) return;
+
+  /* Adicionar mensagem do usuario */
+  chatHistory.push({role:'user', content:text});
+  localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
+  if(inp){inp.value='';inp.style.height='auto';}
+  renderChatMessages();
+
+  /* Mostrar typing */
+  chatLoading = true;
+  var msgsEl = document.getElementById('chatMessages');
+  var typingDiv = document.createElement('div');
+  typingDiv.className = 'chat-msg bot';
+  typingDiv.id = 'typingIndicator';
+  typingDiv.innerHTML = '<div class="chat-avatar">AP</div><div class="chat-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>';
+  msgsEl.appendChild(typingDiv);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  /* Desabilitar botao */
+  var btn = document.getElementById('chatSendBtn');
+  if(btn) btn.disabled = true;
+
+  /* Montar contexto do sistema */
+  var totais = calcTotais();
+  var sistemaPrompt = 'Voce e o assistente virtual do AgroPro, um app de gestao financeira para granjas de galinhas e codornas. Responda sempre em portugues do Brasil, de forma clara e objetiva. Dados atuais do usuario: Saldo total '+fmt(totais.saldo)+', Total de entradas '+fmt(totais.entrada)+', Total de saidas '+fmt(totais.saida)+', '+lancamentos.length+' lancamentos, '+lotes.length+' lotes cadastrados. Ajude com duvidas sobre avicultura, nutricao, doencas, gestao financeira, categorias de lancamento, e uso do app. Seja amigavel e profissional. Use formatacao com **negrito** para destacar termos importantes e listas com - para enumerar itens.';
+
+  var mensagensApi = [{role:'system', content:sistemaPrompt}];
+  /* Enviar as ultimas 20 mensagens para nao exceder limite */
+  var hist = chatHistory.slice(-20);
+  hist.forEach(function(m){mensagensApi.push({role:m.role, content:m.content});});
+
+  try {
+    var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + groqApiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages: mensagensApi,
+        max_tokens: 1024,
+        temperature: 0.7
+      })
+    });
+
+    /* Remover typing */
+    var td = document.getElementById('typingIndicator');
+    if(td) td.remove();
+
+    if(!response.ok){
+      var errData = null;
+      try{errData = await response.json();}catch(e){}
+      if(response.status === 401){
+        chatHistory.push({role:'assistant', content:'Sua chave API expirou ou e invalida. Vá em Gestao > Assistente IA para atualizar a chave.'});
+      } else if(response.status === 429){
+        chatHistory.push({role:'assistant', content:'Muitas requisicoes. Aguarde alguns segundos e tente novamente.'});
+      } else {
+        chatHistory.push({role:'assistant', content:'Erro ao conectar com o servidor. Tente novamente em instantes.'});
+      }
+    } else {
+      var data = await response.json();
+      var resposta = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : 'Nao consegui gerar uma resposta.';
+      chatHistory.push({role:'assistant', content:resposta});
+    }
+  } catch(err){
+    var td2 = document.getElementById('typingIndicator');
+    if(td2) td2.remove();
+    chatHistory.push({role:'assistant', content:'Erro de conexao. Verifique sua internet e tente novamente.'});
+  }
+
+  /* Manter no maximo 50 mensagens no historico */
+  if(chatHistory.length > 50) chatHistory = chatHistory.slice(-50);
+  localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
+  chatLoading = false;
+  if(btn) btn.disabled = false;
+  renderChatMessages();
+}
+
+/* === COMPRAS GESTAO === */
+function renderComprasGestao(){
+  var el=document.getElementById('comprasListGestao');
+  if(compras.length===0){el.innerHTML='<div class="empty-state" style="padding:20px"><p style="font-size:.78rem;color:var(--fg-d)">Nenhuma compra registrada.</p></div>';return;}
+  var sorted=compras.slice().sort(function(a,b){return b.data>a.data?1:-1;});var h='';
+  sorted.forEach(function(c){h+='<div class="compra-item"><div class="compra-header"><span>'+fmtDate(c.data)+' - '+esc(c.fornecedor)+'</span><div style="display:flex;gap:4px"><button class="btn-sm edit" style="padding:3px 8px;font-size:.62rem" onclick="editarCompra(\''+c.id+'\')">Editar</button><button class="btn-sm danger" style="padding:3px 8px;font-size:.62rem" onclick="confirmarExcluirCompra(\''+c.id+'\')">Excluir</button></div></div><div class="compra-linha"><span>'+esc(c.produto)+' ('+Number(c.qtd).toLocaleString('pt-BR')+')</span><span><strong>'+fmt(c.valor)+'</strong></span></div></div>';});el.innerHTML=h;
+}
+
+/* === LANCAMENTO: NOVO / EDITAR === */
+function setTipo(t){ tipoAtual=t;document.getElementById('tbEntrada').className='type-btn'+(t==='entrada'?' sel-in':'');document.getElementById('tbSaida').className='type-btn'+(t==='saida'?' sel-out':'');preencherCategorias();atualizarTP(); }
+function preencherCategorias(){ var sel=document.getElementById('inpCategoria');var cats=CATS[tipoAtual];var h='<option value="">Selecione...</option><optgroup label="Categorias de '+(tipoAtual==='entrada'?'Entrada':'Saida')+'">';cats.forEach(function(c){h+='<option value="'+c.v+'">'+c.l+'</option>';});h+='</optgroup>';sel.innerHTML=h; }
+function atualizarTP(){ var q=parseFloat(document.getElementById('inpQtd').value)||0;var p=parseFloat(document.getElementById('inpPreco').value)||0;document.getElementById('tpPreview').textContent=fmt(q*p); }
+
+function openModalLancamento(){
+  document.getElementById('formLancamento').reset();document.getElementById('lancEditId').value='';document.getElementById('inpData').value=hoje();
+  document.getElementById('lancTitle').textContent='Novo Lancamento';document.getElementById('lancBtn').textContent='Salvar Lancamento';
+  setTipo('entrada');abrirModal('modalLancamento');
+}
+
+function editarLancamento(id){
+  var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;
+  document.getElementById('lancEditId').value=l.id;document.getElementById('lancTitle').textContent='Editar Lancamento';document.getElementById('lancBtn').textContent='Atualizar Lancamento';
+  setTipo(l.tipo);
+  setTimeout(function(){document.getElementById('inpCategoria').value=l.categoria;document.getElementById('inpDescricao').value=l.descricao;document.getElementById('inpQtd').value=l.quantidade;document.getElementById('inpPreco').value=l.precoUnitario;document.getElementById('inpData').value=l.data;atualizarTP();},50);
+  abrirModal('modalLancamento');
+}
+
+function salvarLancamento(e){
+  e.preventDefault();var editId=document.getElementById('lancEditId').value;
+  var cat=document.getElementById('inpCategoria').value;var desc=document.getElementById('inpDescricao').value.trim();
+  var qtd=parseFloat(document.getElementById('inpQtd').value)||0;var preco=parseFloat(document.getElementById('inpPreco').value)||0;
+  var data=document.getElementById('inpData').value;
+  if(!cat){toast('Selecione uma categoria','err');return;}if(!desc){toast('Informe a descricao','err');return;}
+  var valor=qtd*preco;if(valor<=0){toast('Informe quantidade e preco unitario','err');return;}
+  if(editId){
+    var idx=lancamentos.findIndex(function(x){return x.id===editId;});
+    if(idx>-1){lancamentos[idx].tipo=tipoAtual;lancamentos[idx].categoria=cat;lancamentos[idx].descricao=desc;lancamentos[idx].quantidade=qtd;lancamentos[idx].precoUnitario=preco;lancamentos[idx].valor=valor;lancamentos[idx].data=data;}
+    toast('Lancamento atualizado!','ok');
+  } else {
+    lancamentos.push({id:uid(),tipo:tipoAtual,categoria:cat,descricao:desc,quantidade:qtd,precoUnitario:preco,valor:valor,data:data,ts:Date.now()});
+    toast('Lancamento salvo com sucesso!','ok');
+  }
+  salvar();fecharModal('modalLancamento');atualizarTela();
+}
+
+function verDetalheLanc(id){
+  var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;
+  document.getElementById('detTitle').textContent=l.tipo==='entrada'?'Detalhe da Entrada':'Detalhe da Saida';
+  var is=l.tipo==='entrada';var h='<div class="modal-section">';
+  h+='<div class="info-row"><span class="ir-label">Tipo</span><span class="ir-value" style="color:'+(is?'var(--ac)':'var(--dng)')+'">'+(is?'Entrada':'Saida')+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Categoria</span><span class="ir-value">'+esc(CAT_LABELS[l.categoria]||l.categoria)+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Descricao</span><span class="ir-value">'+esc(l.descricao)+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Quantidade</span><span class="ir-value">'+Number(l.quantidade).toLocaleString('pt-BR')+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Preco Unitario</span><span class="ir-value">'+fmt(l.precoUnitario)+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Valor Total</span><span class="ir-value" style="color:'+(is?'var(--ac)':'var(--dng)')+';font-size:1.05rem">'+(is?'+':'-')+fmt(l.valor)+'</span></div>';
+  h+='<div class="info-row"><span class="ir-label">Data</span><span class="ir-value">'+fmtDateExt(l.data)+'</span></div>';
+  h+='</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-sm edit" style="flex:1;padding:11px" onclick="fecharModal(\'modalDetalhe\');editarLancamento(\''+l.id+'\')">Editar</button><button class="btn-sm danger" style="flex:1;padding:11px" onclick="fecharModal(\'modalDetalhe\');confirmarExcluirLanc(\''+l.id+'\')">Excluir</button></div>';
+  document.getElementById('detContent').innerHTML=h;abrirModal('modalDetalhe');
+}
+
+function confirmarExcluirLanc(id){
+  document.getElementById('confTitle').textContent='Excluir Lancamento';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lancamento?';
+  document.getElementById('confBtn').onclick=function(){lancamentos=lancamentos.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');fecharModal('modalDetalhe');atualizarTela();toast('Lancamento excluido','ok');};abrirModal('modalConfirmar');
+}
+
+/* === LOTE: NOVO / EDITAR === */
+function openModalLote(){
+  document.getElementById('formLote').reset();document.getElementById('loteEditId').value='';
+  document.getElementById('loteTitle').textContent='Novo Lote';document.getElementById('loteBtn').textContent='Salvar Lote';
+  abrirModal('modalLote');
+}
+
+function editarLote(id){
+  var l=lotes.find(function(x){return x.id===id;});if(!l)return;
+  document.getElementById('loteEditId').value=l.id;document.getElementById('loteTitle').textContent='Editar Lote';document.getElementById('loteBtn').textContent='Atualizar Lote';
+  document.getElementById('inpLoteId').value=l.identificacao;document.getElementById('inpLoteTipo').value=l.tipo;document.getElementById('inpLoteCultura').value=l.cultura;document.getElementById('inpLoteArea').value=l.area;document.getElementById('inpLoteStatus').value=l.status;document.getElementById('inpLoteObs').value=l.observacoes||'';
+  abrirModal('modalLote');
+}
+
+function salvarLote(e){
+  e.preventDefault();var editId=document.getElementById('loteEditId').value;
+  var ident=document.getElementById('inpLoteId').value.trim();var tipo=document.getElementById('inpLoteTipo').value;
+  var cultura=document.getElementById('inpLoteCultura').value.trim();var area=document.getElementById('inpLoteArea').value;
+  var status=document.getElementById('inpLoteStatus').value;var obs=document.getElementById('inpLoteObs').value.trim();
+  if(!ident){toast('Informe a identificacao','err');return;}if(!cultura){toast('Informe a raca','err');return;}
+  if(editId){
+    var idx=lotes.findIndex(function(x){return x.id===editId;});
+    if(idx>-1){lotes[idx].identificacao=ident;lotes[idx].tipo=tipo;lotes[idx].cultura=cultura;lotes[idx].area=area;lotes[idx].status=status;lotes[idx].observacoes=obs;}
+    toast('Lote atualizado!','ok');
+  } else {
+    lotes.push({id:uid(),identificacao:ident,tipo:tipo,cultura:cultura,area:area,status:status,observacoes:obs});
+    toast('Lote salvo com sucesso!','ok');
+  }
+  salvar();fecharModal('modalLote');atualizarTela();
+}
+
+function confirmarExcluirLote(id){
+  document.getElementById('confTitle').textContent='Excluir Lote';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lote?';
+  document.getElementById('confBtn').onclick=function(){lotes=lotes.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');atualizarTela();toast('Lote excluido','ok');};abrirModal('modalConfirmar');
+}
+
+/* === COMPRA: NOVO / EDITAR === */
+function openModalCompra(){
+  document.getElementById('formCompra').reset();document.getElementById('compEditId').value='';document.getElementById('inpCompData').value=hoje();
+  document.getElementById('compTitle').textContent='Nova Compra';document.getElementById('compBtn').textContent='Salvar Compra';
+  abrirModal('modalCompra');
+}
+
+function editarCompra(id){
+  var c=compras.find(function(x){return x.id===id;});if(!c)return;
+  document.getElementById('compEditId').value=c.id;document.getElementById('compTitle').textContent='Editar Compra';document.getElementById('compBtn').textContent='Atualizar Compra';
+  document.getElementById('inpCompFor').value=c.fornecedor;document.getElementById('inpCompProd').value=c.produto;document.getElementById('inpCompQtd').value=c.qtd;document.getElementById('inpCompVal').value=c.valor;document.getElementById('inpCompData').value=c.data;
+  abrirModal('modalCompra');
+}
+
+function salvarCompra(e){
+  e.preventDefault();var editId=document.getElementById('compEditId').value;
+  var fornc=document.getElementById('inpCompFor').value.trim();var prod=document.getElementById('inpCompProd').value.trim();
+  var qtd=parseFloat(document.getElementById('inpCompQtd').value)||0;var val=parseFloat(document.getElementById('inpCompVal').value)||0;
+  var data=document.getElementById('inpCompData').value;
+  if(!fornc){toast('Informe o fornecedor','err');return;}if(!prod){toast('Informe o produto','err');return;}
+  if(val<=0){toast('Informe o valor','err');return;}
+  if(editId){
+    var idx=compras.findIndex(function(x){return x.id===editId;});
+    if(idx>-1){compras[idx].fornecedor=fornc;compras[idx].produto=prod;compras[idx].qtd=qtd;compras[idx].valor=val;compras[idx].data=data;}
+    toast('Compra atualizada!','ok');
+  } else {
+    compras.push({id:uid(),fornecedor:fornc,produto:prod,qtd:qtd,valor:val,data:data});
+    toast('Compra salva com sucesso!','ok');
+  }
+  salvar();fecharModal('modalCompra');atualizarTela();
+}
+
+function confirmarExcluirCompra(id){
+  document.getElementById('confTitle').textContent='Excluir Compra';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir esta compra?';
+  document.getElementById('confBtn').onclick=function(){compras=compras.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');atualizarTela();toast('Compra excluida','ok');};abrirModal('modalConfirmar');
+}
+
+/* === LIMPAR DADOS === */
+function confirmarLimparDados(){
+  document.getElementById('confTitle').textContent='Limpar Todos os Dados';document.getElementById('confMsg').textContent='ATENCAO: Todos os lancamentos, lotes e compras serao apagados permanentemente. Esta acao nao pode ser desfeita.';
+  document.getElementById('confBtn').onclick=function(){lancamentos=[];lotes=[];compras=[];salvar();fecharModal('modalConfirmar');atualizarTela();toast('Todos os dados foram apagados','ok');};abrirModal('modalConfirmar');
+}
+
+/* === GERAR PDF (CORRIGIDO) === */
+function gerarPDF(){
+  try {
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF('p','mm','a4');
+    var t = calcTotais();
+    var pageW = 210;
+    var margin = 15;
+    var contentW = pageW - margin*2;
+    var y = 15;
+
+    /* Funcao auxiliar para checar nova pagina */
+    function checkPage(needed){
+      if(y + needed > 275){
+        doc.addPage();
+        y = 15;
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text('AgroPro - Relatorio Financeiro', margin, y);
+        y += 8;
+      }
+    }
+
+    /* Cabecalho com fundo escuro */
+    doc.setFillColor(26,29,35);
+    doc.rect(0, 0, pageW, 36, 'F');
+    doc.setFillColor(34,197,94);
+    doc.rect(0, 36, pageW, 2, 'F');
+
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica','bold');
+    doc.text('AgroPro', margin, 18);
+    doc.setFontSize(9);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(180,180,180);
+    var hd = new Date();
+    var ms = ['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    doc.text('Relatorio Financeiro - ' + hd.getDate() + ' de ' + ms[hd.getMonth()] + ' de ' + hd.getFullYear(), margin, 28);
+
+    y = 48;
+
+    /* Resumo financeiro */
+    doc.setTextColor(26,29,35);
+    doc.setFontSize(12);
+    doc.setFont('helvetica','bold');
+    doc.text('Resumo Financeiro', margin, y);
+    y += 8;
+
+    /* Caixas de resumo */
+    var boxH = 22;
+    var boxW = (contentW - 8) / 3;
+
+    /* Entradas */
+    doc.setFillColor(240,253,244);
+    doc.roundedRect(margin, y, boxW, boxH, 3, 3, 'F');
+    doc.setFontSize(7);
+    doc.setTextColor(107,114,128);
+    doc.text('ENTRADAS', margin + boxW/2, y + 7, {align:'center'});
+    doc.setFontSize(13);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(22,163,74);
+    doc.text(fmt(t.entrada), margin + boxW/2, y + 16, {align:'center'});
+
+    /* Saidas */
+    doc.setFillColor(254,242,242);
+    doc.roundedRect(margin + boxW + 4, y, boxW, boxH, 3, 3, 'F');
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(107,114,128);
+    doc.text('SAIDAS', margin + boxW + 4 + boxW/2, y + 7, {align:'center'});
+    doc.setFontSize(13);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(239,68,68);
+    doc.text(fmt(t.saida), margin + boxW + 4 + boxW/2, y + 16, {align:'center'});
+
+    /* Saldo */
+    doc.setFillColor(243,244,246);
+    doc.roundedRect(margin + (boxW+4)*2, y, boxW, boxH, 3, 3, 'F');
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(107,114,128);
+    doc.text('SALDO', margin + (boxW+4)*2 + boxW/2, y + 7, {align:'center'});
+    doc.setFontSize(13);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(t.saldo >= 0 ? 22 : 239, t.saldo >= 0 ? 163 : 68, t.saldo >= 0 ? 74 : 68);
+    doc.text(fmt(t.saldo), margin + (boxW+4)*2 + boxW/2, y + 16, {align:'center'});
+
+    y += boxH + 12;
+
+    /* Lotes ativos */
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.setTextColor(26,29,35);
+    doc.text('Lotes Cadastrados (' + lotes.length + ')', margin, y);
+    y += 6;
+
+    if(lotes.length > 0){
+      /* Header da tabela de lotes */
+      doc.setFillColor(244,246,249);
+      doc.rect(margin, y, contentW, 7, 'F');
+      doc.setFontSize(7);
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(107,114,128);
+      doc.text('IDENTIFICACAO', margin + 2, y + 5);
+      doc.text('TIPO', margin + 55, y + 5);
+      doc.text('RACA', margin + 80, y + 5);
+      doc.text('QTD', margin + 130, y + 5);
+      doc.text('STATUS', margin + 155, y + 5);
+      y += 8;
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      doc.setTextColor(26,29,35);
+      lotes.forEach(function(l){
+        checkPage(8);
+        var tipoL = l.tipo === 'galinhas' ? 'Galinhas' : 'Codornas';
+        doc.text(String(l.identificacao).substring(0,22), margin + 2, y + 4);
+        doc.text(tipoL, margin + 55, y + 4);
+        doc.text(String(l.cultura).substring(0,24), margin + 80, y + 4);
+        doc.text(Number(l.area).toLocaleString('pt-BR'), margin + 130, y + 4);
+        doc.text(l.status === 'ativo' ? 'Ativo' : 'Finalizado', margin + 155, y + 4);
+        y += 7;
+      });
+    } else {
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(156,163,175);
+      doc.text('Nenhum lote cadastrado.', margin, y + 4);
+      y += 8;
+    }
+
+    y += 8;
+
+    /* Compras */
+    checkPage(20);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.setTextColor(26,29,35);
+    doc.text('Compras Registradas (' + compras.length + ')', margin, y);
+    y += 6;
+
+    if(compras.length > 0){
+      doc.setFillColor(244,246,249);
+      doc.rect(margin, y, contentW, 7, 'F');
+      doc.setFontSize(7);
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(107,114,128);
+      doc.text('DATA', margin + 2, y + 5);
+      doc.text('FORNECEDOR', margin + 25, y + 5);
+      doc.text('PRODUTO', margin + 85, y + 5);
+      doc.text('QTD', margin + 140, y + 5);
+      doc.text('VALOR', margin + 165, y + 5);
+      y += 8;
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      doc.setTextColor(26,29,35);
+      var sortedCompras = compras.slice().sort(function(a,b){return b.data > a.data ? 1 : -1;});
+      sortedCompras.forEach(function(c){
+        checkPage(8);
+        doc.text(fmtDate(c.data), margin + 2, y + 4);
+        doc.text(String(c.fornecedor).substring(0,22), margin + 25, y + 4);
+        doc.text(String(c.produto).substring(0,24), margin + 85, y + 4);
+        doc.text(Number(c.qtd).toLocaleString('pt-BR'), margin + 140, y + 4);
+        doc.text(fmt(c.valor), margin + 165, y + 4);
+        y += 7;
+      });
+    } else {
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(156,163,175);
+      doc.text('Nenhuma compra registrada.', margin, y + 4);
+      y += 8;
+    }
+
+    y += 8;
+
+    /* Lancamentos detalhados */
+    checkPage(20);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.setTextColor(26,29,35);
+    doc.text('Lancamentos (' + lancamentos.length + ')', margin, y);
+    y += 6;
+
+    if(lancamentos.length > 0){
+      doc.setFillColor(244,246,249);
+      doc.rect(margin, y, contentW, 7, 'F');
+      doc.setFontSize(7);
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(107,114,128);
+      doc.text('DATA', margin + 2, y + 5);
+      doc.text('TIPO', margin + 25, y + 5);
+      doc.text('CATEGORIA', margin + 42, y + 5);
+      doc.text('DESCRICAO', margin + 90, y + 5);
+      doc.text('VALOR', margin + 165, y + 5);
+      y += 8;
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      var sortedLanc = lancamentos.slice().sort(function(a,b){return b.data > a.data ? 1 : b.data > a.data ? -1 : b.ts - a.ts;});
+      sortedLanc.forEach(function(l){
+        checkPage(8);
+        var isE = l.tipo === 'entrada';
+        doc.setTextColor(26,29,35);
+        doc.text(fmtDate(l.data), margin + 2, y + 4);
+        doc.setTextColor(isE ? 22 : 239, isE ? 163 : 68, isE ? 74 : 68);
+        doc.text(isE ? 'Entrada' : 'Saida', margin + 25, y + 4);
+        doc.setTextColor(26,29,35);
+        doc.text(String(CAT_LABELS[l.categoria] || l.categoria).substring(0,20), margin + 42, y + 4);
+        doc.text(String(l.descricao).substring(0,22), margin + 90, y + 4);
+        doc.setTextColor(isE ? 22 : 239, isE ? 163 : 68, isE ? 74 : 68);
+        doc.text((isE ? '+' : '-') + fmt(l.valor), margin + 165, y + 4);
+        y += 7;
+      });
+    } else {
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(156,163,175);
+      doc.text('Nenhum lancamento registrado.', margin, y + 4);
+    }
+
+    /* Rodape em todas as paginas */
+    var totalPages = doc.getNumberOfPages();
+    for(var i = 1; i <= totalPages; i++){
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(180,180,180);
+      doc.text('Gerado pelo AgroPro em ' + hd.getDate() + '/' + (hd.getMonth()+1) + '/' + hd.getFullYear() + ' as ' + String(hd.getHours()).padStart(2,'0') + ':' + String(hd.getMinutes()).padStart(2,'0'), margin, 290);
+      doc.text('Pagina ' + i + ' de ' + totalPages, pageW - margin, 290, {align:'right'});
+    }
+
+    doc.save('AgroPro_Relatorio_' + hoje() + '.pdf');
+    toast('Relatorio PDF gerado com sucesso!','ok');
+  } catch(err) {
+    toast('Erro ao gerar PDF: ' + err.message, 'err');
+  }
+}
+
+/* === INIT === */
+atualizarTela();
+</script>
+</body>
+</html>
