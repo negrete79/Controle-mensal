@@ -171,14 +171,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 .btn-sbm:active{transform:scale(.97)}
 .btn-del{width:100%;padding:11px;border:1.5px solid rgba(239,68,68,.2);border-radius:var(--rs);background:var(--dng-s);color:var(--dng);font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--f);margin-top:8px;transition:all .2s}
 .btn-del:active{transform:scale(.97)}
-.guia-grid{display:flex;flex-direction:column;gap:8px}
-.guia-card{background:var(--bg-card);border-radius:var(--r);border:1px solid var(--bdr);display:flex;overflow:hidden;cursor:pointer;box-shadow:var(--sh);transition:all .15s}
-.guia-card:active{transform:scale(.98)}
-.guia-color{width:4px;flex-shrink:0}
-.guia-content{padding:14px 16px;flex:1;display:flex;justify-content:space-between;align-items:center}
-.gc-text h3{font-size:.88rem;margin-bottom:3px;font-weight:700}
-.gc-text p{font-size:.74rem;color:var(--fg-m);line-height:1.4}
-.gc-arrow{color:var(--fg-d);font-size:1rem}
 .compras-list{display:flex;flex-direction:column;gap:10px}
 .compra-item{background:var(--bg-card);border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);box-shadow:var(--sh)}
 .compra-header{background:var(--bg-el);padding:10px 14px;font-size:.68rem;font-weight:700;color:var(--fg-m);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
@@ -220,9 +212,9 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 @keyframes isl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-/* === CHAT GROQ === */
+/* === CHAT === */
 .chat-container{display:flex;flex-direction:column;height:calc(100vh - 54px - 62px - max(6px,env(safe-area-inset-bottom)));overflow:hidden}
-.chat-messages{flex:1;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch}
+.chat-messages{flex:1;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
 .chat-messages::-webkit-scrollbar{width:0}
 .chat-msg{display:flex;gap:8px;max-width:88%;animation:msgIn .3s ease}
 .chat-msg.user{align-self:flex-end;flex-direction:row-reverse}
@@ -239,19 +231,27 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 .chat-bubble li{margin-bottom:3px}
 .chat-bubble p{margin-bottom:6px}
 .chat-bubble p:last-child{margin-bottom:0}
-.chat-typing{display:flex;gap:4px;padding:12px 16px}
-.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--fg-d);animation:typingBounce .6s ease-in-out infinite}
-.chat-typing span:nth-child(2){animation-delay:.15s}
-.chat-typing span:nth-child(3){animation-delay:.3s}
-@keyframes typingBounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+.chat-typing-wrap{display:flex;gap:8px;max-width:88%;align-self:flex-start;animation:msgIn .25s ease}
+.chat-typing-bubble{padding:12px 16px;border-radius:16px;border-bottom-left-radius:4px;background:var(--bg-card);border:1px solid var(--bdr);box-shadow:var(--sh);display:flex;gap:4px;align-items:center}
+.chat-typing-bubble span{width:7px;height:7px;border-radius:50%;background:var(--fg-d);animation:typingBounce 1.2s ease-in-out infinite}
+.chat-typing-bubble span:nth-child(2){animation-delay:.15s}
+.chat-typing-bubble span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-7px);opacity:1}}
 .chat-input-area{padding:10px 0 0;border-top:1px solid var(--bdr);display:flex;gap:8px;align-items:flex-end;background:var(--bg);position:relative}
 .chat-input-area textarea{flex:1;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:20px;font-size:.84rem;font-family:var(--f);background:var(--bg-inp);outline:none;resize:none;max-height:100px;min-height:40px;color:var(--fg);transition:border-color .2s;line-height:1.4}
 .chat-input-area textarea:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px var(--ac-g)}
 .chat-send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 3px 10px var(--ac-g)}
 .chat-send:active{transform:scale(.88)}
 .chat-send:disabled{opacity:.4;cursor:not-allowed}
-
-/* === API KEY SETUP === */
+.chat-triggers{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px}
+.chat-trigger{padding:7px 14px;border-radius:50px;border:1.5px solid var(--bdr);background:var(--bg-card);color:var(--fg-m);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:var(--f);white-space:nowrap;box-shadow:var(--sh);display:flex;align-items:center;gap:5px}
+.chat-trigger:active{transform:scale(.94);border-color:var(--ac);color:var(--ac2);background:var(--suc-s)}
+.chat-trigger .ct-emoji{font-size:.82rem}
+.chat-welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:20px;text-align:center;gap:14px}
+.chat-welcome-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:800;box-shadow:0 6px 24px var(--ac-g)}
+.chat-welcome h3{font-size:1rem;font-weight:800;color:var(--fg)}
+.chat-welcome p{font-size:.78rem;color:var(--fg-m);line-height:1.5;max-width:280px}
+.chat-welcome-triggers{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
 .apikey-setup{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 54px - 62px - max(6px,env(safe-area-inset-bottom)));padding:30px 20px;text-align:center}
 .apikey-icon{width:70px;height:70px;border-radius:50%;background:var(--bg-el);border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:16px}
 .apikey-setup h3{font-size:1.1rem;font-weight:800;margin-bottom:6px}
@@ -260,8 +260,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 .apikey-input-wrap input{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:.88rem;font-family:var(--f);background:var(--bg-inp);outline:none;color:var(--fg);text-align:center;letter-spacing:.5px}
 .apikey-input-wrap input:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px var(--ac-g)}
 .apikey-input-wrap .btn-sbm{margin-top:12px}
-
-/* === CHAT SETTINGS (na gestao) === */
 .chat-settings-card{background:var(--bg-card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-top:10px}
 .chat-settings-card h4{font-size:.85rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .chat-settings-card p{font-size:.74rem;color:var(--fg-m);line-height:1.4;margin-bottom:10px}
@@ -351,17 +349,16 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
   <section class="screen" id="screenGestao">
     <div class="section-title">Gestao</div>
     <div class="gestao-cards">
-      <div class="gestao-card" onclick="openModalLote()"><span class="gc-emoji">&#x1F4E6;</span><h3>Novo Lote</h3><p>Cadastre um lote</p></div>
+      <div class="gestao-card" onclick="openModalLote()"><span class="gc-emoji">🐔</span><h3>Novo Lote</h3><p>Cadastre um lote</p></div>
       <div class="gestao-card" onclick="gerarPDF()"><span class="gc-emoji">&#x1F4CA;</span><h3>Relatorio</h3><p>Exportar PDF</p></div>
       <div class="gestao-card" onclick="openModalCompra()"><span class="gc-emoji">&#x1F6D2;</span><h3>Nova Compra</h3><p>Registre compras</p></div>
       <div class="gestao-card" onclick="confirmarLimparDados()"><span class="gc-emoji">&#x1F5D1;</span><h3>Limpar Dados</h3><p>Resetar tudo</p></div>
     </div>
-    <!-- Configuracao do Chat Groq -->
     <div class="chat-settings-card" id="chatSettingsCard">
       <h4>&#x1F4AC; Assistente IA (Groq)</h4>
       <p>Conecte sua chave API do Groq para ter um assistente inteligente que tira duvidas sobre avicultura, gestao financeira e muito mais.</p>
       <div class="apikey-row">
-        <input type="password" id="inpApiKeyGestao" placeholder="gsk_..." oninput="this.type=this.value.length>0?'password':'text'">
+        <input type="password" id="inpApiKeyGestao" placeholder="gsk_...">
         <button class="btn-sbm" onclick="salvarApiKeyDaGestao()">Salvar</button>
       </div>
       <div id="chatStatusGestao"></div>
@@ -375,13 +372,11 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 <nav class="nav-bar" id="navBar">
   <button class="nav-item active" data-screen="screenDashboard" onclick="navigateTo('screenDashboard',this)"><span class="ni-icon">&#x1F4CA;</span><span class="ni-label">Dashboard</span></button>
   <button class="nav-item" data-screen="screenMov" onclick="navigateTo('screenMov',this)"><span class="ni-icon">&#x1F4CB;</span><span class="ni-label">Mov.</span></button>
-<button class="nav-item" data-screen="screenLotes" onclick="navigateTo('screenLotes',this)"><span class="ni-icon">&#x1F414;</span><span class="ni-label">Lotes</span></button>
+  <button class="nav-item" data-screen="screenLotes" onclick="navigateTo('screenLotes',this)"><span class="ni-icon">&#x1F414;</span><span class="ni-label">Lotes</span></button>
   <button class="nav-item" data-screen="screenGuia" onclick="navigateTo('screenGuia',this)"><span class="ni-icon">&#x1F916;</span><span class="ni-label">Chat</span></button>
- 
   <button class="nav-item" data-screen="screenGestao" onclick="navigateTo('screenGestao',this)"><span class="ni-icon">&#x2699;</span><span class="ni-label">Gestao</span></button>
 </nav>
 
-<!-- MODAL LANCAMENTO -->
 <div class="modal-overlay" id="modalLancamento" onclick="fecharModalFora(event,'modalLancamento')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -405,7 +400,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
   </div>
 </div>
 
-<!-- MODAL LOTE -->
 <div class="modal-overlay" id="modalLote" onclick="fecharModalFora(event,'modalLote')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -432,7 +426,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
   </div>
 </div>
 
-<!-- MODAL COMPRA -->
 <div class="modal-overlay" id="modalCompra" onclick="fecharModalFora(event,'modalCompra')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -451,7 +444,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
   </div>
 </div>
 
-<!-- MODAL DETALHE -->
 <div class="modal-overlay" id="modalDetalhe" onclick="fecharModalFora(event,'modalDetalhe')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -460,7 +452,6 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR -->
 <div class="modal-overlay" id="modalConfirmar" onclick="fecharModalFora(event,'modalConfirmar')">
   <div class="modal-sheet" style="max-height:40vh">
     <div class="modal-handle"></div>
@@ -474,49 +465,30 @@ html,body{width:100%;height:100%;overflow:hidden;position:fixed;top:0;left:0;dis
 </div>
 
 <script>
-/* === PWA: Gerar icon e manifest dinamicamente === */
+/* === PWA com icone 🪶 === */
 (function initPWA(){
-  /* Gerar icone SVG como data URI */
-  var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="%2316a34a"/><text x="256" y="310" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="200" fill="white">AP</text></svg>';
-  var iconDataUri = 'data:image/svg+xml,' + svgIcon;
-
-  /* Aplicar apple-touch-icon */
-  var appleLink = document.getElementById('appleIcon');
-  if(appleLink) appleLink.href = iconDataUri;
-
-  /* Gerar e injetar manifest */
-  var manifest = {
-    name: "AgroPro - Gestao Avicola",
-    short_name: "AgroPro",
-    description: "Gerenciamento financeiro para avicultura",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#eef1f5",
-    theme_color: "#eef1f5",
-    orientation: "portrait-primary",
-    icons: [
-      { src: iconDataUri, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
-    ]
-  };
-  var manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-  var manifestUrl = URL.createObjectURL(manifestBlob);
-  var manifestLink = document.getElementById('manifestLink');
-  if(manifestLink) manifestLink.href = manifestUrl;
-
-  /* Registrar Service Worker via Blob */
+  var canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#16a34a';
+  ctx.beginPath();
+  ctx.moveTo(96,0);ctx.lineTo(416,0);ctx.quadraticCurveTo(512,0,512,96);
+  ctx.lineTo(512,416);ctx.quadraticCurveTo(512,512,416,512);
+  ctx.lineTo(96,512);ctx.quadraticCurveTo(0,512,0,416);
+  ctx.lineTo(0,96);ctx.quadraticCurveTo(0,0,96,0);
+  ctx.closePath();ctx.fill();
+  ctx.font='280px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('🪶',256,270);
+  var iconDataUri=canvas.toDataURL('image/png');
+  var appleLink=document.getElementById('appleIcon');
+  if(appleLink)appleLink.href=iconDataUri;
+  var manifest={name:"AgroPro - Gestao Avicola",short_name:"AgroPro",description:"Gerenciamento financeiro para avicultura",start_url:".",display:"standalone",background_color:"#eef1f5",theme_color:"#eef1f5",orientation:"portrait-primary",icons:[{src:iconDataUri,sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+  var manifestBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  var manifestLink=document.getElementById('manifestLink');
+  if(manifestLink)manifestLink.href=URL.createObjectURL(manifestBlob);
   if('serviceWorker' in navigator){
-    var swCode = [
-      'const CACHE="agopro-v2";',
-      'self.addEventListener("install",e=>{self.skipWaiting();});',
-      'self.addEventListener("activate",e=>{e.waitUntil(clients.claim());});',
-      'self.addEventListener("fetch",e=>{',
-      '  if(e.request.method!=="GET")return;',
-      '  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));',
-      '});'
-    ].join('\n');
-    var swBlob = new Blob([swCode], {type: 'application/javascript'});
-    var swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl, {scope: './'}).catch(function(){});
+    var swCode=['const CACHE="agopro-v5";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(clients.claim());});','self.addEventListener("fetch",e=>{','  if(e.request.method!=="GET")return;','  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));','});'].join('\n');
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode],{type:'application/javascript'})),{scope:'./'}).catch(function(){});
   }
 })();
 
@@ -527,13 +499,13 @@ var CATS = {
     {v:'venda_aves',l:'Venda de Aves'},
     {v:'venda_codornas',l:'Venda de Codornas'},
     {v:'venda_ovos_codorna',l:'Venda Ovos Codorna'},
-    {v:'Adubo',l:'Venda Adubo orgânico'},
+    {v:'Adubo',l:'Venda Adubo organico'},
     {v:'outra_entrada',l:'Outra Entrada'}
   ],
   saida: [
-    {v:'ração',l:'Ração'},
+    {v:'ração',l:'Racao'},
     {v:'medicamento',l:'Medicamento/Vacina'},
-    {v:'mão_obra',l:'Mão de Obra'},
+    {v:'mão_obra',l:'Mao de Obra'},
     {v:'energia',l:'Energia/Agua'},
     {v:'manutenção',l:'Manutencao'},
     {v:'aves',l:'Aquisicao de Aves'},
@@ -557,24 +529,66 @@ var groqApiKey = localStorage.getItem('agro_groq_key') || '';
 var chatHistory = JSON.parse(localStorage.getItem('agro_chat_hist') || '[]');
 var chatLoading = false;
 
+/* === SONS DO CHAT === */
+var audioCtx = null;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
+function playSendSound(){try{var ctx=getAudioCtx(),now=ctx.currentTime;var o1=ctx.createOscillator(),g1=ctx.createGain();o1.type='sine';o1.frequency.setValueAtTime(880,now);o1.frequency.exponentialRampToValueAtTime(1200,now+.06);g1.gain.setValueAtTime(.15,now);g1.gain.exponentialRampToValueAtTime(.001,now+.12);o1.connect(g1);g1.connect(ctx.destination);o1.start(now);o1.stop(now+.12);var o2=ctx.createOscillator(),g2=ctx.createGain();o2.type='sine';o2.frequency.setValueAtTime(660,now+.03);o2.frequency.exponentialRampToValueAtTime(990,now+.08);g2.gain.setValueAtTime(.08,now+.03);g2.gain.exponentialRampToValueAtTime(.001,now+.15);o2.connect(g2);g2.connect(ctx.destination);o2.start(now+.03);o2.stop(now+.15);}catch(e){}}
+function playReceiveSound(){try{var ctx=getAudioCtx(),now=ctx.currentTime;var o1=ctx.createOscillator(),g1=ctx.createGain();o1.type='sine';o1.frequency.setValueAtTime(587,now);g1.gain.setValueAtTime(0,now);g1.gain.linearRampToValueAtTime(.18,now+.01);g1.gain.exponentialRampToValueAtTime(.001,now+.35);o1.connect(g1);g1.connect(ctx.destination);o1.start(now);o1.stop(now+.35);var o2=ctx.createOscillator(),g2=ctx.createGain();o2.type='sine';o2.frequency.setValueAtTime(784,now+.1);g2.gain.setValueAtTime(0,now+.1);g2.gain.linearRampToValueAtTime(.14,now+.11);g2.gain.exponentialRampToValueAtTime(.001,now+.45);o2.connect(g2);g2.connect(ctx.destination);o2.start(now+.1);o2.stop(now+.45);var o3=ctx.createOscillator(),g3=ctx.createGain();o3.type='sine';o3.frequency.setValueAtTime(1047,now+.18);g3.gain.setValueAtTime(0,now+.18);g3.gain.linearRampToValueAtTime(.06,now+.19);g3.gain.exponentialRampToValueAtTime(.001,now+.5);o3.connect(g3);g3.connect(ctx.destination);o3.start(now+.18);o3.stop(now+.5);}catch(e){}}
+
+/* === GATILHOS DO CHAT === */
+var GATILHOS_INICIAIS = [
+  {emoji:'\u{1F33E}',label:'Racao ideal',texto:'Qual a racao ideal para galinhas poedeiras e qual o custo medio por ave?'},
+  {emoji:'\u{1F95A}',label:'Producao de ovos',texto:'Como aumentar a producao de ovos no meu lote? Dicas praticas.'},
+  {emoji:'\u{1F489}',label:'Doencas comuns',texto:'Quais as doencas mais comuns em galinhas e como prevenir?'},
+  {emoji:'\u{1F4B0}',label:'Custo por ovo',texto:'Como calcular o custo de producao por ovo? Me explique passo a passo.'},
+  {emoji:'\u{1F4CA}',label:'Analise financeira',texto:'Analise meus dados financeiros atuais e me de dicas de como melhorar a rentabilidade.'},
+  {emoji:'\u{1F414}',label:'Manejo inicial',texto:'Quais os cuidados necessarios nas primeiras semanas de vida das pintinhas?'}
+];
+var GATILHOS_CONTEXTUAIS = [
+  {emoji:'\u{1F504}',label:'Me detalhe mais',texto:'Pode me detalhar mais sobre isso?'},
+  {emoji:'\u{1F4DD}',label:'Resumo pratico',texto:'Faca um resumo pratico em topicos curtos do que acabou de explicar.'},
+  {emoji:'\u{1F4B0}',label:'Quanto custa?',texto:'Quanto isso custaria na pratica para um lote de 1000 aves?'},
+  {emoji:'\u26A0\uFE0F',label:'Riscos envolvidos',texto:'Quais os riscos ou pontos de atencao que devo ficar atento?'},
+  {emoji:'\u{1F4CB}',label:'Plano de acao',texto:'Monte um plano de acao simples com os proximos passos que devo seguir.'},
+  {emoji:'\u{1F916}',label:'Outra duvida',texto:''}
+];
+
+function renderTriggersHtml(triggers,isWelcome){
+  var cls=isWelcome?'chat-welcome-triggers':'chat-triggers';
+  var h='<div class="'+cls+'">';
+  triggers.forEach(function(trig,idx){
+    if(!trig.texto){h+='<button class="chat-trigger" onclick="focarChatInput()"><span class="ct-emoji">'+trig.emoji+'</span>'+esc(trig.label)+'</button>';}
+    else{h+='<button class="chat-trigger" onclick="dispararGatilho('+idx+')"><span class="ct-emoji">'+trig.emoji+'</span>'+esc(trig.label)+'</button>';}
+  });
+  h+='</div>';return h;
+}
+function focarChatInput(){var inp=document.getElementById('chatInput');if(inp){inp.focus();inp.scrollIntoView({behavior:'smooth',block:'end'});}}
+function dispararGatilho(idx){
+  var texto=null;
+  if(GATILHOS_INICIAIS[idx]&&GATILHOS_INICIAIS[idx].texto)texto=GATILHOS_INICIAIS[idx].texto;
+  else if(GATILHOS_CONTEXTUAIS[idx]&&GATILHOS_CONTEXTUAIS[idx].texto)texto=GATILHOS_CONTEXTUAIS[idx].texto;
+  if(!texto){focarChatInput();return;}
+  var inp=document.getElementById('chatInput');if(!inp)return;inp.value=texto;enviarMensagemChat();
+}
+
 /* === UTILIDADES === */
-function fmt(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtShort(v){ if(v>=1000000) return 'R$ '+(v/1000000).toFixed(1)+'M'; if(v>=1000) return 'R$ '+(v/1000).toFixed(1)+'K'; return fmt(v); }
-function fmtDate(d){ if(!d) return '-'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-function fmtDateExt(d){ if(!d) return '-'; var m=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']; var p=d.split('-'); return parseInt(p[2])+' de '+m[parseInt(p[1])-1]; }
-function hoje(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function diaSemana(d){ var ds=['dom','seg','ter','qua','qui','sex','sab']; return ds[new Date(d+'T12:00:00').getDay()]; }
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr(2,5); }
-function salvar(){ localStorage.setItem('agro_lanc',JSON.stringify(lancamentos)); localStorage.setItem('agro_lotes',JSON.stringify(lotes)); localStorage.setItem('agro_compras',JSON.stringify(compras)); }
-function esc(s){ if(!s) return ''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function fmt(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtShort(v){if(v>=1000000)return 'R$ '+(v/1000000).toFixed(1)+'M';if(v>=1000)return 'R$ '+(v/1000).toFixed(1)+'K';return fmt(v);}
+function fmtDate(d){if(!d)return '-';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function fmtDateExt(d){if(!d)return '-';var m=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];var p=d.split('-');return parseInt(p[2])+' de '+m[parseInt(p[1])-1];}
+function hoje(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function diaSemana(d){var ds=['dom','seg','ter','qua','qui','sex','sab'];return ds[new Date(d+'T12:00:00').getDay()];}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
+function salvar(){localStorage.setItem('agro_lanc',JSON.stringify(lancamentos));localStorage.setItem('agro_lotes',JSON.stringify(lotes));localStorage.setItem('agro_compras',JSON.stringify(compras));}
+function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 /* === TOAST === */
-function toast(msg,tipo){ var t=document.getElementById('toast'); t.textContent=msg; t.className='toast t-'+(tipo||'ok'); setTimeout(function(){t.classList.add('show');},10); setTimeout(function(){t.classList.remove('show');},2500); }
+function toast(msg,tipo){var t=document.getElementById('toast');t.textContent=msg;t.className='toast t-'+(tipo||'ok');setTimeout(function(){t.classList.add('show');},10);setTimeout(function(){t.classList.remove('show');},2500);}
 
 /* === MODAIS === */
-function abrirModal(id){ document.getElementById(id).classList.add('active'); }
-function fecharModal(id){ document.getElementById(id).classList.remove('active'); }
-function fecharModalFora(e,id){ if(e.target===e.currentTarget) fecharModal(id); }
+function abrirModal(id){document.getElementById(id).classList.add('active');}
+function fecharModal(id){document.getElementById(id).classList.remove('active');}
+function fecharModalFora(e,id){if(e.target===e.currentTarget)fecharModal(id);}
 
 /* === NAVEGACAO === */
 function navigateTo(screenId,navEl){
@@ -582,22 +596,22 @@ function navigateTo(screenId,navEl){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById(screenId).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  if(navEl) navEl.classList.add('active');
+  if(navEl)navEl.classList.add('active');
   else document.querySelector('.nav-item[data-screen="'+screenId+'"]').classList.add('active');
   var hf=document.getElementById('headerFin'),hg=document.getElementById('headerGen'),fab=document.getElementById('fabAdd'),pdf=document.getElementById('btnPdfHeader');
   if(screenId==='screenDashboard'){hf.classList.add('active');hg.classList.remove('active');fab.classList.remove('hide');pdf.style.display='';}
   else if(screenId==='screenMov'){hf.classList.add('active');hg.classList.remove('active');fab.classList.remove('hide');pdf.style.display='none';}
   else{hf.classList.remove('active');hg.classList.add('active');fab.classList.add('hide');var t={screenLotes:'Meus Lotes',screenGuia:'Assistente IA',screenGestao:'Gestao'};document.getElementById('headerGenTitle').textContent=t[screenId]||'';}
   document.getElementById('appContent').scrollTop=0;
-  if(screenId==='screenGuia') renderGuia();
+  if(screenId==='screenGuia')renderGuia();
   atualizarTela();
 }
 
 /* === CALCULOS === */
-function calcTotais(){ var e=0,s=0; lancamentos.forEach(function(l){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;}); return {entrada:e,saida:s,saldo:e-s,count:lancamentos.length}; }
-function calcUltimos7Dias(){ var dados=[];var hd=new Date(); for(var i=6;i>=0;i--){var d=new Date(hd);d.setDate(d.getDate()-i);var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var e=0,s=0;lancamentos.forEach(function(l){if(l.data===ds){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;}});dados.push({data:ds,dia:diaSemana(ds),ent:e,sai:s});}return dados;}
+function calcTotais(){var e=0,s=0;lancamentos.forEach(function(l){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;});return{entrada:e,saida:s,saldo:e-s,count:lancamentos.length};}
+function calcUltimos7Dias(){var dados=[];var hd=new Date();for(var i=6;i>=0;i--){var d=new Date(hd);d.setDate(d.getDate()-i);var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');var e=0,s=0;lancamentos.forEach(function(l){if(l.data===ds){if(l.tipo==='entrada')e+=l.valor;else s+=l.valor;}});dados.push({data:ds,dia:diaSemana(ds),ent:e,sai:s});}return dados;}
 function getRecentes(n){return lancamentos.slice().sort(function(a,b){return b.data>a.data?1:b.data<a.data?-1:b.ts-a.ts;}).slice(0,n);}
-function getCatIcon(cat){var ic={venda_ovos:'\u{1F95A}',venda_aves:'\u{1F414}',venda_codornas:'\u{1F426}',venda_ovos_codorna:'\u{1F95A}',subsidiogov:'\u{1F3DB}\u{FE0F}',outra_entrada:'\u{1F4B0}',racao:'\u{1F33E}',medicamento:'\u{1F489}',mao_obra:'\u{1F477}',energia:'\u{1F4A1}',manutencao:'\u{1F527}',avos:'\u{1F423}',embalagem:'\u{1F4E6}',transporte:'\u{1F69A}',impostos:'\u{1F4CB}',outra_saida:'\u{1F4E4}'};return ic[cat]||'\u{1F4DD}';}
+function getCatIcon(cat){var ic={venda_ovos:'\u{1F95A}',venda_aves:'\u{1F414}',venda_codornas:'\u{1F424}',venda_ovos_codorna:'\u{1F95A}',subsidiogov:'\u{1F3DB}\u{FE0F}',outra_entrada:'\u{1F4B0}',racao:'\u{1F33E}',medicamento:'\u{1F489}',mao_obra:'\u{1F477}',energia:'\u{1F4A1}',manutencao:'\u{1F527}',aves:'\u{1F423}',embalagem:'\u{1F4E6}',transporte:'\u{1F69A}',impostos:'\u{1F4CB}',outra_saida:'\u{1F4E4}'};return ic[cat]||'\u{1F4DD}';}
 
 /* === ATUALIZAR TELA === */
 function atualizarTela(){
@@ -643,652 +657,139 @@ function renderExtrato(){
 /* === LOTES === */
 function renderLotes(){
   var el=document.getElementById('lotesList');
-  if(lotes.length===0){el.innerHTML='<div class="empty-state"><div class="es-icon">\u{1F4E6}</div><p>Nenhum lote cadastrado.</p><small>Va em Gestao > Novo Lote.</small></div>';return;}
-  var h='';lotes.forEach(function(l){var tipoLabel=l.tipo==='galinhas'?'\u{1F414} Galinhas':'\u{1F426} Codornas';h+='<div class="lote-card"><div class="lc-top"><h4>'+esc(l.identificacao)+'</h4><span class="lc-badge '+l.status+'">'+l.status+'</span></div><div class="lc-detail"><strong>Tipo:</strong> '+tipoLabel+'<br><strong>Raca:</strong> '+esc(l.cultura)+'<br><strong>Qtd cabecas:</strong> '+Number(l.area).toLocaleString('pt-BR')+(l.observacoes?'<br><strong>Obs:</strong> '+esc(l.observacoes):'')+'</div><div class="lc-actions"><button class="btn-sm edit" onclick="editarLote(\''+l.id+'\')">Editar</button><button class="btn-sm danger" onclick="confirmarExcluirLote(\''+l.id+'\')">Excluir</button></div></div>';});el.innerHTML=h;
+  if(lotes.length===0){el.innerHTML='<div class="empty-state"><div class="es-icon">🐔</div><p>Nenhum lote cadastrado.</p><small>Va em Gestao > Novo Lote.</small></div>';return;}
+  var h='';lotes.forEach(function(l){var tipoLabel=l.tipo==='galinhas'?'🐔 Galinhas':'\u{1F424} Codornas';h+='<div class="lote-card"><div class="lc-top"><h4>'+esc(l.identificacao)+'</h4><span class="lc-badge '+l.status+'">'+l.status+'</span></div><div class="lc-detail"><strong>Tipo:</strong> '+tipoLabel+'<br><strong>Raca:</strong> '+esc(l.cultura)+'<br><strong>Qtd cabecas:</strong> '+Number(l.area).toLocaleString('pt-BR')+(l.observacoes?'<br><strong>Obs:</strong> '+esc(l.observacoes):'')+'</div><div class="lc-actions"><button class="btn-sm edit" onclick="editarLote(\''+l.id+'\')">Editar</button><button class="btn-sm danger" onclick="confirmarExcluirLote(\''+l.id+'\')">Excluir</button></div></div>';});el.innerHTML=h;
 }
 
-/* === GUIA - Agora e o Chat Groq === */
+/* === CHAT COMPLETO === */
+function mdToHtml(text){
+  if(!text)return '';
+  var h=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/`([^`]+)`/g,'<code style="background:var(--bg-el);padding:1px 5px;border-radius:4px;font-size:.78rem">$1</code>').replace(/^### (.+)$/gm,'<strong style="font-size:.9rem">$1</strong>').replace(/^## (.+)$/gm,'<strong style="font-size:.95rem">$1</strong>').replace(/^# (.+)$/gm,'<strong style="font-size:1rem">$1</strong>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/((?:<li>.*<\/li>\n?)+)/g,'<ul>$1</ul>');
+  h=h.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  if(!h.startsWith('<'))h='<p>'+h+'</p>';return h;
+}
+function showTypingIndicator(c){hideTypingIndicator();var w=document.createElement('div');w.className='chat-typing-wrap';w.id='chatTypingEl';w.innerHTML='<div class="chat-avatar" style="background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:.65rem;font-weight:700;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">AP</div><div class="chat-typing-bubble"><span></span><span></span><span></span></div>';c.appendChild(w);scrollChatBottom(c);}
+function hideTypingIndicator(){var el=document.getElementById('chatTypingEl');if(el)el.remove();}
+function scrollChatBottom(c){if(!c)return;setTimeout(function(){c.scrollTop=c.scrollHeight;},30);}
+function limparTriggersAnteriores(){document.querySelectorAll('.chat-triggers-wrap').forEach(function(el){el.remove();});}
+
 function renderGuia(){
-  var el = document.getElementById('guiaContent');
-  /* Se nao tem chave API, mostra tela de configuracao */
-  if(!groqApiKey){
-    el.innerHTML = '<div class="apikey-setup">'
-      +'<div class="apikey-icon">\u{1F510}</div>'
-      +'<h3>Conectar Assistente IA</h3>'
-      +'<p>Insira sua chave API do Groq para ativar o assistente inteligente. Ele vai tirar suas duvidas sobre avicultura, gestao financeira, nutricao animal e muito mais.</p>'
-      +'<div class="apikey-input-wrap">'
-      +'<input type="text" id="inpApiKeySetup" placeholder="Cole sua chave gsk_... aqui">'
-      +'<button class="btn-sbm" onclick="salvarApiKeyDoGuia()">Conectar</button>'
-      +'</div>'
-      +'<p style="font-size:.68rem;color:var(--fg-d);margin-top:14px;max-width:300px">Obtenha sua chave gratis em <strong>console.groq.com</strong></p>'
-      +'</div>';
-    return;
-  }
-  /* Tem chave: mostra o chat */
-  el.innerHTML = '<div class="chat-container">'
-    +'<div class="chat-messages" id="chatMessages"></div>'
-    +'<div class="chat-input-area">'
-    +'<textarea id="chatInput" placeholder="Pergunte sobre avicultura..." rows="1" onkeydown="chatKeyDown(event)" oninput="autoResize(this)"></textarea>'
-    +'<button class="chat-send" id="chatSendBtn" onclick="enviarMensagemChat()">\u27A4</button>'
-    +'</div>'
-    +'</div>';
-  renderChatMessages();
+  var el=document.getElementById('guiaContent');
+  if(!groqApiKey){el.innerHTML='<div class="apikey-setup"><div class="apikey-icon">\u{1F510}</div><h3>Conectar Assistente IA</h3><p>Insira sua chave API do Groq para ativar o assistente inteligente.</p><div class="apikey-input-wrap"><input type="text" id="inpApiKeySetup" placeholder="Cole sua chave gsk_... aqui"><button class="btn-sbm" onclick="salvarApiKeyDoSetup()">Conectar</button></div></div>';return;}
+  if(chatHistory.length===0){el.innerHTML='<div class="chat-container"><div class="chat-welcome"><div class="chat-welcome-icon">AP</div><h3>Ola! Sou o AgroPro IA</h3><p>Posso te ajudar com duvidas sobre avicultura, gestao financeira, nutricao, doencas e muito mais.</p>'+renderTriggersHtml(GATILHOS_INICIAIS,true)+'</div><div class="chat-input-area"><textarea id="chatInput" placeholder="Digite sua duvida..." rows="1" onkeydown="chatKeydown(event)" oninput="autoResizeTextarea(this)"></textarea><button class="chat-send" id="chatSendBtn" onclick="enviarMensagemChat()">\u{27A4}</button></div></div>';setTimeout(function(){var inp=document.getElementById('chatInput');if(inp)inp.focus();},100);return;}
+  var html='<div class="chat-container"><div class="chat-messages" id="chatMessages">';
+  chatHistory.forEach(function(msg){if(msg.role==='user'){html+='<div class="chat-msg user"><div class="chat-avatar">\u{1F464}</div><div class="chat-bubble">'+esc(msg.content)+'</div></div>';}else{html+='<div class="chat-msg bot"><div class="chat-avatar">AP</div><div class="chat-bubble">'+mdToHtml(msg.content)+'</div></div>';}});
+  html+='</div><div class="chat-input-area"><textarea id="chatInput" placeholder="Pergunte sobre avicultura..." rows="1" onkeydown="chatKeydown(event)" oninput="autoResizeTextarea(this)"></textarea><button class="chat-send" id="chatSendBtn" onclick="enviarMensagemChat()">\u{27A4}</button></div></div>';
+  el.innerHTML=html;var msgContainer=document.getElementById('chatMessages');scrollChatBottom(msgContainer);setTimeout(function(){var inp=document.getElementById('chatInput');if(inp)inp.focus();},100);
 }
-
-/* === CHAT STATUS NA GESTAO === */
-function renderChatStatusGestao(){
-  var el = document.getElementById('chatStatusGestao');
-  if(!el) return;
-  var inp = document.getElementById('inpApiKeyGestao');
-  if(inp && groqApiKey) inp.value = '********';
-  if(groqApiKey){
-    el.innerHTML = '<span class="chat-status connected">Conectado</span>';
-  } else {
-    el.innerHTML = '<span class="chat-status disconnected">Nao conectado</span>';
-  }
-}
-
-/* === SALVAR API KEY === */
-function salvarApiKeyDoGuia(){
-  var inp = document.getElementById('inpApiKeySetup');
-  var key = inp ? inp.value.trim() : '';
-  if(!key){toast('Cole sua chave API','err');return;}
-  if(!key.startsWith('gsk_')){toast('Chave invalida - deve comecar com gsk_','err');return;}
-  groqApiKey = key;
-  localStorage.setItem('agro_groq_key', key);
-  toast('Conectado com sucesso!','ok');
-  renderGuia();
-}
-
-function salvarApiKeyDaGestao(){
-  var inp = document.getElementById('inpApiKeyGestao');
-  var key = inp ? inp.value.trim() : '';
-  if(key === '********'){toast('Chave ja esta salva','info');return;}
-  if(!key){toast('Cole sua chave API','err');return;}
-  if(!key.startsWith('gsk_')){toast('Chave invalida - deve comecar com gsk_','err');return;}
-  groqApiKey = key;
-  localStorage.setItem('agro_groq_key', key);
-  toast('Chave salva com sucesso!','ok');
-  inp.value = '********';
-  renderChatStatusGestao();
-}
-
-/* === CHAT MESSAGES === */
-function renderChatMessages(){
-  var el = document.getElementById('chatMessages');
-  if(!el) return;
-  if(chatHistory.length === 0){
-    /* Mensagem de boas-vindas */
-    chatHistory.push({
-      role: 'assistant',
-      content: 'Olá! Sou o assistente AgroPro. Posso te ajudar com dúvidas sobre:\n\n- Criacao de galinhas e codornas\n- Nutricao e racao\n- Doencas e vacinas\n- Gestao financeira da granja\n- Categorias de lançamentos\n- Melhores práticas de produção\n\nComo posso te ajudar hoje?'
-    });
-    localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
-  }
-  var h = '';
-  chatHistory.forEach(function(msg){
-    if(msg.role === 'assistant'){
-      h += '<div class="chat-msg bot"><div class="chat-avatar">AP</div><div class="chat-bubble">'+formatarTextoChat(msg.content)+'</div></div>';
-    } else {
-      h += '<div class="chat-msg user"><div class="chat-avatar">\u{1F9D1}\u{200D}\u{1F33E}</div><div class="chat-bubble">'+esc(msg.content)+'</div></div>';
-    }
-  });
-  el.innerHTML = h;
-  el.scrollTop = el.scrollHeight;
-}
-
-function formatarTextoChat(texto){
-  var t = esc(texto);
-  /* Negrito */
-  t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  /* Listas */
-  t = t.replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>');
-  t = t.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-  /* Numeradas */
-  t = t.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
-  /* Quebras de linha */
-  t = t.replace(/\n/g, '<br>');
-  return t;
-}
-
-/* === ENVIAR MENSAGEM === */
-function chatKeyDown(e){
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    enviarMensagemChat();
-  }
-}
-
-function autoResize(el){
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
-}
+function autoResizeTextarea(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function chatKeydown(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMensagemChat();}}
 
 async function enviarMensagemChat(){
-  if(chatLoading) return;
-  var inp = document.getElementById('chatInput');
-  var text = inp ? inp.value.trim() : '';
-  if(!text) return;
-
-  /* Adicionar mensagem do usuario */
-  chatHistory.push({role:'user', content:text});
-  localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
-  if(inp){inp.value='';inp.style.height='auto';}
-  renderChatMessages();
-
-  /* Mostrar typing */
-  chatLoading = true;
-  var msgsEl = document.getElementById('chatMessages');
-  var typingDiv = document.createElement('div');
-  typingDiv.className = 'chat-msg bot';
-  typingDiv.id = 'typingIndicator';
-  typingDiv.innerHTML = '<div class="chat-avatar">AP</div><div class="chat-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>';
-  msgsEl.appendChild(typingDiv);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-
-  /* Desabilitar botao */
-  var btn = document.getElementById('chatSendBtn');
-  if(btn) btn.disabled = true;
-
-  /* Montar contexto do sistema */
-  var totais = calcTotais();
-  var sistemaPrompt = 'Voce e o assistente virtual do AgroPro, um app de gestao financeira para granjas de galinhas e codornas. Responda sempre em portugues do Brasil, de forma clara e objetiva. Dados atuais do usuario: Saldo total '+fmt(totais.saldo)+', Total de entradas '+fmt(totais.entrada)+', Total de saidas '+fmt(totais.saida)+', '+lancamentos.length+' lancamentos, '+lotes.length+' lotes cadastrados. Ajude com duvidas sobre avicultura, nutricao, doencas, gestao financeira, categorias de lancamento, e uso do app. Seja amigavel e profissional. Use formatacao com **negrito** para destacar termos importantes e listas com - para enumerar itens.';
-
-  var mensagensApi = [{role:'system', content:sistemaPrompt}];
-  /* Enviar as ultimas 20 mensagens para nao exceder limite */
-  var hist = chatHistory.slice(-20);
-  hist.forEach(function(m){mensagensApi.push({role:m.role, content:m.content});});
-
-  try {
-    var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + groqApiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
-        messages: mensagensApi,
-        max_tokens: 1024,
-        temperature: 0.7
-      })
-    });
-
-    /* Remover typing */
-    var td = document.getElementById('typingIndicator');
-    if(td) td.remove();
-
-    if(!response.ok){
-      var errData = null;
-      try{errData = await response.json();}catch(e){}
-      if(response.status === 401){
-        chatHistory.push({role:'assistant', content:'Sua chave API expirou ou e invalida. Vá em Gestao > Assistente IA para atualizar a chave.'});
-      } else if(response.status === 429){
-        chatHistory.push({role:'assistant', content:'Muitas requisicões. Aguarde alguns segundos e tente novamente.'});
-      } else {
-        chatHistory.push({role:'assistant', content:'Erro ao conectar com o servidor. Tente novamente em instantes.'});
-      }
-    } else {
-      var data = await response.json();
-      var resposta = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : 'Nao consegui gerar uma resposta.';
-      chatHistory.push({role:'assistant', content:resposta});
-    }
-  } catch(err){
-    var td2 = document.getElementById('typingIndicator');
-    if(td2) td2.remove();
-    chatHistory.push({role:'assistant', content:'Erro de conexao. Verifique sua internet e tente novamente.'});
+  if(chatLoading)return;var input=document.getElementById('chatInput');if(!input)return;var text=input.value.trim();if(!text)return;
+  var welcomeEl=document.querySelector('.chat-welcome');
+  if(welcomeEl){var container=document.querySelector('.chat-container');var inputArea=container.querySelector('.chat-input-area');var msgArea=document.createElement('div');msgArea.className='chat-messages';msgArea.id='chatMessages';container.insertBefore(msgArea,inputArea);welcomeEl.remove();input=document.getElementById('chatInput');}
+  playSendSound();input.value='';input.style.height='auto';
+  chatHistory.push({role:'user',content:text});localStorage.setItem('agro_chat_hist',JSON.stringify(chatHistory));
+  var msgContainer=document.getElementById('chatMessages');if(!msgContainer)return;
+  limparTriggersAnteriores();
+  var userDiv=document.createElement('div');userDiv.className='chat-msg user';userDiv.innerHTML='<div class="chat-avatar">\u{1F464}</div><div class="chat-bubble">'+esc(text)+'</div>';msgContainer.appendChild(userDiv);scrollChatBottom(msgContainer);
+  chatLoading=true;var btn=document.getElementById('chatSendBtn');if(btn)btn.disabled=true;showTypingIndicator(msgContainer);
+  var totais=calcTotais();
+  var sistemaPrompt='Voce e o AgroPro Assistente, um especialista em avicultura e gestao financeira de granjas. Responda sempre em portugues do Brasil, de forma clara e objetiva. Use formatacao markdown quando util. Dados atuais do usuario: Saldo total '+fmt(totais.saldo)+', Total de entradas '+fmt(totais.entrada)+', Total de saidas '+fmt(totais.saida)+', '+totais.count+' lancamentos, '+lotes.length+' lotes cadastrados.';
+  var apiMessages=[{role:'system',content:sistemaPrompt}];var recent=chatHistory.slice(-20);recent.forEach(function(m){apiMessages.push({role:m.role,content:m.content});});
+  try{
+    var response=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+groqApiKey,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:apiMessages,max_tokens:1024,temperature:0.7})});
+    hideTypingIndicator();
+    if(!response.ok){var errData=null;try{errData=await response.json();}catch(e){}throw new Error((errData&&errData.error&&errData.error.message)||'Erro '+response.status);}
+    var data=await response.json();var reply=data.choices&&data.choices[0]&&data.choices[0].message?data.choices[0].message.content:'Sem resposta.';
+    playReceiveSound();
+    chatHistory.push({role:'assistant',content:reply});localStorage.setItem('agro_chat_hist',JSON.stringify(chatHistory));
+    var botDiv=document.createElement('div');botDiv.className='chat-msg bot';botDiv.innerHTML='<div class="chat-avatar">AP</div><div class="chat-bubble">'+mdToHtml(reply)+'</div>';msgContainer.appendChild(botDiv);scrollChatBottom(msgContainer);
+    var trigWrap=document.createElement('div');trigWrap.className='chat-triggers-wrap';trigWrap.innerHTML=renderTriggersHtml(GATILHOS_CONTEXTUAIS,false);msgContainer.appendChild(trigWrap);scrollChatBottom(msgContainer);
+  }catch(err){
+    hideTypingIndicator();var errDiv=document.createElement('div');errDiv.className='chat-msg bot';errDiv.innerHTML='<div class="chat-avatar">AP</div><div class="chat-bubble" style="color:#ef4444"><strong>Erro:</strong> '+esc(err.message)+'</div>';msgContainer.appendChild(errDiv);scrollChatBottom(msgContainer);
   }
-
-  /* Manter no maximo 50 mensagens no historico */
-  if(chatHistory.length > 50) chatHistory = chatHistory.slice(-50);
-  localStorage.setItem('agro_chat_hist', JSON.stringify(chatHistory));
-  chatLoading = false;
-  if(btn) btn.disabled = false;
-  renderChatMessages();
+  chatLoading=false;if(btn)btn.disabled=false;input=document.getElementById('chatInput');if(input)input.focus();
 }
 
-/* === COMPRAS GESTAO === */
-function renderComprasGestao(){
-  var el=document.getElementById('comprasListGestao');
-  if(compras.length===0){el.innerHTML='<div class="empty-state" style="padding:20px"><p style="font-size:.78rem;color:var(--fg-d)">Nenhuma compra registrada.</p></div>';return;}
-  var sorted=compras.slice().sort(function(a,b){return b.data>a.data?1:-1;});var h='';
-  sorted.forEach(function(c){h+='<div class="compra-item"><div class="compra-header"><span>'+fmtDate(c.data)+' - '+esc(c.fornecedor)+'</span><div style="display:flex;gap:4px"><button class="btn-sm edit" style="padding:3px 8px;font-size:.62rem" onclick="editarCompra(\''+c.id+'\')">Editar</button><button class="btn-sm danger" style="padding:3px 8px;font-size:.62rem" onclick="confirmarExcluirCompra(\''+c.id+'\')">Excluir</button></div></div><div class="compra-linha"><span>'+esc(c.produto)+' ('+Number(c.qtd).toLocaleString('pt-BR')+')</span><span><strong>'+fmt(c.valor)+'</strong></span></div></div>';});el.innerHTML=h;
-}
+function salvarApiKeyDoSetup(){var inp=document.getElementById('inpApiKeySetup');if(!inp)return;var key=inp.value.trim();if(!key){toast('Cole a chave API','err');return;}groqApiKey=key;localStorage.setItem('agro_groq_key',key);toast('Conectado com sucesso!','ok');chatHistory=[];localStorage.removeItem('agro_chat_hist');renderGuia();}
+function salvarApiKeyDaGestao(){var inp=document.getElementById('inpApiKeyGestao');if(!inp)return;var key=inp.value.trim();if(!key){toast('Digite a chave API','err');return;}groqApiKey=key;localStorage.setItem('agro_groq_key',key);toast('Chave salva!','ok');renderChatStatusGestao();}
+function renderChatStatusGestao(){var el=document.getElementById('chatStatusGestao');if(!el)return;if(groqApiKey){el.innerHTML='<span class="chat-status connected">Conectado</span>';}else{el.innerHTML='<span class="chat-status disconnected">Desconectado</span>';}var inp=document.getElementById('inpApiKeyGestao');if(inp&&groqApiKey&&!inp.value){inp.value=groqApiKey;inp.type='password';}}
 
-/* === LANCAMENTO: NOVO / EDITAR === */
-function setTipo(t){ tipoAtual=t;document.getElementById('tbEntrada').className='type-btn'+(t==='entrada'?' sel-in':'');document.getElementById('tbSaida').className='type-btn'+(t==='saida'?' sel-out':'');preencherCategorias();atualizarTP(); }
-function preencherCategorias(){ var sel=document.getElementById('inpCategoria');var cats=CATS[tipoAtual];var h='<option value="">Selecione...</option><optgroup label="Categorias de '+(tipoAtual==='entrada'?'Entrada':'Saida')+'">';cats.forEach(function(c){h+='<option value="'+c.v+'">'+c.l+'</option>';});h+='</optgroup>';sel.innerHTML=h; }
-function atualizarTP(){ var q=parseFloat(document.getElementById('inpQtd').value)||0;var p=parseFloat(document.getElementById('inpPreco').value)||0;document.getElementById('tpPreview').textContent=fmt(q*p); }
+/* === COMPRAS === */
+function renderComprasGestao(){var el=document.getElementById('comprasListGestao');if(compras.length===0){el.innerHTML='<div class="empty-state" style="padding:20px"><p>Nenhuma compra registrada.</p></div>';return;}var h='';compras.slice().reverse().forEach(function(c){h+='<div class="compra-item"><div class="compra-header"><span>'+esc(c.fornecedor)+'</span><span>'+fmtDate(c.data)+'</span></div><div class="compra-linha"><span>'+esc(c.produto)+'</span><small>Qtd: '+Number(c.qtd).toLocaleString('pt-BR')+'</small></div><div class="compra-linha"><strong>'+fmt(c.valor)+'</strong><div><button class="btn-sm danger" style="padding:3px 10px;font-size:.65rem" onclick="excluirCompra(\''+c.id+'\')">Excluir</button></div></div></div>';});el.innerHTML=h;}
+function openModalCompra(){document.getElementById('compTitle').textContent='Nova Compra';document.getElementById('compEditId').value='';document.getElementById('formCompra').reset();document.getElementById('inpCompData').value=hoje();abrirModal('modalCompra');}
+function salvarCompra(e){e.preventDefault();var editId=document.getElementById('compEditId').value;var obj={id:editId||uid(),fornecedor:document.getElementById('inpCompFor').value.trim(),produto:document.getElementById('inpCompProd').value.trim(),qtd:parseFloat(document.getElementById('inpCompQtd').value)||0,valor:parseFloat(document.getElementById('inpCompVal').value)||0,data:document.getElementById('inpCompData').value,ts:Date.now()};if(editId){var idx=compras.findIndex(function(c){return c.id===editId;});if(idx>=0)compras[idx]=obj;toast('Compra atualizada!');}else{compras.push(obj);toast('Compra registrada!');}salvar();fecharModal('modalCompra');atualizarTela();}
+function excluirCompra(id){compras=compras.filter(function(c){return c.id!==id;});salvar();toast('Compra removida!');atualizarTela();}
 
-function openModalLancamento(){
-  document.getElementById('formLancamento').reset();document.getElementById('lancEditId').value='';document.getElementById('inpData').value=hoje();
-  document.getElementById('lancTitle').textContent='Novo Lancamento';document.getElementById('lancBtn').textContent='Salvar Lancamento';
-  setTipo('entrada');abrirModal('modalLancamento');
-}
+/* === LANCAMENTOS === */
+function populateCats(){var sel=document.getElementById('inpCategoria');sel.innerHTML='';var cats=tipoAtual==='entrada'?CATS.entrada:CATS.saida;cats.forEach(function(c){var o=document.createElement('option');o.value=c.v;o.textContent=c.l;sel.appendChild(o);});}
+function setTipo(t){tipoAtual=t;document.getElementById('tbEntrada').className='type-btn'+(t==='entrada'?' sel-in':'');document.getElementById('tbSaida').className='type-btn'+(t==='saida'?' sel-out':'');populateCats();atualizarTP();}
+function atualizarTP(){var q=parseFloat(document.getElementById('inpQtd').value)||0;var p=parseFloat(document.getElementById('inpPreco').value)||0;document.getElementById('tpPreview').textContent=fmt(q*p);}
+function openModalLancamento(){document.getElementById('lancTitle').textContent='Novo Lancamento';document.getElementById('lancEditId').value='';document.getElementById('formLancamento').reset();document.getElementById('inpData').value=hoje();tipoAtual='entrada';setTipo('entrada');document.getElementById('tpPreview').textContent=fmt(0);abrirModal('modalLancamento');}
+function salvarLancamento(e){e.preventDefault();var editId=document.getElementById('lancEditId').value;var q=parseFloat(document.getElementById('inpQtd').value)||0;var p=parseFloat(document.getElementById('inpPreco').value)||0;var valor=q*p||p||0;var obj={id:editId||uid(),tipo:tipoAtual,categoria:document.getElementById('inpCategoria').value,descricao:document.getElementById('inpDescricao').value.trim(),qtd:q,preco:p,valor:valor,data:document.getElementById('inpData').value,ts:Date.now()};if(editId){var idx=lancamentos.findIndex(function(l){return l.id===editId;});if(idx>=0)lancamentos[idx]=obj;toast('Lancamento atualizado!');}else{lancamentos.push(obj);toast('Lancamento salvo!');}salvar();fecharModal('modalLancamento');atualizarTela();}
+function verDetalheLanc(id){var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;document.getElementById('detTitle').textContent='Detalhe do Lancamento';var is=l.tipo==='entrada';document.getElementById('detContent').innerHTML='<div class="modal-section"><div class="info-row"><span class="ir-label">Tipo</span><span class="ir-value" style="color:'+(is?'var(--ac2)':'var(--dng)')+'">'+(is?'Entrada':'Saida')+'</span></div><div class="info-row"><span class="ir-label">Categoria</span><span class="ir-value">'+esc(CAT_LABELS[l.categoria]||l.categoria)+'</span></div><div class="info-row"><span class="ir-label">Descricao</span><span class="ir-value">'+esc(l.descricao)+'</span></div><div class="info-row"><span class="ir-label">Quantidade</span><span class="ir-value">'+Number(l.qtd||0).toLocaleString('pt-BR')+'</span></div><div class="info-row"><span class="ir-label">Preco Unit.</span><span class="ir-value">'+fmt(l.preco||0)+'</span></div><div class="info-row"><span class="ir-label">Valor Total</span><span class="ir-value" style="font-size:1rem;color:'+(is?'var(--ac2)':'var(--dng)')+'">'+(is?'+':'-')+fmt(l.valor)+'</span></div><div class="info-row"><span class="ir-label">Data</span><span class="ir-value">'+fmtDateExt(l.data)+'</span></div></div><div style="display:flex;gap:8px;margin-top:14px"><button class="btn-sm edit" style="flex:1;padding:11px" onclick="editarLancamento(\''+l.id+'\')">Editar</button><button class="btn-sm danger" style="flex:1;padding:11px" onclick="confirmarExcluirLanc(\''+l.id+'\')">Excluir</button></div>';abrirModal('modalDetalhe');}
+function editarLancamento(id){fecharModal('modalDetalhe');var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;document.getElementById('lancTitle').textContent='Editar Lancamento';document.getElementById('lancEditId').value=l.id;setTipo(l.tipo);document.getElementById('inpCategoria').value=l.categoria;document.getElementById('inpDescricao').value=l.descricao;document.getElementById('inpQtd').value=l.qtd||'';document.getElementById('inpPreco').value=l.preco||'';document.getElementById('inpData').value=l.data;atualizarTP();abrirModal('modalLancamento');}
+function confirmarExcluirLanc(id){document.getElementById('confTitle').textContent='Excluir Lancamento';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lancamento?';document.getElementById('confBtn').onclick=function(){lancamentos=lancamentos.filter(function(l){return l.id!==id;});salvar();fecharModal('modalConfirmar');toast('Lancamento excluido!');atualizarTela();};abrirModal('modalConfirmar');}
 
-function editarLancamento(id){
-  var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;
-  document.getElementById('lancEditId').value=l.id;document.getElementById('lancTitle').textContent='Editar Lancamento';document.getElementById('lancBtn').textContent='Atualizar Lancamento';
-  setTipo(l.tipo);
-  setTimeout(function(){document.getElementById('inpCategoria').value=l.categoria;document.getElementById('inpDescricao').value=l.descricao;document.getElementById('inpQtd').value=l.quantidade;document.getElementById('inpPreco').value=l.precoUnitario;document.getElementById('inpData').value=l.data;atualizarTP();},50);
-  abrirModal('modalLancamento');
-}
-
-function salvarLancamento(e){
-  e.preventDefault();var editId=document.getElementById('lancEditId').value;
-  var cat=document.getElementById('inpCategoria').value;var desc=document.getElementById('inpDescricao').value.trim();
-  var qtd=parseFloat(document.getElementById('inpQtd').value)||0;var preco=parseFloat(document.getElementById('inpPreco').value)||0;
-  var data=document.getElementById('inpData').value;
-  if(!cat){toast('Selecione uma categoria','err');return;}if(!desc){toast('Informe a descricao','err');return;}
-  var valor=qtd*preco;if(valor<=0){toast('Informe quantidade e preco unitario','err');return;}
-  if(editId){
-    var idx=lancamentos.findIndex(function(x){return x.id===editId;});
-    if(idx>-1){lancamentos[idx].tipo=tipoAtual;lancamentos[idx].categoria=cat;lancamentos[idx].descricao=desc;lancamentos[idx].quantidade=qtd;lancamentos[idx].precoUnitario=preco;lancamentos[idx].valor=valor;lancamentos[idx].data=data;}
-    toast('Lancamento atualizado!','ok');
-  } else {
-    lancamentos.push({id:uid(),tipo:tipoAtual,categoria:cat,descricao:desc,quantidade:qtd,precoUnitario:preco,valor:valor,data:data,ts:Date.now()});
-    toast('Lancamento salvo com sucesso!','ok');
-  }
-  salvar();fecharModal('modalLancamento');atualizarTela();
-}
-
-function verDetalheLanc(id){
-  var l=lancamentos.find(function(x){return x.id===id;});if(!l)return;
-  document.getElementById('detTitle').textContent=l.tipo==='entrada'?'Detalhe da Entrada':'Detalhe da Saida';
-  var is=l.tipo==='entrada';var h='<div class="modal-section">';
-  h+='<div class="info-row"><span class="ir-label">Tipo</span><span class="ir-value" style="color:'+(is?'var(--ac)':'var(--dng)')+'">'+(is?'Entrada':'Saida')+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Categoria</span><span class="ir-value">'+esc(CAT_LABELS[l.categoria]||l.categoria)+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Descricao</span><span class="ir-value">'+esc(l.descricao)+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Quantidade</span><span class="ir-value">'+Number(l.quantidade).toLocaleString('pt-BR')+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Preco Unitario</span><span class="ir-value">'+fmt(l.precoUnitario)+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Valor Total</span><span class="ir-value" style="color:'+(is?'var(--ac)':'var(--dng)')+';font-size:1.05rem">'+(is?'+':'-')+fmt(l.valor)+'</span></div>';
-  h+='<div class="info-row"><span class="ir-label">Data</span><span class="ir-value">'+fmtDateExt(l.data)+'</span></div>';
-  h+='</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-sm edit" style="flex:1;padding:11px" onclick="fecharModal(\'modalDetalhe\');editarLancamento(\''+l.id+'\')">Editar</button><button class="btn-sm danger" style="flex:1;padding:11px" onclick="fecharModal(\'modalDetalhe\');confirmarExcluirLanc(\''+l.id+'\')">Excluir</button></div>';
-  document.getElementById('detContent').innerHTML=h;abrirModal('modalDetalhe');
-}
-
-function confirmarExcluirLanc(id){
-  document.getElementById('confTitle').textContent='Excluir Lancamento';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lancamento?';
-  document.getElementById('confBtn').onclick=function(){lancamentos=lancamentos.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');fecharModal('modalDetalhe');atualizarTela();toast('Lancamento excluido','ok');};abrirModal('modalConfirmar');
-}
-
-/* === LOTE: NOVO / EDITAR === */
-function openModalLote(){
-  document.getElementById('formLote').reset();document.getElementById('loteEditId').value='';
-  document.getElementById('loteTitle').textContent='Novo Lote';document.getElementById('loteBtn').textContent='Salvar Lote';
-  abrirModal('modalLote');
-}
-
-function editarLote(id){
-  var l=lotes.find(function(x){return x.id===id;});if(!l)return;
-  document.getElementById('loteEditId').value=l.id;document.getElementById('loteTitle').textContent='Editar Lote';document.getElementById('loteBtn').textContent='Atualizar Lote';
-  document.getElementById('inpLoteId').value=l.identificacao;document.getElementById('inpLoteTipo').value=l.tipo;document.getElementById('inpLoteCultura').value=l.cultura;document.getElementById('inpLoteArea').value=l.area;document.getElementById('inpLoteStatus').value=l.status;document.getElementById('inpLoteObs').value=l.observacoes||'';
-  abrirModal('modalLote');
-}
-
-function salvarLote(e){
-  e.preventDefault();var editId=document.getElementById('loteEditId').value;
-  var ident=document.getElementById('inpLoteId').value.trim();var tipo=document.getElementById('inpLoteTipo').value;
-  var cultura=document.getElementById('inpLoteCultura').value.trim();var area=document.getElementById('inpLoteArea').value;
-  var status=document.getElementById('inpLoteStatus').value;var obs=document.getElementById('inpLoteObs').value.trim();
-  if(!ident){toast('Informe a identificacao','err');return;}if(!cultura){toast('Informe a raça','err');return;}
-  if(editId){
-    var idx=lotes.findIndex(function(x){return x.id===editId;});
-    if(idx>-1){lotes[idx].identificacao=ident;lotes[idx].tipo=tipo;lotes[idx].cultura=cultura;lotes[idx].area=area;lotes[idx].status=status;lotes[idx].observacoes=obs;}
-    toast('Lote atualizado!','ok');
-  } else {
-    lotes.push({id:uid(),identificacao:ident,tipo:tipo,cultura:cultura,area:area,status:status,observacoes:obs});
-    toast('Lote salvo com sucesso!','ok');
-  }
-  salvar();fecharModal('modalLote');atualizarTela();
-}
-
-function confirmarExcluirLote(id){
-  document.getElementById('confTitle').textContent='Excluir Lote';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lote?';
-  document.getElementById('confBtn').onclick=function(){lotes=lotes.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');atualizarTela();toast('Lote excluido','ok');};abrirModal('modalConfirmar');
-}
-
-/* === COMPRA: NOVO / EDITAR === */
-function openModalCompra(){
-  document.getElementById('formCompra').reset();document.getElementById('compEditId').value='';document.getElementById('inpCompData').value=hoje();
-  document.getElementById('compTitle').textContent='Nova Compra';document.getElementById('compBtn').textContent='Salvar Compra';
-  abrirModal('modalCompra');
-}
-
-function editarCompra(id){
-  var c=compras.find(function(x){return x.id===id;});if(!c)return;
-  document.getElementById('compEditId').value=c.id;document.getElementById('compTitle').textContent='Editar Compra';document.getElementById('compBtn').textContent='Atualizar Compra';
-  document.getElementById('inpCompFor').value=c.fornecedor;document.getElementById('inpCompProd').value=c.produto;document.getElementById('inpCompQtd').value=c.qtd;document.getElementById('inpCompVal').value=c.valor;document.getElementById('inpCompData').value=c.data;
-  abrirModal('modalCompra');
-}
-
-function salvarCompra(e){
-  e.preventDefault();var editId=document.getElementById('compEditId').value;
-  var fornc=document.getElementById('inpCompFor').value.trim();var prod=document.getElementById('inpCompProd').value.trim();
-  var qtd=parseFloat(document.getElementById('inpCompQtd').value)||0;var val=parseFloat(document.getElementById('inpCompVal').value)||0;
-  var data=document.getElementById('inpCompData').value;
-  if(!fornc){toast('Informe o fornecedor','err');return;}if(!prod){toast('Informe o produto','err');return;}
-  if(val<=0){toast('Informe o valor','err');return;}
-  if(editId){
-    var idx=compras.findIndex(function(x){return x.id===editId;});
-    if(idx>-1){compras[idx].fornecedor=fornc;compras[idx].produto=prod;compras[idx].qtd=qtd;compras[idx].valor=val;compras[idx].data=data;}
-    toast('Compra atualizada!','ok');
-  } else {
-    compras.push({id:uid(),fornecedor:fornc,produto:prod,qtd:qtd,valor:val,data:data});
-    toast('Compra salva com sucesso!','ok');
-  }
-  salvar();fecharModal('modalCompra');atualizarTela();
-}
-
-function confirmarExcluirCompra(id){
-  document.getElementById('confTitle').textContent='Excluir Compra';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir esta compra?';
-  document.getElementById('confBtn').onclick=function(){compras=compras.filter(function(x){return x.id!==id;});salvar();fecharModal('modalConfirmar');atualizarTela();toast('Compra excluida','ok');};abrirModal('modalConfirmar');
-}
+/* === LOTES === */
+function openModalLote(){document.getElementById('loteTitle').textContent='Novo Lote';document.getElementById('loteEditId').value='';document.getElementById('formLote').reset();abrirModal('modalLote');}
+function salvarLote(e){e.preventDefault();var editId=document.getElementById('loteEditId').value;var obj={id:editId||uid(),identificacao:document.getElementById('inpLoteId').value.trim(),tipo:document.getElementById('inpLoteTipo').value,cultura:document.getElementById('inpLoteCultura').value.trim(),area:parseInt(document.getElementById('inpLoteArea').value)||0,status:document.getElementById('inpLoteStatus').value,observacoes:document.getElementById('inpLoteObs').value.trim()};if(editId){var idx=lotes.findIndex(function(l){return l.id===editId;});if(idx>=0)lotes[idx]=obj;toast('Lote atualizado!');}else{lotes.push(obj);toast('Lote cadastrado!');}salvar();fecharModal('modalLote');atualizarTela();}
+function editarLote(id){var l=lotes.find(function(x){return x.id===id;});if(!l)return;document.getElementById('loteTitle').textContent='Editar Lote';document.getElementById('loteEditId').value=l.id;document.getElementById('inpLoteId').value=l.identificacao;document.getElementById('inpLoteTipo').value=l.tipo;document.getElementById('inpLoteCultura').value=l.cultura;document.getElementById('inpLoteArea').value=l.area;document.getElementById('inpLoteStatus').value=l.status;document.getElementById('inpLoteObs').value=l.observacoes||'';abrirModal('modalLote');}
+function confirmarExcluirLote(id){document.getElementById('confTitle').textContent='Excluir Lote';document.getElementById('confMsg').textContent='Tem certeza que deseja excluir este lote?';document.getElementById('confBtn').onclick=function(){lotes=lotes.filter(function(l){return l.id!==id;});salvar();fecharModal('modalConfirmar');toast('Lote excluido!');atualizarTela();};abrirModal('modalConfirmar');}
 
 /* === LIMPAR DADOS === */
-function confirmarLimparDados(){
-  document.getElementById('confTitle').textContent='Limpar Todos os Dados';document.getElementById('confMsg').textContent='ATENÇÃO: Todos os lancamentos, lotes e compras serão apagados permanentemente. Esta ação não pode ser desfeita.';
-  document.getElementById('confBtn').onclick=function(){lancamentos=[];lotes=[];compras=[];salvar();fecharModal('modalConfirmar');atualizarTela();toast('Todos os dados foram apagados','ok');};abrirModal('modalConfirmar');
-}
+function confirmarLimparDados(){document.getElementById('confTitle').textContent='Limpar Todos os Dados';document.getElementById('confMsg').textContent='ATENCAO: Todos os lancamentos, lotes e compras serao apagados permanentemente. O historico do chat tambem sera limpo.';document.getElementById('confBtn').onclick=function(){lancamentos=[];lotes=[];compras=[];chatHistory=[];localStorage.removeItem('agro_lanc');localStorage.removeItem('agro_lotes');localStorage.removeItem('agro_compras');localStorage.removeItem('agro_chat_hist');fecharModal('modalConfirmar');toast('Dados limpos!');atualizarTela();};abrirModal('modalConfirmar');}
 
-/* === GERAR PDF (CORRIGIDO) === */
+/* === GERAR PDF PROFISSIONAL === */
 function gerarPDF(){
-  try {
-    var jsPDF = window.jspdf.jsPDF;
-    var doc = new jsPDF('p','mm','a4');
-    var t = calcTotais();
-    var pageW = 210;
-    var margin = 15;
-    var contentW = pageW - margin*2;
-    var y = 15;
-
-    /* Funcao auxiliar para checar nova pagina */
-    function checkPage(needed){
-      if(y + needed > 275){
-        doc.addPage();
-        y = 15;
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text('AgroPro - Relatorio Financeiro', margin, y);
-        y += 8;
-      }
-    }
-
-    /* Cabecalho com fundo escuro */
-    doc.setFillColor(26,29,35);
-    doc.rect(0, 0, pageW, 36, 'F');
-    doc.setFillColor(34,197,94);
-    doc.rect(0, 36, pageW, 2, 'F');
-
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(18);
-    doc.setFont('helvetica','bold');
-    doc.text('AgroPro', margin, 18);
-    doc.setFontSize(9);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(180,180,180);
-    var hd = new Date();
-    var ms = ['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    doc.text('Relatorio Financeiro - ' + hd.getDate() + ' de ' + ms[hd.getMonth()] + ' de ' + hd.getFullYear(), margin, 28);
-
-    y = 48;
-
-    /* Resumo financeiro */
-    doc.setTextColor(26,29,35);
-    doc.setFontSize(12);
-    doc.setFont('helvetica','bold');
-    doc.text('Resumo Financeiro', margin, y);
-    y += 8;
-
-    /* Caixas de resumo */
-    var boxH = 22;
-    var boxW = (contentW - 8) / 3;
-
-    /* Entradas */
-    doc.setFillColor(240,253,244);
-    doc.roundedRect(margin, y, boxW, boxH, 3, 3, 'F');
-    doc.setFontSize(7);
-    doc.setTextColor(107,114,128);
-    doc.text('ENTRADAS', margin + boxW/2, y + 7, {align:'center'});
-    doc.setFontSize(13);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(22,163,74);
-    doc.text(fmt(t.entrada), margin + boxW/2, y + 16, {align:'center'});
-
-    /* Saidas */
-    doc.setFillColor(254,242,242);
-    doc.roundedRect(margin + boxW + 4, y, boxW, boxH, 3, 3, 'F');
-    doc.setFontSize(7);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(107,114,128);
-    doc.text('SAIDAS', margin + boxW + 4 + boxW/2, y + 7, {align:'center'});
-    doc.setFontSize(13);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(239,68,68);
-    doc.text(fmt(t.saida), margin + boxW + 4 + boxW/2, y + 16, {align:'center'});
-
-    /* Saldo */
-    doc.setFillColor(243,244,246);
-    doc.roundedRect(margin + (boxW+4)*2, y, boxW, boxH, 3, 3, 'F');
-    doc.setFontSize(7);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(107,114,128);
-    doc.text('SALDO', margin + (boxW+4)*2 + boxW/2, y + 7, {align:'center'});
-    doc.setFontSize(13);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(t.saldo >= 0 ? 22 : 239, t.saldo >= 0 ? 163 : 68, t.saldo >= 0 ? 74 : 68);
-    doc.text(fmt(t.saldo), margin + (boxW+4)*2 + boxW/2, y + 16, {align:'center'});
-
-    y += boxH + 12;
-
-    /* === GRAFICO DE BARRAS NO PDF === */
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.setTextColor(26,29,35);
-    doc.text('Ultimos 7 dias', margin, y);
-    y += 4;
-
-    /* Legenda */
-    doc.setFontSize(7);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(107,114,128);
-    doc.setFillColor(34,197,94);
-    doc.roundedRect(margin, y - 2, 6, 3, 1, 1, 'F');
-    doc.text('Entradas', margin + 9, y);
-    doc.setFillColor(239,68,68);
-    doc.roundedRect(margin + 35, y - 2, 6, 3, 1, 1, 'F');
-    doc.text('Saidas', margin + 44, y);
-    y += 10;
-
-    var seteDias = calcUltimos7Dias();
-    var chartMax = 0;
-    seteDias.forEach(function(d){ chartMax = Math.max(chartMax, d.ent, d.sai); });
-    if(chartMax === 0) chartMax = 1;
-
-    var chartH = 40;
-    var chartW = contentW;
-    var barGroupW = chartW / 7;
-    var barW = barGroupW * 0.32;
-    var gap = 2;
-
-    /* Linha base */
-    doc.setDrawColor(226,230,236);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y + chartH, margin + chartW, y + chartH);
-
-    seteDias.forEach(function(d, i){
-      var hEnt = Math.max(1, (d.ent / chartMax) * chartH);
-      var hSai = Math.max(1, (d.sai / chartMax) * chartH);
-      var xBase = margin + (i * barGroupW) + (barGroupW - barW * 2 - gap) / 2;
-
-      /* Barra entrada (verde) */
-      doc.setFillColor(34,197,94);
-      doc.roundedRect(xBase, y + chartH - hEnt, barW, hEnt, 1, 1, 'F');
-
-      /* Barra saida (vermelho) */
-      doc.setFillColor(239,68,68);
-      doc.roundedRect(xBase + barW + gap, y + chartH - hSai, barW, hSai, 1, 1, 'F');
-
-      /* Label do dia */
-      doc.setFontSize(6);
-      doc.setTextColor(156,163,175);
-      doc.text(d.dia, xBase + barW + gap / 2, y + chartH + 4, {align: 'center'});
-    });
-
-    y += chartH + 10;
-
-    /* Lotes ativos */
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.setTextColor(26,29,35);
-    doc.text('Lotes Cadastrados (' + lotes.length + ')', margin, y);
-    y += 6;
-
-    if(lotes.length > 0){
-      /* Header da tabela de lotes */
-      doc.setFillColor(244,246,249);
-      doc.rect(margin, y, contentW, 7, 'F');
-      doc.setFontSize(7);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(107,114,128);
-      doc.text('IDENTIFICAÇÃO', margin + 2, y + 5);
-      doc.text('TIPO', margin + 55, y + 5);
-      doc.text('RAÇA', margin + 80, y + 5);
-      doc.text('QTD', margin + 130, y + 5);
-      doc.text('STATUS', margin + 155, y + 5);
-      y += 8;
-
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      doc.setTextColor(26,29,35);
-      lotes.forEach(function(l){
-        checkPage(8);
-        var tipoL = l.tipo === 'galinhas' ? 'Galinhas' : 'Codornas';
-        doc.text(String(l.identificacao).substring(0,22), margin + 2, y + 4);
-        doc.text(tipoL, margin + 55, y + 4);
-        doc.text(String(l.cultura).substring(0,24), margin + 80, y + 4);
-        doc.text(Number(l.area).toLocaleString('pt-BR'), margin + 130, y + 4);
-        doc.text(l.status === 'ativo' ? 'Ativo' : 'Finalizado', margin + 155, y + 4);
-        y += 7;
-      });
-    } else {
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(156,163,175);
-      doc.text('Nenhum lote cadastrado.', margin, y + 4);
-      y += 8;
-    }
-
-    y += 8;
-
-    /* Compras */
-    checkPage(20);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.setTextColor(26,29,35);
-    doc.text('Compras Registradas (' + compras.length + ')', margin, y);
-    y += 6;
-
-    if(compras.length > 0){
-      doc.setFillColor(244,246,249);
-      doc.rect(margin, y, contentW, 7, 'F');
-      doc.setFontSize(7);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(107,114,128);
-      doc.text('DATA', margin + 2, y + 5);
-      doc.text('FORNECEDOR', margin + 25, y + 5);
-      doc.text('PRODUTO', margin + 85, y + 5);
-      doc.text('QTD', margin + 140, y + 5);
-      doc.text('VALOR', margin + 165, y + 5);
-      y += 8;
-
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      doc.setTextColor(26,29,35);
-      var sortedCompras = compras.slice().sort(function(a,b){return b.data > a.data ? 1 : -1;});
-      sortedCompras.forEach(function(c){
-        checkPage(8);
-        doc.text(fmtDate(c.data), margin + 2, y + 4);
-        doc.text(String(c.fornecedor).substring(0,22), margin + 25, y + 4);
-        doc.text(String(c.produto).substring(0,24), margin + 85, y + 4);
-        doc.text(Number(c.qtd).toLocaleString('pt-BR'), margin + 140, y + 4);
-        doc.text(fmt(c.valor), margin + 165, y + 4);
-        y += 7;
-      });
-    } else {
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(156,163,175);
-      doc.text('Nenhuma compra registrada.', margin, y + 4);
-      y += 8;
-    }
-
-    y += 8;
-
-    /* Lancamentos detalhados */
-    checkPage(20);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.setTextColor(26,29,35);
-    doc.text('Lancamentos (' + lancamentos.length + ')', margin, y);
-    y += 6;
-
-    if(lancamentos.length > 0){
-      doc.setFillColor(244,246,249);
-      doc.rect(margin, y, contentW, 7, 'F');
-      doc.setFontSize(7);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(107,114,128);
-      doc.text('DATA', margin + 2, y + 5);
-      doc.text('TIPO', margin + 25, y + 5);
-      doc.text('CATEGORIA', margin + 42, y + 5);
-      doc.text('DESCRICAO', margin + 90, y + 5);
-      doc.text('VALOR', margin + 165, y + 5);
-      y += 8;
-
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      var sortedLanc = lancamentos.slice().sort(function(a,b){return b.data > a.data ? 1 : b.data > a.data ? -1 : b.ts - a.ts;});
-      sortedLanc.forEach(function(l){
-        checkPage(8);
-        var isE = l.tipo === 'entrada';
-        doc.setTextColor(26,29,35);
-        doc.text(fmtDate(l.data), margin + 2, y + 4);
-        doc.setTextColor(isE ? 22 : 239, isE ? 163 : 68, isE ? 74 : 68);
-        doc.text(isE ? 'Entrada' : 'Saida', margin + 25, y + 4);
-        doc.setTextColor(26,29,35);
-        doc.text(String(CAT_LABELS[l.categoria] || l.categoria).substring(0,20), margin + 42, y + 4);
-        doc.text(String(l.descricao).substring(0,22), margin + 90, y + 4);
-        doc.setTextColor(isE ? 22 : 239, isE ? 163 : 68, isE ? 74 : 68);
-        doc.text((isE ? '+' : '-') + fmt(l.valor), margin + 165, y + 4);
-        y += 7;
-      });
-    } else {
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(156,163,175);
-      doc.text('Nenhum lancamento registrado.', margin, y + 4);
-    }
-
-    /* Rodape em todas as paginas */
-    var totalPages = doc.getNumberOfPages();
-    for(var i = 1; i <= totalPages; i++){
-      doc.setPage(i);
-      doc.setFontSize(7);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(180,180,180);
-      doc.text('Gerado pelo AgroPro em ' + hd.getDate() + '/' + (hd.getMonth()+1) + '/' + hd.getFullYear() + ' as ' + String(hd.getHours()).padStart(2,'0') + ':' + String(hd.getMinutes()).padStart(2,'0'), margin, 290);
-      doc.text('Pagina ' + i + ' de ' + totalPages, pageW - margin, 290, {align:'right'});
-    }
-
-    doc.save('AgroPro_Relatorio_' + hoje() + '.pdf');
-    toast('Relatorio PDF gerado com sucesso!','ok');
-  } catch(err) {
-    toast('Erro ao gerar PDF: ' + err.message, 'err');
-  }
+  if(typeof window.jspdf==='undefined'){toast('Biblioteca PDF nao carregou','err');return;}
+  var{jsPDF}=window.jspdf;var doc=new jsPDF();var t=calcTotais();var sete=calcUltimos7Dias();
+  var w=doc.internal.pageSize.getWidth();var lm=14;var rw=w-lm*2;
+  doc.setFillColor(22,163,74);doc.rect(0,0,w,32,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont(undefined,'bold');doc.text('AgroPro',lm,15);
+  doc.setFontSize(9);doc.setFont(undefined,'normal');doc.text('Relatorio Financeiro - Avicultura',lm,22);
+  doc.setFontSize(8);doc.text('Gerado em: '+new Date().toLocaleString('pt-BR'),lm,28);
+  doc.setFillColor(255,255,255);doc.roundedRect(w-42,6,32,20,4,4,'F');
+  doc.setTextColor(22,163,74);doc.setFontSize(11);doc.setFont(undefined,'bold');doc.text('AP',w-35,20);
+  var y=42;
+  doc.setFillColor(26,29,35);doc.roundedRect(lm,y,rw,28,4,4,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont(undefined,'normal');doc.text('SALDO TOTAL',lm+10,y+8);
+  doc.setFontSize(18);doc.setFont(undefined,'bold');
+  var sc=t.saldo>=0?[74,222,128]:(t.saldo<0?[248,113,113]:[180,180,180]);
+  doc.setTextColor(sc[0],sc[1],sc[2]);doc.text(fmt(t.saldo),lm+10,y+21);
+  doc.setFontSize(7.5);doc.setFont(undefined,'normal');
+  doc.setTextColor(74,222,128);doc.text('\u25CF Entradas: '+fmt(t.entrada),lm+70,y+12);
+  doc.setTextColor(248,113,113);doc.text('\u25CF Saidas: '+fmt(t.saida),lm+70,y+20);
+  doc.setTextColor(180,180,180);doc.text(t.count+' lancamentos',lm+130,y+12);y+=38;
+  var kpiW=(rw-8)/3;var kpis=[{label:'ENTRADAS',value:fmt(t.entrada),color:[34,197,94],bg:[232,255,237]},{label:'SAIDAS',value:fmt(t.saida),color:[239,68,68],bg:[254,235,235]},{label:'LANCAMENTOS',value:String(t.count),color:[217,119,6],bg:[255,247,230]}];
+  kpis.forEach(function(k,i){var x=lm+i*(kpiW+4);doc.setFillColor(k.bg[0],k.bg[1],k.bg[2]);doc.roundedRect(x,y,kpiW,22,3,3,'F');doc.setDrawColor(k.color[0],k.color[1],k.color[2]);doc.setLineWidth(0.5);doc.line(x,y,x+kpiW,y);doc.setTextColor(k.color[0],k.color[1],k.color[2]);doc.setFontSize(6.5);doc.setFont(undefined,'bold');doc.text(k.label,x+kpiW/2,y+7,{align:'center'});doc.setFontSize(11);doc.text(k.value,x+kpiW/2,y+17,{align:'center'});});y+=32;
+  doc.setTextColor(26,29,35);doc.setFontSize(11);doc.setFont(undefined,'bold');doc.text('Ultimos 7 dias',lm,y);
+  doc.setFontSize(7);doc.setFont(undefined,'normal');doc.setFillColor(34,197,94);doc.roundedRect(lm+60,y-4,8,3,1,1,'F');doc.setTextColor(100,100,100);doc.text('Entradas',lm+71,y);
+  doc.setFillColor(239,68,68);doc.roundedRect(lm+105,y-4,8,3,1,1,'F');doc.text('Saidas',lm+116,y);y+=8;
+  var chartH=55;doc.setFillColor(248,249,251);doc.roundedRect(lm,y,rw,chartH+14,3,3,'F');doc.setDrawColor(226,230,236);doc.setLineWidth(0.3);doc.roundedRect(lm,y,rw,chartH+14,3,3,'S');
+  var mx=0;sete.forEach(function(d){mx=Math.max(mx,d.ent,d.sai);});if(mx===0)mx=1;
+  var colW=(rw-20)/7;var chartTop=y+4;var chartBase=chartTop+chartH;
+  doc.setDrawColor(235,238,242);doc.setLineWidth(0.2);for(var g=0;g<4;g++){var gy=chartTop+(chartH/3)*g;doc.line(lm+10,gy,lm+rw-10,gy);}
+  sete.forEach(function(d,i){var cx=lm+14+i*colW;var he=Math.max(1,(d.ent/mx)*chartH);var hs=Math.max(1,(d.sai/mx)*chartH);var bw=colW*0.32;
+  doc.setFillColor(34,197,94);doc.roundedRect(cx,chartBase-he,bw,he,1.5,1.5,'F');doc.setFillColor(74,222,128);doc.roundedRect(cx,chartBase-he,bw,Math.min(he,4),1.5,1.5,'F');
+  doc.setFillColor(239,68,68);doc.roundedRect(cx+bw+2,chartBase-hs,bw,hs,1.5,1.5,'F');doc.setFillColor(248,113,113);doc.roundedRect(cx+bw+2,chartBase-hs,bw,Math.min(hs,4),1.5,1.5,'F');
+  doc.setTextColor(156,163,175);doc.setFontSize(6);doc.setFont(undefined,'bold');doc.text(d.dia,cx+bw+1,chartBase+9,{align:'center'});});y+=chartH+22;
+  if(y>240){doc.addPage();y=20;}
+  doc.setTextColor(26,29,35);doc.setFontSize(11);doc.setFont(undefined,'bold');doc.text('Lancamentos ('+t.count+')',lm,y);doc.setDrawColor(34,197,94);doc.setLineWidth(0.8);doc.line(lm,y+2,lm+30,y+2);y+=10;
+  if(lancamentos.length===0){doc.setTextColor(156,163,175);doc.setFontSize(9);doc.setFont(undefined,'normal');doc.text('Nenhum lancamento registrado.',lm,y);}
+  else{var sorted=lancamentos.slice().sort(function(a,b){return b.data>a.data?1:b.data<a.data?-1:b.ts-a.ts;});
+  sorted.forEach(function(l){if(y>272){doc.addPage();y=20;}var is=l.tipo==='entrada';doc.setFillColor(is?248:255,is?255:245,is?248:245);doc.roundedRect(lm,y-4,rw,14,2,2,'F');doc.setFillColor(is?34:239,is?197:68,is?94:68);doc.roundedRect(lm,y-4,3,14,1,1,'F');doc.setTextColor(is?22:220,is?163:38,is?74:38);doc.setFontSize(9);doc.setFont(undefined,'bold');doc.text((is?'+ ':'- ')+fmt(l.valor),lm+8,y+5);doc.setTextColor(26,29,35);doc.setFontSize(8);doc.setFont(undefined,'bold');doc.text(l.descricao,lm+52,y+3);doc.setTextColor(107,114,128);doc.setFont(undefined,'normal');doc.setFontSize(7);doc.text(CAT_LABELS[l.categoria]||l.categoria,lm+52,y+8);doc.setTextColor(156,163,175);doc.setFontSize(7);doc.text(fmtDate(l.data),lm+rw-22,y+5);y+=16;});}
+  if(lotes.length>0){y+=8;if(y>250){doc.addPage();y=20;}doc.setTextColor(26,29,35);doc.setFontSize(11);doc.setFont(undefined,'bold');doc.text('Lotes ('+lotes.length+')',lm,y);doc.setDrawColor(217,119,6);doc.setLineWidth(0.8);doc.line(lm,y+2,lm+20,y+2);y+=10;
+  lotes.forEach(function(l){if(y>272){doc.addPage();y=20;}var ativo=l.status==='ativo';doc.setFillColor(ativo?248:255,ativo?255:247,ativo?248:230);doc.roundedRect(lm,y-4,rw,18,2,2,'F');doc.setFillColor(ativo?34:217,ativo?197:119,ativo?94:6);doc.roundedRect(lm,y-4,3,18,1,1,'F');doc.setTextColor(26,29,35);doc.setFontSize(8.5);doc.setFont(undefined,'bold');doc.text(l.identificacao,lm+8,y+3);var badgeX=lm+8+doc.getTextWidth(l.identificacao)+6;doc.setFillColor(ativo?232:255,ativo?255:237,ativo?237:213);doc.roundedRect(badgeX,y-2,22,8,4,4,'F');doc.setTextColor(ativo?22:217,ativo?163:119,ativo?74:6);doc.setFontSize(6);doc.text(l.status.toUpperCase(),badgeX+11,y+3,{align:'center'});doc.setTextColor(107,114,128);doc.setFontSize(7);doc.setFont(undefined,'normal');var tipoL=l.tipo==='galinhas'?'Galinhas':'Codornas';doc.text(tipoL+' - '+l.cultura+' - '+Number(l.area).toLocaleString('pt-BR')+' cabecas',lm+8,y+10);y+=22;});}
+  var pageH=doc.internal.pageSize.getHeight();doc.setFillColor(244,246,249);doc.rect(0,pageH-18,w,18,'F');doc.setDrawColor(226,230,236);doc.setLineWidth(0.3);doc.line(0,pageH-18,w,pageH-18);doc.setTextColor(156,163,175);doc.setFontSize(6.5);doc.setFont(undefined,'normal');doc.text('AgroPro - Gestao Financeira para Avicultura',lm,pageH-9);doc.text('Pagina '+doc.internal.getNumberOfPages(),w-lm,pageH-9,{align:'right'});
+  doc.save('agropro-relatorio.pdf');toast('PDF gerado!');
 }
 
 /* === INIT === */
+populateCats();
 atualizarTela();
 </script>
 </body>
